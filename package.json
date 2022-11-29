@@ -1,0 +1,53 @@
+{
+  "name": "aao_chale",
+  "version": "1.0.0",
+  "description": "aao_chale app",
+  "main": "sever.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "prd": "node server.js",
+    "delete": "node helpers/deleteDb.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kshitij-skywalk/eman-backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kshitij-skywalk/eman-backend/issues"
+  },
+  "homepage": "https://github.com/kshitij-skywalk/eman-backend#readme",
+  "dependencies": {
+    "aws-sdk": "^2.1221.0",
+    "axios": "^1.1.3",
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.20.0",
+    "connect-timeout": "^1.9.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.2",
+    "html-to-text": "^8.2.1",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.4",
+    "mongoose": "^6.5.2",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "multer-s3": "^2.10.0",
+    "nodemailer": "^6.7.8",
+    "path": "^0.12.7",
+    "pug": "^3.0.2",
+    "socket.io": "^4.5.3",
+    "twilio": "^3.81.0",
+    "winston": "^3.8.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "engines": {
+    "node": ">=10.0.0"
+  }
+}
