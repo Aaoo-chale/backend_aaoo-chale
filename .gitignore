@@ -1,0 +1,4 @@
+/node_modules/*
+/public/*
+/.VSCodeCounter/*
+/config.env
