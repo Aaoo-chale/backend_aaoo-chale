@@ -22,7 +22,7 @@ const userModel = new Schema(
   {
     name: {
       type: String,
-      // required: [true, "Please Provide First Name"],
+      // required: [true, "Please Provide First Name"],//
     },
 
     profilePictureLink: String,
