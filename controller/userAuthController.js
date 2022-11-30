@@ -142,7 +142,7 @@ exports.login = catchAsync(async (req, res, next) => {
     res.status(200).json({
       status: true,
       data: {
-        message: "An OTP has been sent,Please Verify OTP To verify mobile",
+        message: "Account Create successfully and OTP has been sent,Please Verify OTP To verify mobile",
       },
     });
   }
