@@ -236,7 +236,7 @@ exports.forgotPwdGenerateOtp = catchAsync(async (req, res, next) => {
     status: true,
     data: {
       verificationToken: user.verificationToken,
-      message: "An OTP has been sent,Please Verify OTP To Reset The Password",
+      message: "An OTP has been sent,Please Verify Email",
     },
   });
 });
