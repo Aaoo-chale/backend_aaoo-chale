@@ -11,6 +11,7 @@ const express = require("express");
 // SELF MODULES
 const UserAuthRouter = require("./route/userAuthRoute");
 const vehicleRoute = require("./route/vehicleRoute");
+const userPersonalInfoRoute = require("./route/userPersonalInfoRoute");
 const requestBodyLogger = require(path.join(__dirname, "helpers", "winstonLogger"));
 
 const globalErrorHandler = require(path.join(__dirname, "utils", "globalErrorHandler"));
@@ -51,6 +52,7 @@ app.use("*", (req, res, next) => {
 app.use(express.static(path.join(__dirname, "public", "profile-picture")));
 app.use("/eman-api/v1/UserAuth", UserAuthRouter);
 app.use("/eman-api/v1/UserAuth/vehicle", vehicleRoute);
+app.use("/eman-api/v1/UserAuth/perinfo", userPersonalInfoRoute);
 
 // LANDING PAGE
 

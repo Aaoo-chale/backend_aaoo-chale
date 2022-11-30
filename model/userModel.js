@@ -22,17 +22,9 @@ const userModel = new Schema(
   {
     name: {
       type: String,
-      required: [true, "Please Provide First Name"],
+      // required: [true, "Please Provide First Name"],
     },
-    password: {
-      type: String,
-      required: [true, "Please Provide Password"],
-      select: false,
-    },
-    passwordChangedAt: {
-      type: Date,
-      select: false,
-    },
+
     profilePictureLink: String,
     createdOn: {
       type: Date,
@@ -42,7 +34,7 @@ const userModel = new Schema(
       emailId: {
         type: String,
         unique: [true, "Email Id Already Exists"],
-        required: [true, "Please Provide Email ID"],
+        // required: [true, "Please Provide Email ID"],
         trim: true,
         validate: [validateEmail, "Please fill a valid email address"],
         match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, "Please fill a valid email address"],
@@ -55,7 +47,7 @@ const userModel = new Schema(
     mobile: {
       mobileNumber: {
         type: String,
-        unique: [true, "Mobile Number Already Exists"],
+        unique: [false, "Mobile Number Already Exists"],
         required: [true, "Please Provide Mobile Number"],
       },
       isMobileVerified: {
