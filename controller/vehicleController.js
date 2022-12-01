@@ -9,13 +9,16 @@ exports.registerVehicle = async (req, res, next) => {
   const user = req.user;
   console.log(user._id);
   try {
-    let { carBrand, carModel, carType, carColor } = req.body;
+    let { vehicleRegiNumb, carBrand, carModel, carType, carColor, manufacturYear, vehiclePic } = req.body;
 
     const vehicle = await Vehicle.create({
+      vehicleRegiNumb,
       carBrand,
       carModel,
       carType,
       carColor,
+      manufacturYear,
+      vehiclePic,
       userId: user._id,
     });
 
@@ -35,7 +38,6 @@ exports.registerVehicle = async (req, res, next) => {
 exports.getAllCars = async (req, res, next) => {
   try {
     const getAllCars = await Vehicle.find({});
-
     res.status(200).json({
       type: "success",
       message: "Vehicle Register Succussefully",
