@@ -112,7 +112,7 @@ exports.login = catchAsync(async (req, res, next) => {
     try {
       await generateOtp("mobile", doc, "Please Verify OTP , OTP Expires in 10 Minutes");
     } catch (err) {
-      return res.status(500).json({
+      return res.status(200).json({
         status: "fail",
         message: "Unable To Send Otp, Please Try Later....",
       });
