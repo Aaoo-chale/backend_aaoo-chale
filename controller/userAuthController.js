@@ -105,7 +105,7 @@ exports.login = catchAsync(async (req, res, next) => {
   // TODO:NO LOGIN TILL EMAIL VERIFIED
   const { mobileNumber } = req.body;
   if (!mobileNumber) {
-    return next(new AppErr("Please Provide all the details to create user", 400));
+    return next(new AppErr("Please Provide all the details to create user", 200));
   }
   let doc = await User.findOne({ "mobile.mobileNumber": mobileNumber });
   if (doc) {
@@ -162,16 +162,16 @@ exports.loginMobileOTP = catchAsync(async (req, res, next) => {
   const doc = await User.findOne({ "mobile.mobileNumber": mobile });
 
   const currDate = new Date(Date.now());
-  if (doc?.verificationToken?.mobileTokenExpiry < currDate) return next(new AppErr("OTP Expired", 400));
+  if (doc?.verificationToken?.mobileTokenExpiry < currDate) return next(new AppErr("OTP Expired", 200));
   // verify otp
-  if (!(doc?.verificationToken?.mobileToken === otp)) return next(new AppErr("OTP Entered Is Incorrect", 400));
+  if (!(doc?.verificationToken?.mobileToken === otp)) return next(new AppErr("OTP Entered Is Incorrect", 200));
   // update token fields in document
   doc.verificationToken.mobileToken = undefined;
   doc.verificationToken.mobileTokenExpiry = undefined;
   doc.mobile.isMobileVerified = true;
   let user = await doc.save();
   // check mobile is very or not
-  if (!user?.mobile?.isMobileVerified) return next(new AppErr("Please Verify Your Mobile Address To Login", 401));
+  if (!user?.mobile?.isMobileVerified) return next(new AppErr("Please Verify Your Mobile Address To Login", 200));
 
   createSendToken(doc, 200, res);
 });
@@ -191,7 +191,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     const cookieToken = req?.cookies?.jwt;
   }
   if (!token) {
-    return next(new AppErr("You are not logged  in!!! Please log in to get access.", 401));
+    return next(new AppErr("You are not logged  in!!! Please log in to get access.", 200));
   }
 
   //2) Validate token
@@ -204,12 +204,12 @@ exports.protect = catchAsync(async (req, res, next) => {
   const currentUser = await User.findById(id);
 
   if (!currentUser) {
-    return next(new AppErr(" The user blonging to this token no longer exists", 401));
+    return next(new AppErr(" The user blonging to this token no longer exists", 200));
   }
 
   //4) Check if user change password after the token was issued
   if (currentUser.changePasswordAfter(decoded.iat)) {
-    return next(new AppErr("App user recently changed password! Please log in again", 401));
+    return next(new AppErr("App user recently changed password! Please log in again", 200));
   }
   // Grant access to protected route
   req.user = currentUser;
@@ -230,7 +230,7 @@ exports.forgotPwdGenerateOtp = catchAsync(async (req, res, next) => {
     });
   }
   const user = await User.findOne({ "email.emailId": email });
-  if (!user) return next(new AppErr("Account Not Found"), 400);
+  if (!user) return next(new AppErr("Account Not Found"), 200);
   await generateOtp("password", user, "[SL WORLD JOBS] OTP for password change", "Reset Your Password");
   res.status(200).json({
     status: true,
@@ -253,15 +253,15 @@ exports.forgotPwdVerifyOtp = catchAsync(async (req, res, next) => {
   }
 
   const doc = await User.findOne({ "email.emailId": email });
-  if (!doc) return next(new AppErr("Account Not Found"), 400);
+  if (!doc) return next(new AppErr("Account Not Found"), 200);
   // check if token is present
   if (!doc?.verificationToken?.passwordToken && !doc?.verificationToken?.passwordTokenExpiry)
-    return next(new AppErr("Token Not Issued, Route Is FORBIDDEN", 403));
+    return next(new AppErr("Token Not Issued, Route Is FORBIDDEN", 200));
   // check if time expired
   const currDate = new Date(Date.now());
-  if (doc?.verificationToken?.passwordTokenExpiry < currDate) return next(new AppErr("OTP Expired", 400));
+  if (doc?.verificationToken?.passwordTokenExpiry < currDate) return next(new AppErr("OTP Expired", 200));
   // verify otp
-  if (!(doc?.verificationToken?.passwordToken === otp)) return next(new AppErr("OTP Entered Is Incorrect", 400));
+  if (!(doc?.verificationToken?.passwordToken === otp)) return next(new AppErr("OTP Entered Is Incorrect", 200));
   // update token fields in document
   doc.verificationToken.passwordToken = undefined;
   doc.verificationToken.passwordTokenExpiry = undefined;
@@ -325,15 +325,15 @@ exports.verifyReceivedMobileOTP = catchAsync(async (req, res, next) => {
     });
   }
   const doc = await User.findOne({ "mobile.mobileNumber": mobile });
-  if (!doc) return next(new AppErr("Account Not Found"), 400);
+  if (!doc) return next(new AppErr("Account Not Found"), 200);
   // check if token is present
   if (!doc?.verificationToken?.mobileToken && !doc?.verificationToken?.mobileTokenExpiry)
-    return next(new AppErr("Token Not Issued, Route Is FORBIDDEN", 403));
+    return next(new AppErr("Token Not Issued, Route Is FORBIDDEN", 200));
   // check if time expired
   const currDate = new Date(Date.now());
-  if (doc?.verificationToken?.mobileTokenExpiry < currDate) return next(new AppErr("OTP Expired", 400));
+  if (doc?.verificationToken?.mobileTokenExpiry < currDate) return next(new AppErr("OTP Expired", 200));
   // verify otp
-  if (!(doc?.verificationToken?.mobileToken === otp)) return next(new AppErr("OTP Entered Is Incorrect", 400));
+  if (!(doc?.verificationToken?.mobileToken === otp)) return next(new AppErr("OTP Entered Is Incorrect", 200));
   // update token fields in document
   doc.verificationToken.mobileToken = undefined;
   doc.verificationToken.mobileTokenExpiry = undefined;

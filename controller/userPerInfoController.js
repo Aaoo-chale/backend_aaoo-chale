@@ -11,7 +11,7 @@ exports.addUserPersoInfo = catchAsync(async (req, res, next) => {
 
   // chake email present or mot
   const data = await User.findOne({ "email.emailId": emailId });
-  if (data) return next(new AppErr("Account already exist please add new emailId"), 400);
+  if (data) return next(new AppErr("Account already exist please add new emailId"), 200);
 
   user.name = name;
   user.email = { emailId };
@@ -30,7 +30,7 @@ exports.addUserPersoInfo = catchAsync(async (req, res, next) => {
 // get user personal info
 exports.getUserPersoInfo = catchAsync(async (req, res, next) => {
   const user = req.user;
-  if (!user) return next(new AppErr("Please Login User"), 500);
+  if (!user) return next(new AppErr("Please Login User"), 200);
   res.status(200).json({
     status: true,
     data: {
