@@ -2,7 +2,6 @@ const path = require("path");
 const AppErr = require(path.join(__dirname, "..", "utils", "AppErr"));
 const User = require(path.join(__dirname, "..", "model", "userModel"));
 const Vehicle = require("../model/vehicleModel");
-// const User = require("../model/userModel");
 
 // register car
 exports.registerVehicle = async (req, res, next) => {

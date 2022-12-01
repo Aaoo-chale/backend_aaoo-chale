@@ -2,7 +2,7 @@ const path = require("path");
 const AppErr = require(path.join(__dirname, "AppErr"));
 const handleCastErrorDB = (err) => {
   const message = `Ivalid ${err.path}: ${err.value}`;
-  return new AppErr(message, 400);
+  return new AppErr(message, 200);
 };
 
 const handleDuplicateFieldsDB = (err) => {
@@ -10,13 +10,13 @@ const handleDuplicateFieldsDB = (err) => {
   // regular expression for getting the value('document field value') from string which contains double quotes words
   // if unique: true set on model on some schema value then this error is shown
   const message = ` Duplicate field value: ${value}. Please enter another value`;
-  return new AppErr(message, 400);
+  return new AppErr(message, 200);
 };
 
 const handleValidationErrorDB = (err) => {
   const errors = Object.values(err.errors).map((el) => el.message);
   const message = `Invalid Input data. ${errors.join(". ")}`;
-  return new AppErr(message, 400);
+  return new AppErr(message, 200);
 };
 
 const handleJWTError = (err) => new AppErr("Invalid token. please login with valid token", 401);
@@ -25,7 +25,7 @@ const handleTokenExpiredError = (err) => new AppErr("Token is Expired.please try
 
 const sendErrorDev = (err, res) => {
   if (err.code === 11000) {
-    return res.status(422).json({
+    return res.status(200).json({
       status: err.status,
       message: "User already exist!",
       error: err,
@@ -49,7 +49,7 @@ const sendErrorProd = (err, res) => {
     });
   } else {
     //1) Send Generic Message
-    res.status(500).json({
+    res.status(200).json({
       status: "error",
       message: "something wents very wrong!! Error from Technical side",
     });
@@ -60,7 +60,7 @@ const globalErrorHandler = function (err, req, res, next) {
   // console.log("GLOBAL ERROR HANDLER HIT!!");
   // console.log(err);
   err.status = err.status || "error";
-  err.statusCode = err.statusCode || 500;
+  err.statusCode = err.statusCode || 200;
   err.message = err.message || "Internal Server Error";
   if (process.env.NODE_ENV === "development") {
     sendErrorDev(err, res);
