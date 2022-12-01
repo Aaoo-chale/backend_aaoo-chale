@@ -24,7 +24,7 @@ const createSendToken = (user, statusCode, res) => {
     expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
     httpOnly: true,
   };
-  if (process.env.NODE_ENV === "development") cookieOptions.secure = true; // only for the https
+  // if (process.env.NODE_ENV === "development") cookieOptions.secure = true; // only for the https
 
   res.cookie("jwt", token, cookieOptions);
   user.password = undefined; // hide password field from the response of document
@@ -120,14 +120,14 @@ exports.login = catchAsync(async (req, res, next) => {
     res.status(200).json({
       status: true,
       data: {
-        message: "An OTP has been sent,Please Verify OTP To verify mobile",
+        message: "Account already exits An OTP has been sent your mobile Number,Please Enter OTP and Login",
       },
     });
   } else {
     const user = await User.create({
       mobile: { mobileNumber },
     });
-    console.log("data");
+
     try {
       await generateOtp("mobile", user, "Please Verify OTP , OTP Expires in 10 Minutes");
     } catch (err) {
@@ -142,7 +142,7 @@ exports.login = catchAsync(async (req, res, next) => {
     res.status(200).json({
       status: true,
       data: {
-        message: "Account Create successfully and OTP has been sent,Please Verify OTP To verify mobile",
+        message: "Account Create successfully and OTP has been sent Your Mobile,Please Verify OTP To verify mobile",
       },
     });
   }
