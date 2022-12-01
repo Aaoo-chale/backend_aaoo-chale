@@ -3,8 +3,8 @@ require("dotenv").config({ path: path.join(__dirname, "..", "config.env") });
 const Email = require(path.join(__dirname, "..", "utils", "Email"));
 // this function only sends otp to mailtrap for email and password otp verification, but can be configured for mobile as well
 const generateOtp = async function (mode, user, message, body) {
-  const otp = Math.floor(9999 + Math.random() * 9999);
-  const date = Date.now() + 10 * 60 * 9999;
+  const otp = Math.floor(1000 + Math.random() * 9000);
+  const date = Date.now() + 10 * 60 * 9000;
   user[`verificationToken`][`${mode}Token`] = otp;
   user[`verificationToken`][`${mode}TokenExpiry`] = date;
   await user.save();
