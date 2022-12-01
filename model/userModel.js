@@ -22,7 +22,7 @@ const userModel = new Schema(
   {
     name: {
       type: String,
-      // required: [true, "Please Provide First Name"],
+      required: [false, "Please Provide First Name"],
     },
 
     profilePictureLink: String,
@@ -47,7 +47,7 @@ const userModel = new Schema(
     mobile: {
       mobileNumber: {
         type: String,
-        unique: [false, "Mobile Number Already Exists"],
+        unique: [true, "Mobile Number Already Exists"],
         required: [true, "Please Provide Mobile Number"],
       },
       isMobileVerified: {
@@ -62,6 +62,29 @@ const userModel = new Schema(
       mobileTokenExpiry: Date,
       passwordToken: String,
       passwordTokenExpiry: Date,
+    },
+    documents: {
+      aadharCard: {
+        documentName: String,
+        documentNumber: String,
+        documentLink: String,
+        isDocumentVerified: Boolean,
+        documentExpiryDate: Date,
+      },
+      panCard: {
+        documentName: String,
+        documentNumber: String,
+        documentLink: String,
+        isDocumentVerified: Boolean,
+        documentExpiryDate: Date,
+      },
+      drivingLicence: {
+        documentName: String,
+        documentNumber: String,
+        documentLink: String,
+        isDocumentVerified: Boolean,
+        documentExpiryDate: Date,
+      },
     },
   },
   { toJSON: { virtuals: true } }

@@ -8,8 +8,15 @@ const User = require(path.join(__dirname, "..", "model", "userModel"));
 exports.addUserPersoInfo = catchAsync(async (req, res, next) => {
   const user = req.user;
   const { name, emailId } = req.body;
+
+  // chake email present or mot
+  const data = await User.findOne({ "email.emailId": emailId });
+  if (data) return next(new AppErr("Account already exist please add new emailId"), 400);
+
   user.name = name;
   user.email = { emailId };
+
+  // save data
   await user.save();
   res.status(200).json({
     status: true,

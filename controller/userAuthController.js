@@ -1,6 +1,6 @@
 const path = require("path");
 const jwt = require("jsonwebtoken");
-require("dotenv").config({ path: path.join(__dirname, "config.env") });
+require("dotenv").config({ path: path.join(__dirname, "..", "config.env") });
 const multer = require("multer");
 const { promisify } = require("util");
 const generateOtp = require(path.join(__dirname, "..", "helpers", "generateOtp"));
@@ -112,7 +112,7 @@ exports.login = catchAsync(async (req, res, next) => {
     try {
       await generateOtp("mobile", doc, "Please Verify OTP , OTP Expires in 10 Minutes");
     } catch (err) {
-      return res.status(200).json({
+      return res.status(500).json({
         status: "fail",
         message: "Unable To Send Otp, Please Try Later....",
       });
@@ -120,18 +120,18 @@ exports.login = catchAsync(async (req, res, next) => {
     res.status(200).json({
       status: true,
       data: {
-        message: "An OTP has been sent,Please Verify OTP To verify mobile",
+        message: "Account already exits An OTP has been sent your mobile Number,Please Enter OTP and Login",
       },
     });
   } else {
     const user = await User.create({
       mobile: { mobileNumber },
     });
-    console.log("data");
+
     try {
       await generateOtp("mobile", user, "Please Verify OTP , OTP Expires in 10 Minutes");
     } catch (err) {
-      return res.status(200).json({
+      return res.status(500).json({
         status: "fail",
         message: "Unable To Send Otp, Please Try Later....",
       });
@@ -142,7 +142,7 @@ exports.login = catchAsync(async (req, res, next) => {
     res.status(200).json({
       status: true,
       data: {
-        message: "An OTP has been sent,Please Verify OTP To verify mobile",
+        message: "Account Create successfully and OTP has been sent Your Mobile,Please Verify OTP To verify mobile",
       },
     });
   }
@@ -162,15 +162,16 @@ exports.loginMobileOTP = catchAsync(async (req, res, next) => {
   const doc = await User.findOne({ "mobile.mobileNumber": mobile });
 
   const currDate = new Date(Date.now());
-  if (doc?.verificationToken?.mobileTokenExpiry < currDate) return next(new AppErr("OTP Expired", 200));
+  if (doc?.verificationToken?.mobileTokenExpiry < currDate) return next(new AppErr("OTP Expired", 400));
   // verify otp
-  if (!(doc?.verificationToken?.mobileToken === otp)) return next(new AppErr("OTP Entered Is Incorrect", 200));
+  if (!(doc?.verificationToken?.mobileToken === otp)) return next(new AppErr("OTP Entered Is Incorrect", 400));
   // update token fields in document
   doc.verificationToken.mobileToken = undefined;
   doc.verificationToken.mobileTokenExpiry = undefined;
   doc.mobile.isMobileVerified = true;
-  await doc.save();
-  // if (!doc?.mobile?.isMobileVerified) return next(new AppErr("Please Verify Your Mobile Address To Login", 401));
+  let user = await doc.save();
+  // check mobile is very or not
+  if (!user?.mobile?.isMobileVerified) return next(new AppErr("Please Verify Your Mobile Address To Login", 401));
 
   createSendToken(doc, 200, res);
 });
@@ -235,7 +236,7 @@ exports.forgotPwdGenerateOtp = catchAsync(async (req, res, next) => {
     status: true,
     data: {
       verificationToken: user.verificationToken,
-      message: "An OTP has been sent,Please Verify OTP To Reset The Password",
+      message: "An OTP has been sent,Please Verify Email",
     },
   });
 });
