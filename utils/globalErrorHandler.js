@@ -19,9 +19,9 @@ const handleValidationErrorDB = (err) => {
   return new AppErr(message, 200);
 };
 
-const handleJWTError = (err) => new AppErr("Invalid token. please login with valid token", 401);
+const handleJWTError = (err) => new AppErr("Invalid token. please login with valid token", 200);
 
-const handleTokenExpiredError = (err) => new AppErr("Token is Expired.please try with valid Token", 401);
+const handleTokenExpiredError = (err) => new AppErr("Token is Expired.please try with valid Token", 200);
 
 const sendErrorDev = (err, res) => {
   if (err.code === 11000) {

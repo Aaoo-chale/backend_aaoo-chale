@@ -112,7 +112,7 @@ exports.login = catchAsync(async (req, res, next) => {
     try {
       await generateOtp("mobile", doc, "Please Verify OTP , OTP Expires in 10 Minutes");
     } catch (err) {
-      return res.status(500).json({
+      return res.status(200).json({
         status: "fail",
         message: "Unable To Send Otp, Please Try Later....",
       });
@@ -200,7 +200,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   //3) Get if user still exists
 
   const id = decoded?.id?.split("--")[1];
-  if (!id) return next(new AppErr("JWT Malformed"), 401);
+  if (!id) return next(new AppErr("JWT Malformed"), 200);
   const currentUser = await User.findById(id);
 
   if (!currentUser) {
@@ -302,7 +302,7 @@ exports.verifyMobileSendOtp = catchAsync(async (req, res, next) => {
     });
   }
   const user = await User.findOne({ "mobile.mobileNumber": mobile });
-  if (!user) return next(new AppErr("Account Not Found"), 400);
+  if (!user) return next(new AppErr("Account Not Found"), 200);
   await generateOtp("mobile", user, "Please Verify OTP , OTP Expires in 10 Minutes");
 
   res.status(200).json({
