@@ -5,14 +5,31 @@ const encryptPassword = require(path.join(__dirname, "..", "helpers", "encryptPa
 const User = require(path.join(__dirname, "..", "model", "userModel"));
 
 // add user personal info
+exports.addUserPersoInfo = catchAsync(async (req, res, next) => {
+  const user = req.user;
+  // console.log(user);
+  const { name, emailId } = req.body;
+  user.name = name;
+  user.email = { emailId };
+  await user.save();
+  res.status(200).json({
+    status: true,
+    data: {
+      message: "Add User Personal information",
+      user,
+    },
+  });
+});
+
+// user update personal info
 exports.updateUserPersoInfo = catchAsync(async (req, res, next) => {
   // const user = req.user;
   const { id } = req.query;
   const { name, emailId, gender, DOB, bio, mobileNumber } = req.body;
 
-  // chake email present or mot
-  const data = await User.findOne({ "email.emailId": emailId });
-  if (data) return next(new AppErr("Account already exist please add new emailId"), 200);
+  // // chake email present or mot
+  // const data = await User.findOne({ "email.emailId": emailId });
+  // if (data) return next(new AppErr("Account already exist please add new emailId"), 200);
 
   const user = await User.findByIdAndUpdate(
     { _id: id },
@@ -33,6 +50,10 @@ exports.updateUserPersoInfo = catchAsync(async (req, res, next) => {
   });
 });
 
+// add preferances
+exports.addPreferences = catchAsync(async (req, res, next) => {
+  // const {}
+});
 // get user personal info
 exports.getUserPersoInfo = catchAsync(async (req, res, next) => {
   // const user = req.user;
