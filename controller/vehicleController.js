@@ -33,26 +33,26 @@ exports.registerVehicle = async (req, res, next) => {
   }
 };
 
-// get all register car
-exports.getAllCars = async (req, res, next) => {
-  try {
-    const getAllCars = await Vehicle.find({});
-    res.status(200).json({
-      type: "success",
-      message: "Vehicle Register Succussefully",
-      getAllCars,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+// // get all register car
+// exports.getAllCars = async (req, res, next) => {
+//   try {
+//     const getAllCars = await Vehicle.find({});
+//     res.status(200).json({
+//       type: "success",
+//       message: "Vehicle Register Succussefully",
+//       getAllCars,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 // get all cars of UserId
 exports.getAllCarsByUserId = async (req, res, next) => {
-  const user = req.user;
+  // const user = req.user;
+  const { id } = req.query;
   try {
-    // const { userId } = req.query;
-    const getAllCars = await Vehicle.find({ userId: user._id });
+    const getAllCars = await Vehicle.find({ userId: id });
     res.status(200).json({
       type: "success",
       message: "Vehicle Register Succussefully",

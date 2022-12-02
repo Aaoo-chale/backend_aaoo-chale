@@ -120,7 +120,7 @@ exports.login = catchAsync(async (req, res, next) => {
     res.status(200).json({
       status: true,
       data: {
-        message: "Account already exits An OTP has been sent your mobile Number,Please Enter OTP and Login",
+        message: "Account already exits An OTP has been sent your mobile Number",
       },
     });
   } else {
@@ -142,7 +142,7 @@ exports.login = catchAsync(async (req, res, next) => {
     res.status(200).json({
       status: true,
       data: {
-        message: "Account Create successfully and OTP has been sent Your Mobile,Please Verify OTP To verify mobile",
+        message: "Account Create successfully and OTP has been sent Your Mobile",
       },
     });
   }
@@ -173,7 +173,7 @@ exports.loginMobileOTP = catchAsync(async (req, res, next) => {
   // check mobile is very or not
   if (!user?.mobile?.isMobileVerified) return next(new AppErr("Please Verify Your Mobile Address To Login", 200));
 
-  createSendToken(doc, 200, res);
+  createSendToken(user, 200, res);
 });
 
 //PROTECT route to chake user is login or not
@@ -231,7 +231,7 @@ exports.forgotPwdGenerateOtp = catchAsync(async (req, res, next) => {
   }
   const user = await User.findOne({ "email.emailId": email });
   if (!user) return next(new AppErr("Account Not Found"), 200);
-  await generateOtp("password", user, "[SL WORLD JOBS] OTP for password change", "Reset Your Password");
+  await generateOtp("password", user, "OTP send your email please verify email");
   res.status(200).json({
     status: true,
     data: {

@@ -30,11 +30,22 @@ const userModel = new Schema(
       type: Date,
       default: getISTTime(new Date(Date.now())),
     },
+    gender: {
+      type: String,
+      enum: ["Male", "Female", "Other"],
+    },
+    DOB: {
+      type: Date,
+    },
+    bio: {
+      type: String,
+    },
+
     email: {
       emailId: {
         type: String,
         unique: [true, "Email Id Already Exists"],
-        // required: [true, "Please Provide Email ID"],
+        required: [false, "Please Provide Email ID"],
         trim: true,
         validate: [validateEmail, "Please fill a valid email address"],
         match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, "Please fill a valid email address"],
@@ -62,6 +73,20 @@ const userModel = new Schema(
       mobileTokenExpiry: Date,
       passwordToken: String,
       passwordTokenExpiry: Date,
+    },
+    yourPreferences: {
+      chattiness: {
+        type: String,
+      },
+      music: {
+        type: String,
+      },
+      smoking: {
+        type: String,
+      },
+      pets: {
+        type: String,
+      },
     },
     documents: {
       aadharCard: {
