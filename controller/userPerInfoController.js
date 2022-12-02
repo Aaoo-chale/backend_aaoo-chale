@@ -60,6 +60,7 @@ exports.getUserPersoInfo = catchAsync(async (req, res, next) => {
   const { id } = req.query;
   // if (!user) return next(new AppErr("Please Login User"), 200);
   const user = await User.findOne({ _id: id }, "-__v");
+  console.log(user);
   res.status(200).json({
     status: true,
     data: {

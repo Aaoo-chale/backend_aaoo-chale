@@ -53,6 +53,7 @@ exports.getAllCarsByUserId = async (req, res, next) => {
   const { id } = req.query;
   try {
     const getAllCars = await Vehicle.find({ userId: id });
+    console.log(getAllCars);
     res.status(200).json({
       type: "success",
       message: "Vehicle Register Succussefully",
