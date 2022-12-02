@@ -50,10 +50,10 @@ exports.updateUserPersoInfo = catchAsync(async (req, res, next) => {
   });
 });
 
-// add preferances
-exports.addPreferences = catchAsync(async (req, res, next) => {
-  // const {}
-});
+// // add preferances
+// exports.addPreferences = catchAsync(async (req, res, next) => {
+//   // const {}
+// });
 // get user personal info
 exports.getUserPersoInfo = catchAsync(async (req, res, next) => {
   // const user = req.user;
