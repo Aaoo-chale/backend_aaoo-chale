@@ -33,6 +33,16 @@ const VehicleSchema = new Schema(
       required: [false, "Please Provide manufacturYear"],
       trim: true,
     },
+    seatCount: {
+      type: Number,
+      required: [false, "Please Provide seatCount"],
+      trim: true,
+    },
+    colorCode: {
+      type: String,
+      required: [false, "Please Provide colorCode"],
+      trim: true,
+    },
     vehiclePic: {
       type: String,
     },
