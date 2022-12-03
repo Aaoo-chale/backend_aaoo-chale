@@ -50,9 +50,9 @@ app.use("*", (req, res, next) => {
 
 // GET DOCUMENT ROUTE
 app.use(express.static(path.join(__dirname, "public", "profile-picture")));
-app.use("/eman-api/v1/UserAuth", UserAuthRouter);
-app.use("/eman-api/v1/UserAuth/vehicle", vehicleRoute);
-app.use("/eman-api/v1/UserAuth/perinfo", userPersonalInfoRoute);
+app.use("/aaoochale/UserAuth", UserAuthRouter);
+app.use("/aaoochale/UserAuth/vehicle", vehicleRoute);
+app.use("/aaoochale/UserAuth/perinfo", userPersonalInfoRoute);
 
 // LANDING PAGE
 
