@@ -74,19 +74,17 @@ const userModel = new Schema(
       passwordToken: String,
       passwordTokenExpiry: Date,
     },
-    yourPreferences: {
-      chattiness: {
-        type: String,
-      },
-      music: {
-        type: String,
-      },
-      smoking: {
-        type: String,
-      },
-      pets: {
-        type: String,
-      },
+    chattiness: {
+      type: String,
+    },
+    music: {
+      type: String,
+    },
+    smoking: {
+      type: String,
+    },
+    pets: {
+      type: String,
     },
     documents: {
       aadharCard: {

@@ -4,9 +4,9 @@ const userAuthController = require("../controller/userAuthController");
 const vehicleController = require("../controller/vehicleController");
 const router = express.Router();
 
-router.get("/getAllCarsByUserId", vehicleController.getAllCarsByUserId);
+router.post("/getAllCarsByUserId", vehicleController.getAllCarsByUserId);
+router.post("/getVehicleById", vehicleController.getVehicleById);
 router.use(userAuthController.protect); //below this protected routes//
 router.post("/registerVehicle", vehicleController.registerVehicle);
-// router.get("/getAllCars", vehicleController.getAllCars);
 
 module.exports = router;
