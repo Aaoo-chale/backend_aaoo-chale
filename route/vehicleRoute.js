@@ -8,5 +8,7 @@ router.post("/getAllCarsByUserId", vehicleController.getAllCarsByUserId);
 router.post("/getVehicleById", vehicleController.getVehicleById);
 router.use(userAuthController.protect); //below this protected routes//
 router.post("/registerVehicle", vehicleController.registerVehicle);
+router.post("/uploadVehicle", vehicleController.uploadVehicle);
+router.post("/getVehicleimage", vehicleController.getVehicleimage);
 
 module.exports = router;

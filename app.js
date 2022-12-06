@@ -12,6 +12,7 @@ const express = require("express");
 const UserAuthRouter = require("./route/userAuthRoute");
 const vehicleRoute = require("./route/vehicleRoute");
 const userPersonalInfoRoute = require("./route/userPersonalInfoRoute");
+const RideRoute = require("./route/rideRoute");
 const requestBodyLogger = require(path.join(__dirname, "helpers", "winstonLogger"));
 
 const globalErrorHandler = require(path.join(__dirname, "utils", "globalErrorHandler"));
@@ -49,13 +50,13 @@ app.use("*", (req, res, next) => {
 });
 
 // GET DOCUMENT ROUTE
-app.use(express.static(path.join(__dirname, "public", "profile-picture")));
+// app.use(express.static(path.join(__dirname, "public", "profile-picture")));
 app.use("/aaoochale/UserAuth", UserAuthRouter);
 app.use("/aaoochale/UserAuth/vehicle", vehicleRoute);
 app.use("/aaoochale/UserAuth/perinfo", userPersonalInfoRoute);
+app.use("/aaoochale/UserAuth/ride", RideRoute);
 
 // LANDING PAGE
-
 app.use(globalErrorHandler);
 app.use("*", (req, res, next) => {
   res.status(404).json({
