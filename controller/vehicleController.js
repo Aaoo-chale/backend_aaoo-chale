@@ -2,7 +2,7 @@ const path = require("path");
 const catchAsync = require(path.join(__dirname, "..", "utils", "catchAsync"));
 const AppErr = require(path.join(__dirname, "..", "utils", "AppErr"));
 const User = require(path.join(__dirname, "..", "model", "userModel"));
-const aws = require("aws-sdk");
+const AWS = require("aws-sdk");
 const multerS3 = require("multer-s3");
 const multer = require("multer");
 require("dotenv").config({ path: path.join(__dirname, "..", "config.env") });
@@ -17,12 +17,13 @@ const vehicleImage = require("../model/vehicleImageModel");
 // register car
 exports.registerVehicle = async (req, res, next) => {
   const user = req.user;
-  console.log(user._id);
+  console.log(user);
   try {
-    let { vehicleRegiNumb, carBrand, carModel, carType, carColor, manufacturYear, vehiclePic } = req.body;
+    let { vehicleRegiNumb, seatCount, carBrand, carModel, carType, carColor, manufacturYear, vehiclePic } = req.body;
 
     const vehicle = await Vehicle.create({
       vehicleRegiNumb,
+      seatCount,
       carBrand,
       carModel,
       carType,
@@ -159,7 +160,7 @@ exports.getVehicleById = async (req, res, next) => {
 //   });
 // });
 
-const s3 = new aws.S3({
+const s3 = new AWS.S3({
   accessKeyId: process.env.S3_ACCESS_KEY,
   secretAccessKey: process.env.S3_SECRETE_ACCESS_KEY,
   region: process.env.S3_BUCKET_RESION,
@@ -175,7 +176,7 @@ const upload = (bucketName) => {
         cb(null, { fileName: file.fieldname });
       },
       key: function (req, file, cb) {
-        cb(null, `image-${Date.now}jpeg`);
+        cb(null, `image-${Date.now.toString()}jpeg`);
       },
     }),
   });
@@ -217,7 +218,7 @@ const upload = (bucketName) => {
 
 exports.uploadVehicle = (req, res, next) => {
   console.log("uploadSingle");
-  let uploadSingle = upload("aaoochale-vehicle").single("file");
+  let uploadSingle = upload("aaoochale-vehicle").single("vehicle-image");
 
   uploadSingle(req, res, async (err) => {
     // console.log("ok");
