@@ -73,220 +73,252 @@ exports.getRide = catchAsync(async (req, res, next) => {
   });
 });
 
+// TOTAL DISTANCE COUNT FUNCTION
+function distanceCount(latitude1, longitude1, latitude2, longitude2, units) {
+  var p = 0.017453292519943295; //This is  Math.PI / 180
+  var c = Math.cos;
+  var a =
+    0.5 -
+    c((latitude2 - latitude1) * p) / 2 +
+    (c(latitude1 * p) * c(latitude2 * p) * (1 - c((longitude2 - longitude1) * p))) / 2;
+  var R = 6371; //  Earth distance in km so it will return the distance in km
+  var dist = 2 * R * Math.asin(Math.sqrt(a));
+  // console.log("Distance Between London And New York is", dist, "KM");
+  return dist;
+}
+
+// console.log(distanceCount(20.99541, 79.9428, 21.14691, 79.03129));
+
+// DISTANCE COUNT API
+exports.countDistance = catchAsync(async (req, res, next) => {
+  const { id } = req.body;
+
+  const data = await Ride.findOne({ _id: id });
+  const distance = distanceCount(data.pickupLat, data.pickLong, data.dropLat, data.dropLong);
+  res.status(200).json({
+    status: true,
+    data: {
+      message: "Count Distance In Km",
+      distance,
+    },
+  });
+});
+
 // search api
-// exports.searchJobs = catchAsync(async (req, res, next) => {
-//   // const user = req?.user;
-//   let queryStr = req.query;
-//   let appliedJobs = [];
-//   let mongoObject = {};
-//   const { page, pageSize } = req.query;
-//   const skip = (page - 1) * pageSize;
-//   // if (user) {
-//   //   appliedJobs = (await CandidateJobs.find({ candidate: user._id }).select("job")).map((el) => {
-//   //     return el.job;
-//   //   });
-//   // }
-//   // const arr = [{ jobStatus: { $ne: "closed" } }, { jobStatus: { $ne: "stop" } }];
-//   // if (queryStr.jobType) {
-//   //   mongoObject["jobType"] = {
-//   //     $regex: queryStr.jobType,
-//   //     $options: "ixsm",
-//   //   };
-//   // }
-//   // //
-//   if (queryStr?.jobDesignation?.length >= 1 && queryStr?.jobLocation?.length >= 1) {
-//     const searchJobs = await JobPost.find({
-//       $and: [
-//         { _id: { $nin: appliedJobs } },
-//         {
-//           $and: [
-//             {
-//               jobDesignation: {
-//                 $regex: queryStr.jobDesignation,
-//                 $options: "ixsm",
-//               },
-//             },
-//             {
-//               $or: [
-//                 {
-//                   "jobLocation.country": {
-//                     $regex: queryStr.jobLocation,
-//                     $options: "ixsm",
-//                   },
-//                 },
-//                 {
-//                   "jobLocation.state": {
-//                     $regex: queryStr.jobLocation,
-//                     $options: "ixsm",
-//                   },
-//                 },
-//                 {
-//                   "jobLocation.city": {
-//                     $regex: queryStr.jobLocation,
-//                     $options: "ixsm",
-//                   },
-//                 },
-//               ],
-//             },
-//           ],
-//         },
-//         {
-//           $and: arr,
-//         },
-//       ],
-//     })
-//       .skip(skip)
-//       .limit(pageSize)
-//       .populate("createdById")
-//       .lean();
+exports.searchJobs = catchAsync(async (req, res, next) => {
+  // const user = req?.user;
+  let queryStr = req.query;
+  // let appliedJobs = [];
+  let mongoObject = {};
+  const { page, pageSize } = req.query;
+  const skip = (page - 1) * pageSize;
+  // if (user) {
+  //   appliedJobs = (await CandidateJobs.find({ candidate: user._id }).select("job")).map((el) => {
+  //     return el.job;
+  //   });
+  // }
+  // const arr = [{ jobStatus: { $ne: "closed" } }, { jobStatus: { $ne: "stop" } }];
+  // if (queryStr.jobType) {
+  //   mongoObject["jobType"] = {
+  //     $regex: queryStr.jobType,
+  //     $options: "ixsm",
+  //   };
+  // }
+  // //
+  if (queryStr?.jobDesignation?.length >= 1 && queryStr?.jobLocation?.length >= 1) {
+    const searchJobs = await JobPost.find({
+      $and: [
+        // { _id: { $nin: appliedJobs } },
+        {
+          $and: [
+            {
+              jobDesignation: {
+                $regex: queryStr.jobDesignation,
+                $options: "ixsm",
+              },
+            },
+            {
+              $or: [
+                {
+                  "jobLocation.country": {
+                    $regex: queryStr.jobLocation,
+                    $options: "ixsm",
+                  },
+                },
+                {
+                  "jobLocation.state": {
+                    $regex: queryStr.jobLocation,
+                    $options: "ixsm",
+                  },
+                },
+                {
+                  "jobLocation.city": {
+                    $regex: queryStr.jobLocation,
+                    $options: "ixsm",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          $and: arr,
+        },
+      ],
+    })
+      .skip(skip)
+      .limit(pageSize)
+      .populate("createdById")
+      .lean();
 
-//     return res.status(201).json({
-//       success: true,
-//       result: searchJobs.length,
-//       searchJobs,
-//     });
-//   }
-//   //
-//   if (queryStr.jobLocation || queryStr.jobDesignation || queryStr.keySkills) {
-//     if (queryStr.jobDesignation) {
-//       if (mongoObject["$or"]) {
-//         mongoObject["$or"] = [
-//           ...mongoObject["$or"],
-//           {
-//             jobDesignation: {
-//               $regex: queryStr.jobDesignation,
-//               $options: "ixsm",
-//             },
-//           },
-//         ];
-//       } else {
-//         mongoObject["$or"] = [
-//           {
-//             jobDesignation: {
-//               $regex: queryStr.jobDesignation,
-//               $options: "ixsm",
-//             },
-//           },
-//         ];
-//       }
-//     }
-//     if (queryStr.keySkills) {
-//       let keySkillArray = queryStr.keySkills.split(/[ ,]+/);
-//       let rgxArray = keySkillArray.map((ele) => {
-//         var re = new RegExp(`^${ele} `, "i");
-//         return re;
-//       });
+    return res.status(201).json({
+      success: true,
+      result: searchJobs.length,
+      searchJobs,
+    });
+  }
+  //
+  if (queryStr.jobLocation || queryStr.jobDesignation || queryStr.keySkills) {
+    if (queryStr.jobDesignation) {
+      if (mongoObject["$or"]) {
+        mongoObject["$or"] = [
+          ...mongoObject["$or"],
+          {
+            jobDesignation: {
+              $regex: queryStr.jobDesignation,
+              $options: "ixsm",
+            },
+          },
+        ];
+      } else {
+        mongoObject["$or"] = [
+          {
+            jobDesignation: {
+              $regex: queryStr.jobDesignation,
+              $options: "ixsm",
+            },
+          },
+        ];
+      }
+    }
+    if (queryStr.keySkills) {
+      let keySkillArray = queryStr.keySkills.split(/[ ,]+/);
+      let rgxArray = keySkillArray.map((ele) => {
+        var re = new RegExp(`^${ele} `, "i");
+        return re;
+      });
 
-//       if (mongoObject["$or"]) {
-//         mongoObject["$or"] = [
-//           ...mongoObject["$or"],
-//           {
-//             keySkills: {
-//               $in: rgxArray,
-//             },
-//           },
-//         ];
-//       } else {
-//         mongoObject["$or"] = [
-//           {
-//             keySkills: {
-//               $in: rgxArray,
-//             },
-//           },
-//         ];
-//       }
-//     }
-//     if (queryStr.jobLocation) {
-//       if (mongoObject["$or"]) {
-//         mongoObject["$or"] = [
-//           ...mongoObject["$or"],
-//           {
-//             "jobLocation.country": {
-//               $regex: queryStr.jobLocation,
-//               $options: "ixsm",
-//             },
-//           },
-//           {
-//             "jobLocation.state": {
-//               $regex: queryStr.jobLocation,
-//               $options: "ixsm",
-//             },
-//           },
-//           {
-//             "jobLocation.city": {
-//               $regex: queryStr.jobLocation,
-//               $options: "ixsm",
-//             },
-//           },
-//         ];
-//       } else {
-//         mongoObject["$or"] = [
-//           {
-//             "jobLocation.country": {
-//               $regex: queryStr.jobLocation,
-//               $options: "ixsm",
-//             },
-//           },
-//           {
-//             "jobLocation.state": {
-//               $regex: queryStr.jobLocation,
-//               $options: "ixsm",
-//             },
-//           },
-//           {
-//             "jobLocation.city": {
-//               $regex: queryStr.jobLocation,
-//               $options: "ixsm",
-//             },
-//           },
-//         ];
-//       }
-//     }
-//   }
+      if (mongoObject["$or"]) {
+        mongoObject["$or"] = [
+          ...mongoObject["$or"],
+          {
+            keySkills: {
+              $in: rgxArray,
+            },
+          },
+        ];
+      } else {
+        mongoObject["$or"] = [
+          {
+            keySkills: {
+              $in: rgxArray,
+            },
+          },
+        ];
+      }
+    }
+    if (queryStr.jobLocation) {
+      if (mongoObject["$or"]) {
+        mongoObject["$or"] = [
+          ...mongoObject["$or"],
+          {
+            "jobLocation.country": {
+              $regex: queryStr.jobLocation,
+              $options: "ixsm",
+            },
+          },
+          {
+            "jobLocation.state": {
+              $regex: queryStr.jobLocation,
+              $options: "ixsm",
+            },
+          },
+          {
+            "jobLocation.city": {
+              $regex: queryStr.jobLocation,
+              $options: "ixsm",
+            },
+          },
+        ];
+      } else {
+        mongoObject["$or"] = [
+          {
+            "jobLocation.country": {
+              $regex: queryStr.jobLocation,
+              $options: "ixsm",
+            },
+          },
+          {
+            "jobLocation.state": {
+              $regex: queryStr.jobLocation,
+              $options: "ixsm",
+            },
+          },
+          {
+            "jobLocation.city": {
+              $regex: queryStr.jobLocation,
+              $options: "ixsm",
+            },
+          },
+        ];
+      }
+    }
+  }
 
-//   if (queryStr.fromSalary && queryStr.toSalary) {
-//     mongoObject["$and"] = [
-//       { "salaryRange.fromSalary": { $gte: queryStr.fromSalary } },
-//       { "salaryRange.toSalary": { $lte: queryStr.toSalary } },
-//     ];
-//   }
+  if (queryStr.fromSalary && queryStr.toSalary) {
+    mongoObject["$and"] = [
+      { "salaryRange.fromSalary": { $gte: queryStr.fromSalary } },
+      { "salaryRange.toSalary": { $lte: queryStr.toSalary } },
+    ];
+  }
 
-//   if (queryStr.fromExperience && queryStr.toExperience) {
-//     let salaryRange = [];
+  if (queryStr.fromExperience && queryStr.toExperience) {
+    let salaryRange = [];
 
-//     if (mongoObject["$and"]) {
-//       salaryRange = mongoObject["$and"];
-//     }
+    if (mongoObject["$and"]) {
+      salaryRange = mongoObject["$and"];
+    }
 
-//     mongoObject["$and"] = [
-//       ...salaryRange,
-//       { "requiredExperience.fromExperience": { $gte: queryStr.fromExperience } },
-//       { "requiredExperience.toExperience": { $lte: queryStr.toExperience } },
-//     ];
-//   }
-//   // console.dir(mongoObject);
-//   // if (user) arr.push({ "appliedCandidates.candidate": { $nin: [user._id] } });
-//   // console.log(mongoObject, arr);
-//   const searchJobs = await JobPost.find({
-//     $and: [
-//       { _id: { $nin: appliedJobs } },
-//       mongoObject,
-//       {
-//         $and: arr,
-//       },
-//     ],
-//   })
-//     .skip(skip)
-//     .limit(pageSize)
-//     .populate("createdById")
-//     .lean();
+    mongoObject["$and"] = [
+      ...salaryRange,
+      { "requiredExperience.fromExperience": { $gte: queryStr.fromExperience } },
+      { "requiredExperience.toExperience": { $lte: queryStr.toExperience } },
+    ];
+  }
+  // console.dir(mongoObject);
+  // if (user) arr.push({ "appliedCandidates.candidate": { $nin: [user._id] } });
+  // console.log(mongoObject, arr);
+  const searchJobs = await JobPost.find({
+    $and: [
+      { _id: { $nin: appliedJobs } },
+      mongoObject,
+      {
+        $and: arr,
+      },
+    ],
+  })
+    .skip(skip)
+    .limit(pageSize)
+    .populate("createdById")
+    .lean();
 
-//   res.status(201).json({
-//     success: true,
-//     result: searchJobs.length,
-//     searchJobs,
-//   });
-// });
+  res.status(201).json({
+    success: true,
+    result: searchJobs.length,
+    searchJobs,
+  });
+});
+
 // case 'Search_Data':
 // 					if(empty($this->input->post('user_id')))
 // 					{

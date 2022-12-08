@@ -6,15 +6,15 @@ const VehicleImageSchema = new Schema({
     type: String,
     // required: true,
   },
-  vehicleImage: String,
+  vehicleimage: String,
   // {
   //   data: Buffer,
   //   contentType: String,
   // },
-  vehicleId: {
-    type: mongoose.Schema.ObjectId,
-    ref: "Vehicle",
-  },
+  // vehicleId: {
+  //   type: mongoose.Schema.ObjectId,
+  //   ref: "Vehicle",
+  // },
 });
 
 const vehicleImage = mongoose.model("vehicleImage", VehicleImageSchema);
