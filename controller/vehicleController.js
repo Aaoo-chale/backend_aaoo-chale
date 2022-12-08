@@ -2,15 +2,11 @@ const path = require("path");
 const catchAsync = require(path.join(__dirname, "..", "utils", "catchAsync"));
 const AppErr = require(path.join(__dirname, "..", "utils", "AppErr"));
 const User = require(path.join(__dirname, "..", "model", "userModel"));
-const AWS = require("aws-sdk");
+// const Vehicle = require("../model/vehicleModel");
+const aws = require("aws-sdk");
 const multerS3 = require("multer-s3");
 const multer = require("multer");
-require("dotenv").config({ path: path.join(__dirname, "..", "config.env") });
-
-// const S3_BUCKET_RESION="ap-south-1"
-// const S3_ACCESS_KEY="AKIAWYT53XG4VU3XHMNZ"
-// const S3_SECRETE_ACCESS_KEY="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"
-
+require("dotenv").config();
 const Vehicle = require("../model/vehicleModel");
 const vehicleImage = require("../model/vehicleImageModel");
 
@@ -161,27 +157,63 @@ exports.getVehicleById = async (req, res, next) => {
 //   });
 // });
 
-const s3 = new AWS.S3({
+const s3 = new aws.S3({
   accessKeyId: process.env.S3_ACCESS_KEY,
   secretAccessKey: process.env.S3_SECRETE_ACCESS_KEY,
   region: process.env.S3_BUCKET_RESION,
   // signatureVersion: "v4",
 });
-// aaoochale-vehicle bucketName
-const upload = (bucketName) => {
-  multer({
-    storage: multerS3({
-      s3: s3,
-      bucket: bucketName,
-      metadata: function (req, file, cb) {
-        cb(null, { fileName: file.fieldname });
-      },
-      key: function (req, file, cb) {
-        cb(null, `image-${Date.now.toString()}jpeg`);
-      },
-    }),
+
+module.exports.upload = multer({
+  // fileFilter,
+  storage: multerS3({
+    //acl: "public-read",
+    s3,
+    bucket: process.env.AWS_S3_BUCKET,
+    metadata: function (req, file, cb) {
+      cb(null, { fieldName: file.originalname });
+    },
+    key: function (req, file, cb) {
+      cb(null, `${Date.now().toString()}${file.originalname}`);
+    },
+  }),
+});
+
+exports.uploadImage = async (req, res) => {
+  const [files] = req.files;
+  const { id } = req.body;
+  // console.log(files.location, "files");
+  var data = await vehicleImage({
+    vehicleimage: files.location,
+    vehicleId: id,
+  });
+
+  console.log(data, "data");
+  await data.save((err, feed) => {
+    if (err) {
+      return res.status(400).json({
+        error: err,
+      });
+    }
+    // res.json(feed);
+    res.send(files);
   });
 };
+// aaoochale-vehicle bucketName
+// const upload = () => {
+//   multer({
+//     storage: multerS3({
+//       s3: s3,
+//       bucket: "aaoochale-vehicle",
+//       metadata: function (req, file, cb) {
+//         cb(null, { fileName: file.fieldname });
+//       },
+//       key: function (req, file, cb) {
+//         cb(null, `image-${Date.now.toString()}jpeg`);
+//       },
+//     }),
+//   });
+// };
 
 // const Storage = multer.diskStorage({
 //   destination: "./uploads/uploadImage",
@@ -217,27 +249,27 @@ const upload = (bucketName) => {
 //   });
 // };
 
-exports.uploadVehicle = (req, res, next) => {
-  console.log("uploadSingle");
-  let uploadSingle = upload("aaoochale-vehicle").single("vehicle-image");
-
-  uploadSingle(req, res, async (err) => {
-    // console.log("ok");
-    if (err) return res.status(400).json({ success: false, message: err.message });
-    // console.log(req.file);
-    await vehicleImage.create({ vehicleimage: req?.file?.location });
-    res.status(200).json({ data: req.file });
-  });
-};
+// exports.uploadVehicle = async (req, res, next) => {
+//   // console.log("uploadSingle");
+//   let uploadSingle = await upload.single("image");
+//   console.log(uploadSingle);
+//   // uploadSingle(req, res, async (err) => {
+//   //   console.log("ok");
+//   //   if (err) return res.status(400).json({ success: false, message: err.message });
+//   //   console.log(req.file);
+//   //   vehicleImage.create({ vehicleimage: req?.file?.location });
+//   //   res.status(200).json({ data: req.file });
+//   // });
+// };
 
 /// get Vehicle Image
 exports.getVehicleimage = async (req, res, next) => {
   const { id } = req.body;
   try {
-    const vehiclePic = await vehicleImage.find({ vehicleId: id });
+    const vehiclePic = await vehicleImage.findOne({ vehicleId: id });
     res.status(200).json({
       status: true,
-      message: "Get Vehicle successfully By Vehicle Id",
+      message: "Get Vehicle Image successfully By Vehicle Id",
       vehiclePic,
     });
   } catch (error) {

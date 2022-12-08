@@ -15,12 +15,12 @@ const VehicleSchema = new Schema(
     },
     carModel: {
       type: String,
-      required: [true, "Please Provide carModel"],
+      required: [false, "Please Provide carModel"],
       trim: true,
     },
     carType: {
       type: String,
-      required: [true, "Please Provide carType"],
+      required: [false, "Please Provide carType"],
       trim: true,
     },
     carColor: {
@@ -43,7 +43,7 @@ const VehicleSchema = new Schema(
       required: [false, "Please Provide colorCode"],
       trim: true,
     },
-    // vehiclePic: String,
+    vehicleimage: String,
     userId: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
