@@ -34,7 +34,7 @@ const VehicleSchema = new Schema(
       trim: true,
     },
     seatCount: {
-      type: Number,
+      type: String,
       required: [false, "Please Provide seatCount"],
       trim: true,
     },
