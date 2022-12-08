@@ -43,7 +43,7 @@ const VehicleSchema = new Schema(
       required: [false, "Please Provide colorCode"],
       trim: true,
     },
-    vehiclePic: String,
+    // vehiclePic: String,
     userId: {
       type: mongoose.Schema.ObjectId,
       ref: "User",

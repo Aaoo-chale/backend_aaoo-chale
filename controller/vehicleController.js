@@ -19,17 +19,18 @@ exports.registerVehicle = async (req, res, next) => {
   const user = req.user;
   console.log(user);
   try {
-    let { vehicleRegiNumb, seatCount, carBrand, carModel, carType, carColor, manufacturYear, vehiclePic } = req.body;
+    let { vehicleRegiNumb, carBrand, carModel, carType, carColor, manufacturYear, seatCount, colorCode } = req.body;
 
     const vehicle = await Vehicle.create({
-      vehicleRegiNumb,
-      seatCount,
-      carBrand,
-      carModel,
-      carType,
-      carColor,
-      manufacturYear,
-      vehiclePic,
+      vehicleRegiNumb: vehicleRegiNumb,
+      seatCount: seatCount,
+      carBrand: carBrand,
+      carModel: carModel,
+      carType: carType,
+      carColor: carColor,
+      colorCode: colorCode,
+      manufacturYear: manufacturYear,
+      // vehiclePic,
       userId: user._id,
     });
 
