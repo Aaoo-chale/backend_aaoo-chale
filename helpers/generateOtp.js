@@ -18,7 +18,7 @@ const generateOtp = async function (mode, user, message, body) {
   }
   if (mode === "mobile") {
     // const mobileNumber = user.mobile.mobileNumber;
-    // //send mobile otp
+    // //send mobile otp 1207167024679151321
     // const twilSMSOption = {
     //   from: process.env.TWILIO_SERVER_MOBILE,
     //   to: mobileNumber,
