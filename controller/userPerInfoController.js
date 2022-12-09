@@ -25,8 +25,8 @@ exports.addUserPersoInfo = catchAsync(async (req, res, next) => {
 // user update personal info
 exports.updateUserPersoInfo = catchAsync(async (req, res, next) => {
   // const user = req.user;
-  const { id } = req.body;
-  const { firstName, lastName, emailId, gender, DOB, bio, mobileNumber } = req.body;
+  // const { id } = req.body;
+  const { id, firstName, lastName, emailId, gender, DOB, bio, mobileNumber } = req.body;
 
   // // chake email present or mot
   // const data = await User.findOne({ "email.emailId": emailId });

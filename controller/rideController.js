@@ -104,6 +104,17 @@ exports.countDistance = catchAsync(async (req, res, next) => {
   });
 });
 
+// delete vehicle
+exports.deleteRide = catchAsync(async (req, res, next) => {
+  const { id } = req.body;
+  const deleteRide = await Ride.findByIdAndDelete({ _id: id });
+  res.status(200).json({
+    status: true,
+    message: "Delete Ride Successfully By Ride Id",
+    deleteRide,
+  });
+});
+
 // search api
 exports.searchJobs = catchAsync(async (req, res, next) => {
   // const user = req?.user;

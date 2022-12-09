@@ -276,3 +276,14 @@ exports.getVehicleimage = async (req, res, next) => {
     next(error);
   }
 };
+
+// delete vehicle
+exports.deleteVehicle = catchAsync(async (req, res, next) => {
+  const { id } = req.body;
+  const vehicleDelete = await Vehicle.findByIdAndDelete({ _id: id });
+  res.status(200).json({
+    status: true,
+    message: "Delete Vehicle Successfully By Vehicle Id",
+    vehicleDelete,
+  });
+});
