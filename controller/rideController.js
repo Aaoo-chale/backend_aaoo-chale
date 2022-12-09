@@ -63,6 +63,8 @@ exports.createRide = catchAsync(async (req, res, next) => {
 
 exports.getRide = catchAsync(async (req, res, next) => {
   const { id } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide Ride Id"), 200);
+
   const ride = await Ride.findById({ _id: id });
   res.status(200).json({
     status: true,
@@ -92,6 +94,7 @@ function distanceCount(latitude1, longitude1, latitude2, longitude2, units) {
 // DISTANCE COUNT API
 exports.countDistance = catchAsync(async (req, res, next) => {
   const { id } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide Ride Id"), 200);
 
   const data = await Ride.findOne({ _id: id });
   const distance = distanceCount(data.pickupLat, data.pickLong, data.dropLat, data.dropLong);
@@ -107,6 +110,8 @@ exports.countDistance = catchAsync(async (req, res, next) => {
 // delete vehicle
 exports.deleteRide = catchAsync(async (req, res, next) => {
   const { id } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide Ride Id"), 200);
+
   const deleteRide = await Ride.findByIdAndDelete({ _id: id });
   res.status(200).json({
     status: true,
@@ -140,41 +145,41 @@ exports.searchJobs = catchAsync(async (req, res, next) => {
     const searchJobs = await JobPost.find({
       $and: [
         // { _id: { $nin: appliedJobs } },
+        // {
+        // $and: [
+        // {
+        //   jobDesignation: {
+        //     $regex: queryStr.jobDesignation,
+        //     $options: "ixsm",
+        //   },
+        // },
         {
-          $and: [
+          $or: [
             {
-              jobDesignation: {
-                $regex: queryStr.jobDesignation,
+              "jobLocation.country": {
+                $regex: queryStr.jobLocation,
                 $options: "ixsm",
               },
             },
             {
-              $or: [
-                {
-                  "jobLocation.country": {
-                    $regex: queryStr.jobLocation,
-                    $options: "ixsm",
-                  },
-                },
-                {
-                  "jobLocation.state": {
-                    $regex: queryStr.jobLocation,
-                    $options: "ixsm",
-                  },
-                },
-                {
-                  "jobLocation.city": {
-                    $regex: queryStr.jobLocation,
-                    $options: "ixsm",
-                  },
-                },
-              ],
+              "jobLocation.state": {
+                $regex: queryStr.jobLocation,
+                $options: "ixsm",
+              },
+            },
+            {
+              "jobLocation.city": {
+                $regex: queryStr.jobLocation,
+                $options: "ixsm",
+              },
             },
           ],
         },
-        {
-          $and: arr,
-        },
+        // ],
+        // },
+        // {
+        //   $and: arr,
+        // },
       ],
     })
       .skip(skip)

@@ -4,10 +4,10 @@ const path = require("path");
 // const getUrl = require(path.join(__dirname, "..", "helpers", "aws", "awsGetUrl"));
 const getISTTime = require("../helpers/getISTTime");
 const Schema = mongoose.Schema;
-const validateEmail = function (email) {
-  const re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-  return re.test(email);
-};
+// const validateEmail = function (email) {
+//   const re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+//   return re.test(email);
+// };
 
 // HELPER FUNCTION
 function monthDiff(d1, d2) {
@@ -48,11 +48,11 @@ const userModel = new Schema(
     email: {
       emailId: {
         type: String,
-        unique: [true, "Email Id Already Exists"],
+        unique: [false, "Email Id Already Exists"],
         required: [false, "Please Provide Email ID"],
-        trim: true,
-        validate: [validateEmail, "Please fill a valid email address"],
-        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, "Please fill a valid email address"],
+        // trim: false,
+        // validate: [validateEmail, "Please fill a valid email address"],
+        // match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, "Please fill a valid email address"],
       },
       isEmailVerified: {
         type: Boolean,

@@ -5,13 +5,19 @@ const encryptPassword = require(path.join(__dirname, "..", "helpers", "encryptPa
 const User = require(path.join(__dirname, "..", "model", "userModel"));
 
 // add user personal info
-exports.addUserPersoInfo = catchAsync(async (req, res, next) => {
-  const user = req.user;
+exports.addUserPersoInfo = async (req, res, next) => {
+  // const user = req.user;
   // console.log(user);
-  const { firstName, lastName, emailId } = req.body;
-  user.firstName = firstName;
-  user.lastName = lastName;
+  const { id, firstName, lastName, emailId } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide User Id"), 200);
+  const user = await User.findByIdAndUpdate(
+    { _id: id },
+    { ...req.body },
+    { runValidator: true, useFindAndModify: false, new: true }
+  );
   user.email = { emailId };
+  console.log(user);
+  // save data
   await user.save();
   res.status(200).json({
     status: true,
@@ -20,13 +26,15 @@ exports.addUserPersoInfo = catchAsync(async (req, res, next) => {
       user,
     },
   });
-});
+};
+// });
 
 // user update personal info
 exports.updateUserPersoInfo = catchAsync(async (req, res, next) => {
   // const user = req.user;
   // const { id } = req.body;
   const { id, firstName, lastName, emailId, gender, DOB, bio, mobileNumber } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide User Id"), 200);
 
   // // chake email present or mot
   // const data = await User.findOne({ "email.emailId": emailId });
@@ -51,16 +59,12 @@ exports.updateUserPersoInfo = catchAsync(async (req, res, next) => {
   });
 });
 
-// // add preferances
-// exports.addPreferences = catchAsync(async (req, res, next) => {
-//   const user = req.user;
-
-//   // const {}
-// });
 // get user personal info
 exports.getUserPersoInfo = catchAsync(async (req, res, next) => {
   // const user = req.user;
   const { id } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide User Id"), 200);
+
   // if (!user) return next(new AppErr("Please Login User"), 200);
   const user = await User.findOne({ _id: id }, "-__v");
   console.log(user);
@@ -73,11 +77,12 @@ exports.getUserPersoInfo = catchAsync(async (req, res, next) => {
   });
 });
 
-//
+// update personal information
 exports.updateUserPreferences = catchAsync(async (req, res, next) => {
   // const user = req.user;
   // const { id } = req.body;
   const { id, chattiness, music, smoking, pets } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide User Id"), 200);
 
   // // chake email present or mot
   // const data = await User.findOne({ "email.emailId": emailId });

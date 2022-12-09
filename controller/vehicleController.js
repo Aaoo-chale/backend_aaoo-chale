@@ -60,6 +60,8 @@ exports.registerVehicle = async (req, res, next) => {
 exports.getAllCarsByUserId = async (req, res, next) => {
   // const user = req.user;
   const { id } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide Vehicle Id"), 200);
+
   try {
     const getAllCars = await Vehicle.find({ userId: id });
     console.log(getAllCars);
@@ -77,6 +79,8 @@ exports.getAllCarsByUserId = async (req, res, next) => {
 exports.getVehicleById = async (req, res, next) => {
   // const user = req.user;
   const { id } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide Vehicle Id"), 200);
+
   try {
     const getCar = await Vehicle.find({ _id: id });
     console.log(getCar);
@@ -89,73 +93,6 @@ exports.getVehicleById = async (req, res, next) => {
     next(error);
   }
 };
-
-// UPLOAD PROFILE PICTURE TO FS
-// exports.uploadProfilePictureFS = (req, res, next) => {
-//   const uploader = upload.single("profile-picture");
-//   uploader(req, res, (err) => {
-//     if (err instanceof multer.MulterError) {
-//       return next(new AppErr(err.message, 500));
-//     } else if (err) {
-//       // An unknown error occurred when uploading.
-//       return next(new AppErr(err.message, 500));
-//     } else {
-//       // manually throw errors if file is not presend
-//       if (!req?.file) return next(new AppErr("Please Provide Required File To Upload Profile Picture", 400));
-//       return next();
-//     }
-//   });
-// };
-
-// UPLOAD PROFILE PICTURE TO DB
-// exports.uploadProfilePictureDB = catchAsync(async (req, res, next) => {
-//   const user = await getUserBypass(req);
-//   // set profile picture
-//   const profilePictureLink = req?.file?.location;
-//   user.profilePictureLink = profilePictureLink;
-//   await user.save();
-//   res.status(200).json({
-//     status: "success",
-//     data: {
-//       doc: {
-//         profilePictureLink,
-//       },
-//       message: "Profile Picture Updated Successfully",
-//     },
-//   });
-// });
-
-// // FETCH PROFILE PICTURE
-// exports.getProfilePicture = catchAsync(async (req, res, next) => {
-//   const user = await getUserBypass(req);
-//   if (!user.profilePictureLink) return next(new AppErr("User Has No Profile Picture", 400));
-//   res.status(200).json({
-//     data: {
-//       doc: {
-//         profilePictureLink: user.profilePictureLink,
-//       },
-//     },
-//   });
-// });
-
-// exports.getCandidateProfilePicture = catchAsync(async (req, res, next) => {
-//   const { candidateId } = req.query;
-//   if (!candidateId) return next(new AppErr("Please Provide Candidate Id", 400));
-//   const user = await Candidate.findOne({ _id: candidateId });
-//   if (!user.profilePictureLink)
-//     return res.status(200).json({
-//       status: "fail",
-//       message: "User Does Not Have A Profile Picture",
-//     });
-//   res.status(200).json({
-//     status: "success",
-//     data: {
-//       doc: {
-//         profilePictureLink: user.profilePictureLink,
-//       },
-//     },
-//   });
-// });
 
 const s3 = new aws.S3({
   accessKeyId: process.env.S3_ACCESS_KEY,
@@ -182,6 +119,7 @@ module.exports.upload = multer({
 exports.uploadImage = async (req, res) => {
   const [files] = req.files;
   const { id } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide vehicle Id"), 200);
   // console.log(files.location, "files");
   var data = await vehicleImage({
     vehicleimage: files.location,
@@ -265,6 +203,8 @@ exports.uploadImage = async (req, res) => {
 /// get Vehicle Image
 exports.getVehicleimage = async (req, res, next) => {
   const { id } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide Vehicle Id"), 200);
+
   try {
     const vehiclePic = await vehicleImage.findOne({ vehicleId: id });
     res.status(200).json({
@@ -280,6 +220,8 @@ exports.getVehicleimage = async (req, res, next) => {
 // delete vehicle
 exports.deleteVehicle = catchAsync(async (req, res, next) => {
   const { id } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide Vehicle Id"), 200);
+
   const vehicleDelete = await Vehicle.findByIdAndDelete({ _id: id });
   res.status(200).json({
     status: true,
