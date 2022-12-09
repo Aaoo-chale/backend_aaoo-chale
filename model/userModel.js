@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 // const candidateSchemaHelpers = require(path.join(__dirname, "..", "helpers", "candidate", "candidateSchemaHelpers"));
 // const getUrl = require(path.join(__dirname, "..", "helpers", "aws", "awsGetUrl"));
-const getISTTime = require(path.join(__dirname, "..", "helpers", "getISTTime"));
+const getISTTime = require("../helpers/getISTTime");
 const Schema = mongoose.Schema;
 const validateEmail = function (email) {
   const re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -20,7 +20,11 @@ function monthDiff(d1, d2) {
 
 const userModel = new Schema(
   {
-    name: {
+    firstName: {
+      type: String,
+      required: [false, "Please Provide First Name"],
+    },
+    lastName: {
       type: String,
       required: [false, "Please Provide First Name"],
     },

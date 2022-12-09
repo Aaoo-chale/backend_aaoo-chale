@@ -8,8 +8,9 @@ const User = require(path.join(__dirname, "..", "model", "userModel"));
 exports.addUserPersoInfo = catchAsync(async (req, res, next) => {
   const user = req.user;
   // console.log(user);
-  const { name, emailId } = req.body;
-  user.name = name;
+  const { firstName, lastName, emailId } = req.body;
+  user.firstName = firstName;
+  user.lastName = lastName;
   user.email = { emailId };
   await user.save();
   res.status(200).json({
@@ -25,7 +26,7 @@ exports.addUserPersoInfo = catchAsync(async (req, res, next) => {
 exports.updateUserPersoInfo = catchAsync(async (req, res, next) => {
   // const user = req.user;
   const { id } = req.body;
-  const { name, emailId, gender, DOB, bio, mobileNumber } = req.body;
+  const { firstName, lastName, emailId, gender, DOB, bio, mobileNumber } = req.body;
 
   // // chake email present or mot
   // const data = await User.findOne({ "email.emailId": emailId });
@@ -75,8 +76,8 @@ exports.getUserPersoInfo = catchAsync(async (req, res, next) => {
 //
 exports.updateUserPreferences = catchAsync(async (req, res, next) => {
   // const user = req.user;
-  const { id } = req.body;
-  const { chattiness, music, smoking, pets } = req.body;
+  // const { id } = req.body;
+  const { id, chattiness, music, smoking, pets } = req.body;
 
   // // chake email present or mot
   // const data = await User.findOne({ "email.emailId": emailId });
