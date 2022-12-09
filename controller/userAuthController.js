@@ -380,3 +380,95 @@ exports.logout = catchAsync(async (req, res, next) => {
 //     }
 //   });
 // };
+// exports.updateMobile = catchAsync(async (req, res, next) => {
+//   const { mobileNumber } = req.body;
+
+//   // const user = await User.create({
+//   //   mobile: { mobileNumber },
+//   // });
+
+//   try {
+//     let data = await generateOtp("mobile", mobileNumber, "Please Verify OTP , OTP Expires in 10 Minutes");
+//     console.log(data, "data");
+//   } catch (err) {
+//     return res.status(500).json({
+//       status: "fail",
+//       message: "Unable To Send Otp, Please Try Later....",
+//     });
+//   }
+
+//   // if (!doc?.mobile?.isMobileVerified) return next(new AppErr("Please Verify Your Email Address To Login", 401));
+//   // createSendToken(doc, 200, res);
+//   res.status(200).json({
+//     status: true,
+//     data: {
+//       message: "Account Create successfully and OTP has been sent Your Mobile",
+//       data,
+//     },
+//   });
+// });
+
+//
+
+exports.updateMobile = catchAsync(async (req, res, next) => {
+  const { id, mobileNumber } = req.body;
+  console.log(mobileNumber);
+
+  const user = await User.findById({ _id: id });
+  console.log(user);
+
+  try {
+    var data = await generateOtp("mobile", user, "Please Verify OTP , OTP Expires in 10 Minutes");
+    console.log(data, "data");
+  } catch (err) {
+    return res.status(500).json({
+      status: "fail",
+      message: "Unable To Send Otp, Please Try Later....",
+    });
+  }
+
+  // if (!doc?.mobile?.isMobileVerified) return next(new AppErr("Please Verify Your Email Address To Login", 401));
+  // createSendToken(doc, 200, res);
+  res.status(200).json({
+    status: true,
+    data: {
+      message: "Otp send your No",
+      data,
+    },
+  });
+});
+
+exports.verifyUpdateMobile = catchAsync(async (req, res, next) => {
+  const { id, otp, mobileNumber } = req.body;
+  if (!mobileNumber || !id || !otp) {
+    res.status(200).json({
+      status: false,
+      data: {
+        message: "Please Provide All The Details",
+      },
+    });
+  }
+  const user = await User.findByIdAndUpdate(
+    { _id: id },
+    { ...req.body },
+    { runValidator: true, useFindAndModify: false, new: true }
+  );
+  user.mobile = { mobileNumber };
+
+  const currDate = new Date(Date.now());
+  if (user?.verificationToken?.mobileTokenExpiry < currDate) return next(new AppErr("OTP Expired", 200));
+  // verify otp
+  if (!(user?.verificationToken?.mobileToken === otp)) return next(new AppErr("OTP Entered Is Incorrect", 200));
+  // update token fields in document
+  user.verificationToken.mobileToken = undefined;
+  user.verificationToken.mobileTokenExpiry = undefined;
+  user.mobile.isMobileVerified = true;
+  const doc = await user.save();
+  res.status(200).json({
+    status: true,
+    data: {
+      message: "User Mobile Verified",
+      doc,
+    },
+  });
+});

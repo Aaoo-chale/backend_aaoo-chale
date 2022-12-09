@@ -10,8 +10,8 @@ router.post("/forgotPwdVerifyOtp", userAuthController.forgotPwdVerifyOtp);
 router.post("/verifyMobileSendOtp", userAuthController.verifyMobileSendOtp);
 router.post("/verifyReceivedMobileOTP", userAuthController.verifyReceivedMobileOTP);
 // router.use(userAuthController.protect); //below this protected routes
-// router.patch("/resetPassword", userAuthController.resetPassword);
-// router.post("/uploadProfilePicture", userAuthController.uploadProfilePictureFS);
+router.post("/updateMobile", userAuthController.updateMobile);
+router.post("/verifyUpdateMobile", userAuthController.verifyUpdateMobile);
 // router.get("/getProfilePicture", userAuthController.getProfilePicture);//
 
 // TESTING ROUTE

@@ -7,4 +7,6 @@ router.post("/getRide", rideController.getRide);
 router.delete("/deleteRide", rideController.deleteRide);
 router.post("/countDistance", rideController.countDistance);
 
+router.post("/searchJobs", rideController.searchJobs);
+
 module.exports = router;

@@ -141,8 +141,8 @@ exports.searchJobs = catchAsync(async (req, res, next) => {
   //   };
   // }
   // //
-  if (queryStr?.jobDesignation?.length >= 1 && queryStr?.jobLocation?.length >= 1) {
-    const searchJobs = await JobPost.find({
+  if (queryStr?.pickUpLocation?.length >= 1 && queryStr?.dropLocation?.length >= 1) {
+    const searchJobs = await Ride.find({
       $and: [
         // { _id: { $nin: appliedJobs } },
         // {
@@ -156,23 +156,23 @@ exports.searchJobs = catchAsync(async (req, res, next) => {
         {
           $or: [
             {
-              "jobLocation.country": {
-                $regex: queryStr.jobLocation,
+              pickUpLocation: {
+                $regex: queryStr.pickUpLocation,
                 $options: "ixsm",
               },
             },
             {
-              "jobLocation.state": {
-                $regex: queryStr.jobLocation,
+              dropLocation: {
+                $regex: queryStr.dropLocation,
                 $options: "ixsm",
               },
             },
-            {
-              "jobLocation.city": {
-                $regex: queryStr.jobLocation,
-                $options: "ixsm",
-              },
-            },
+            // {
+            //   "jobLocation.city": {
+            //     $regex: queryStr.jobLocation,
+            //     $options: "ixsm",
+            //   },
+            // },
           ],
         },
         // ],
@@ -181,11 +181,11 @@ exports.searchJobs = catchAsync(async (req, res, next) => {
         //   $and: arr,
         // },
       ],
-    })
-      .skip(skip)
-      .limit(pageSize)
-      .populate("createdById")
-      .lean();
+    });
+    // .skip(skip)
+    // .limit(pageSize)
+    // .populate("createdById")
+    // .lean();
 
     return res.status(201).json({
       success: true,
@@ -194,139 +194,133 @@ exports.searchJobs = catchAsync(async (req, res, next) => {
     });
   }
   //
-  if (queryStr.jobLocation || queryStr.jobDesignation || queryStr.keySkills) {
-    if (queryStr.jobDesignation) {
-      if (mongoObject["$or"]) {
-        mongoObject["$or"] = [
-          ...mongoObject["$or"],
-          {
-            jobDesignation: {
-              $regex: queryStr.jobDesignation,
-              $options: "ixsm",
-            },
-          },
-        ];
-      } else {
-        mongoObject["$or"] = [
-          {
-            jobDesignation: {
-              $regex: queryStr.jobDesignation,
-              $options: "ixsm",
-            },
-          },
-        ];
-      }
-    }
-    if (queryStr.keySkills) {
-      let keySkillArray = queryStr.keySkills.split(/[ ,]+/);
-      let rgxArray = keySkillArray.map((ele) => {
-        var re = new RegExp(`^${ele} `, "i");
-        return re;
-      });
+  // if (queryStr.jobLocation || queryStr.jobDesignation || queryStr.keySkills) {
+  //   if (queryStr.jobDesignation) {
+  //     if (mongoObject["$or"]) {
+  //       mongoObject["$or"] = [
+  //         ...mongoObject["$or"],
+  //         {
+  //           jobDesignation: {
+  //             $regex: queryStr.jobDesignation,
+  //             $options: "ixsm",
+  //           },
+  //         },
+  //       ];
+  //     } else {
+  //       mongoObject["$or"] = [
+  //         {
+  //           jobDesignation: {
+  //             $regex: queryStr.jobDesignation,
+  //             $options: "ixsm",
+  //           },
+  //         },
+  //       ];
+  //     }
+  //   }
+  //   if (queryStr.keySkills) {
+  //     let keySkillArray = queryStr.keySkills.split(/[ ,]+/);
+  //     let rgxArray = keySkillArray.map((ele) => {
+  //       var re = new RegExp(`^${ele} `, "i");
+  //       return re;
+  //     });
 
-      if (mongoObject["$or"]) {
-        mongoObject["$or"] = [
-          ...mongoObject["$or"],
-          {
-            keySkills: {
-              $in: rgxArray,
-            },
-          },
-        ];
-      } else {
-        mongoObject["$or"] = [
-          {
-            keySkills: {
-              $in: rgxArray,
-            },
-          },
-        ];
-      }
-    }
-    if (queryStr.jobLocation) {
-      if (mongoObject["$or"]) {
-        mongoObject["$or"] = [
-          ...mongoObject["$or"],
-          {
-            "jobLocation.country": {
-              $regex: queryStr.jobLocation,
-              $options: "ixsm",
-            },
-          },
-          {
-            "jobLocation.state": {
-              $regex: queryStr.jobLocation,
-              $options: "ixsm",
-            },
-          },
-          {
-            "jobLocation.city": {
-              $regex: queryStr.jobLocation,
-              $options: "ixsm",
-            },
-          },
-        ];
-      } else {
-        mongoObject["$or"] = [
-          {
-            "jobLocation.country": {
-              $regex: queryStr.jobLocation,
-              $options: "ixsm",
-            },
-          },
-          {
-            "jobLocation.state": {
-              $regex: queryStr.jobLocation,
-              $options: "ixsm",
-            },
-          },
-          {
-            "jobLocation.city": {
-              $regex: queryStr.jobLocation,
-              $options: "ixsm",
-            },
-          },
-        ];
-      }
-    }
-  }
+  //     if (mongoObject["$or"]) {
+  //       mongoObject["$or"] = [
+  //         ...mongoObject["$or"],
+  //         {
+  //           keySkills: {
+  //             $in: rgxArray,
+  //           },
+  //         },
+  //       ];
+  //     } else {
+  //       mongoObject["$or"] = [
+  //         {
+  //           keySkills: {
+  //             $in: rgxArray,
+  //           },
+  //         },
+  //       ];
+  //     }
+  //   }
+  //   if (queryStr.jobLocation) {
+  //     if (mongoObject["$or"]) {
+  //       mongoObject["$or"] = [
+  //         ...mongoObject["$or"],
+  //         {
+  //           "jobLocation.country": {
+  //             $regex: queryStr.jobLocation,
+  //             $options: "ixsm",
+  //           },
+  //         },
+  //         {
+  //           "jobLocation.state": {
+  //             $regex: queryStr.jobLocation,
+  //             $options: "ixsm",
+  //           },
+  //         },
+  //         {
+  //           "jobLocation.city": {
+  //             $regex: queryStr.jobLocation,
+  //             $options: "ixsm",
+  //           },
+  //         },
+  //       ];
+  //     } else {
+  //       mongoObject["$or"] = [
+  //         {
+  //           "jobLocation.country": {
+  //             $regex: queryStr.jobLocation,
+  //             $options: "ixsm",
+  //           },
+  //         },
+  //         {
+  //           "jobLocation.state": {
+  //             $regex: queryStr.jobLocation,
+  //             $options: "ixsm",
+  //           },
+  //         },
+  //         {
+  //           "jobLocation.city": {
+  //             $regex: queryStr.jobLocation,
+  //             $options: "ixsm",
+  //           },
+  //         },
+  //       ];
+  //     }
+  //   }
+  // }
 
-  if (queryStr.fromSalary && queryStr.toSalary) {
+  // if (queryStr.fromSalary && queryStr.toSalary) {
+  //   mongoObject["$and"] = [
+  //     { "salaryRange.fromSalary": { $gte: queryStr.fromSalary } },
+  //     { "salaryRange.toSalary": { $lte: queryStr.toSalary } },
+  //   ];
+  // }
+
+  if (queryStr.passengerCount) {
+    // let salaryRange = [];
+
+    // if (mongoObject["$and"]) {
+    //   salaryRange = mongoObject["$and"];
+    // }
+
     mongoObject["$and"] = [
-      { "salaryRange.fromSalary": { $gte: queryStr.fromSalary } },
-      { "salaryRange.toSalary": { $lte: queryStr.toSalary } },
-    ];
-  }
-
-  if (queryStr.fromExperience && queryStr.toExperience) {
-    let salaryRange = [];
-
-    if (mongoObject["$and"]) {
-      salaryRange = mongoObject["$and"];
-    }
-
-    mongoObject["$and"] = [
-      ...salaryRange,
-      { "requiredExperience.fromExperience": { $gte: queryStr.fromExperience } },
-      { "requiredExperience.toExperience": { $lte: queryStr.toExperience } },
+      // ...salaryRange,
+      { passengerCount: { $gte: queryStr.passengerCount } },
+      // { "requiredExperience.toExperience": { $lte: queryStr.toExperience } },
     ];
   }
   // console.dir(mongoObject);
   // if (user) arr.push({ "appliedCandidates.candidate": { $nin: [user._id] } });
   // console.log(mongoObject, arr);
-  const searchJobs = await JobPost.find({
-    $and: [
-      { _id: { $nin: appliedJobs } },
-      mongoObject,
-      {
-        $and: arr,
-      },
-    ],
-  })
-    .skip(skip)
-    .limit(pageSize)
-    .populate("createdById")
-    .lean();
+  const searchJobs = await Ride.find({
+    $and: [mongoObject],
+  });
+  // .skip(skip)
+  // .limit(pageSize)
+  // .populate("createdById")
+  // .lean();
 
   res.status(201).json({
     success: true,
