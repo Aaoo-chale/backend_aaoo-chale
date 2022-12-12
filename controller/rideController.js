@@ -22,9 +22,11 @@ exports.createRide = catchAsync(async (req, res, next) => {
     totalTime,
     backSeatEmpty,
     passengerCount,
+    availableSeet,
     rideApproval,
     tripPrise,
     extraMessage,
+    status,
     vehicleSelect,
     userId,
   } = req.body;
@@ -44,9 +46,11 @@ exports.createRide = catchAsync(async (req, res, next) => {
     totalTime: totalTime,
     backSeatEmpty: backSeatEmpty,
     passengerCount: passengerCount,
+    availableSeet: availableSeet,
     rideApproval: rideApproval,
     tripPrise: tripPrise,
     extraMessage: extraMessage,
+    status: status,
     vehicleSelect: vehicleSelect,
     userId: userId,
   });
@@ -120,214 +124,112 @@ exports.deleteRide = catchAsync(async (req, res, next) => {
   });
 });
 
-// search api
-exports.searchJobs = catchAsync(async (req, res, next) => {
-  // const user = req?.user;
-  let queryStr = req.query;
-  // let appliedJobs = [];
-  let mongoObject = {};
-  const { page, pageSize } = req.query;
-  const skip = (page - 1) * pageSize;
-  // if (user) {
-  //   appliedJobs = (await CandidateJobs.find({ candidate: user._id }).select("job")).map((el) => {
-  //     return el.job;
-  //   });
-  // }
-  // const arr = [{ jobStatus: { $ne: "closed" } }, { jobStatus: { $ne: "stop" } }];
-  // if (queryStr.jobType) {
-  //   mongoObject["jobType"] = {
-  //     $regex: queryStr.jobType,
-  //     $options: "ixsm",
-  //   };
-  // }
-  // //
-  if (queryStr?.pickUpLocation?.length >= 1 && queryStr?.dropLocation?.length >= 1) {
-    const searchJobs = await Ride.find({
-      $and: [
-        // { _id: { $nin: appliedJobs } },
-        // {
-        // $and: [
-        // {
-        //   jobDesignation: {
-        //     $regex: queryStr.jobDesignation,
-        //     $options: "ixsm",
-        //   },
-        // },
-        {
-          $or: [
-            {
-              pickUpLocation: {
-                $regex: queryStr.pickUpLocation,
-                $options: "ixsm",
-              },
-            },
-            {
-              dropLocation: {
-                $regex: queryStr.dropLocation,
-                $options: "ixsm",
-              },
-            },
-            // {
-            //   "jobLocation.city": {
-            //     $regex: queryStr.jobLocation,
-            //     $options: "ixsm",
-            //   },
-            // },
-          ],
-        },
-        // ],
-        // },
-        // {
-        //   $and: arr,
-        // },
-      ],
-    });
-    // .skip(skip)
-    // .limit(pageSize)
-    // .populate("createdById")
-    // .lean();
+// exports.searchJobs = catchAsync(async (req, res, next) => {
+//   const user = req?.user;
+//   // const {}
+//   let queryStr = req.query;
+//   let mongoObject = {};
+//   // if (queryStr.jobType) {
+//   //   mongoObject["jobType"] = {
+//   //     $regex: queryStr.jobType,
+//   //     $options: "ixsm",
+//   //   };
+//   // }
+//   if (queryStr.location) {
+//     // if (queryStr.jobDesignation) {
+//     //   if (mongoObject["$and"]) {
+//     //     mongoObject["$and"] = [
+//     //       ...mongoObject["$and"],
+//     //       {
+//     //         jobDesignation: {
+//     //           $regex: queryStr.jobDesignation,
+//     //           $options: "ixsm",
+//     //         },
+//     //       },
+//     //     ];
+//     //   } else {
+//     //     mongoObject["$and"] = [
+//     //       {
+//     //         jobDesignation: {
+//     //           $regex: queryStr.jobDesignation,
+//     //           $options: "ixsm",
+//     //         },
+//     //       },
+//     //     ];
+//     //   }
+//     // }
+//     if (queryStr.location) {
+//       if (mongoObject["$or"]) {
+//         mongoObject["$or"] = [
+//           ...mongoObject["$or"],
+//           {
+//             pickUpLocation: {
+//               $regex: queryStr.location,
+//               $options: "ixsm",
+//             },
+//           },
+//           {
+//             dropLocation: {
+//               $regex: queryStr.location,
+//               $options: "ixsm",
+//             },
+//           },
+//           {
+//             stopCity: {
+//               $regex: queryStr.location,
+//               $options: "ixsm",
+//             },
+//           },
+//         ];
+//       } else {
+//         mongoObject["$or"] = [
+//           {
+//             pickUpLocation: {
+//               $regex: queryStr.location,
+//               $options: "ixsm",
+//             },
+//           },
+//           {
+//             dropLocation: {
+//               $regex: queryStr.location,
+//               $options: "ixsm",
+//             },
+//           },
+//           {
+//             stopCity: {
+//               $regex: queryStr.location,
+//               $options: "ixsm",
+//             },
+//           },
+//         ];
+//       }
+//     }
+//   }
+//   if (queryStr.seatCount) {
+//     mongoObject["$and"] = [
+//       { passengerCount: { $gte: queryStr.seatCount } },
+//       // { "salaryRange.toSalary": { $lte: queryStr.toSalary } },
+//     ];
+//   }
+//   // if (queryStr.fromExperience && queryStr.toExperience) {
+//   //   let salaryRange = [];
+//   //   if (mongoObject["$and"]) {
+//   //     salaryRange = mongoObject["$and"];
+//   //   }
+//   //   mongoObject["$and"] = [
+//   //     ...salaryRange,
+//   //     { "requiredExperience.fromExperience": { $gte: queryStr.fromExperience } },
+//   //     { "requiredExperience.toExperience": { $lte: queryStr.toExperience } },
+//   //   ];
+//   // }
 
-    return res.status(201).json({
-      success: true,
-      result: searchJobs.length,
-      searchJobs,
-    });
-  }
-  //
-  // if (queryStr.jobLocation || queryStr.jobDesignation || queryStr.keySkills) {
-  //   if (queryStr.jobDesignation) {
-  //     if (mongoObject["$or"]) {
-  //       mongoObject["$or"] = [
-  //         ...mongoObject["$or"],
-  //         {
-  //           jobDesignation: {
-  //             $regex: queryStr.jobDesignation,
-  //             $options: "ixsm",
-  //           },
-  //         },
-  //       ];
-  //     } else {
-  //       mongoObject["$or"] = [
-  //         {
-  //           jobDesignation: {
-  //             $regex: queryStr.jobDesignation,
-  //             $options: "ixsm",
-  //           },
-  //         },
-  //       ];
-  //     }
-  //   }
-  //   if (queryStr.keySkills) {
-  //     let keySkillArray = queryStr.keySkills.split(/[ ,]+/);
-  //     let rgxArray = keySkillArray.map((ele) => {
-  //       var re = new RegExp(`^${ele} `, "i");
-  //       return re;
-  //     });
-
-  //     if (mongoObject["$or"]) {
-  //       mongoObject["$or"] = [
-  //         ...mongoObject["$or"],
-  //         {
-  //           keySkills: {
-  //             $in: rgxArray,
-  //           },
-  //         },
-  //       ];
-  //     } else {
-  //       mongoObject["$or"] = [
-  //         {
-  //           keySkills: {
-  //             $in: rgxArray,
-  //           },
-  //         },
-  //       ];
-  //     }
-  //   }
-  //   if (queryStr.jobLocation) {
-  //     if (mongoObject["$or"]) {
-  //       mongoObject["$or"] = [
-  //         ...mongoObject["$or"],
-  //         {
-  //           "jobLocation.country": {
-  //             $regex: queryStr.jobLocation,
-  //             $options: "ixsm",
-  //           },
-  //         },
-  //         {
-  //           "jobLocation.state": {
-  //             $regex: queryStr.jobLocation,
-  //             $options: "ixsm",
-  //           },
-  //         },
-  //         {
-  //           "jobLocation.city": {
-  //             $regex: queryStr.jobLocation,
-  //             $options: "ixsm",
-  //           },
-  //         },
-  //       ];
-  //     } else {
-  //       mongoObject["$or"] = [
-  //         {
-  //           "jobLocation.country": {
-  //             $regex: queryStr.jobLocation,
-  //             $options: "ixsm",
-  //           },
-  //         },
-  //         {
-  //           "jobLocation.state": {
-  //             $regex: queryStr.jobLocation,
-  //             $options: "ixsm",
-  //           },
-  //         },
-  //         {
-  //           "jobLocation.city": {
-  //             $regex: queryStr.jobLocation,
-  //             $options: "ixsm",
-  //           },
-  //         },
-  //       ];
-  //     }
-  //   }
-  // }
-
-  // if (queryStr.fromSalary && queryStr.toSalary) {
-  //   mongoObject["$and"] = [
-  //     { "salaryRange.fromSalary": { $gte: queryStr.fromSalary } },
-  //     { "salaryRange.toSalary": { $lte: queryStr.toSalary } },
-  //   ];
-  // }
-
-  if (queryStr.passengerCount) {
-    // let salaryRange = [];
-
-    // if (mongoObject["$and"]) {
-    //   salaryRange = mongoObject["$and"];
-    // }
-
-    mongoObject["$and"] = [
-      // ...salaryRange,
-      { passengerCount: { $gte: queryStr.passengerCount } },
-      // { "requiredExperience.toExperience": { $lte: queryStr.toExperience } },
-    ];
-  }
-  // console.dir(mongoObject);
-  // if (user) arr.push({ "appliedCandidates.candidate": { $nin: [user._id] } });
-  // console.log(mongoObject, arr);
-  const searchJobs = await Ride.find({
-    $and: [mongoObject],
-  });
-  // .skip(skip)
-  // .limit(pageSize)
-  // .populate("createdById")
-  // .lean();
-
-  res.status(201).json({
-    success: true,
-    result: searchJobs.length,
-    searchJobs,
-  });
-});
+//   const searchJobs = await Ride.find({ $and: [mongoObject] });
+//   res.status(201).json({
+//     success: true,
+//     result: searchJobs.length,
+//     searchJobs,
+//   });
+// });
 
 // case 'Search_Data':
 // 					if(empty($this->input->post('user_id')))
@@ -428,3 +330,124 @@ exports.searchJobs = catchAsync(async (req, res, next) => {
 // 				return $miles * 1.609;
 // 			}
 // 		}
+// exports.getNearByUsers = (req, res, next) => {
+//   // res.send({ response: "I am alive" }).status(200);
+//   UserLocation.ensureIndexes({ location: "2dsphere" });
+//   var user = req.body.id;
+//   // console.log(req.body)
+//   let number = []
+//   const data = ({ location } = req.body);
+//   var latitude = parseFloat(data.latitude); // latitude comes through as string from url params, so it's converted to a float
+//   var longitude = parseFloat(data.longitude);
+//   UserLocation.find(
+//     {
+//       $and: [
+//         { userId: { $ne: user } },
+//         {
+//           location: {
+//             $near: {
+//               $geometry: {
+//                 type: "Point",
+//                 coordinates: [latitude, longitude],
+//               },
+//               $maxDistance: 250 * 100,
+//             },
+//           },
+//         },
+//       ],
+//     },
+//     function (err, locations) {
+//       if (err) {
+//         res.send(err);
+//       } else {
+//         const gettedUsers = []
+//         req.body.help.map((help) => {
+//           locations.map((user) => {
+//             if (user.userId.userType.name === 'Service Provider') {
+//               if (user.userId.typeOfServices) {
+//                 user.userId.typeOfServices.map((services) => {
+//                   if (services === help) {
+//                     gettedUsers.push(user)
+//                   }
+//                 })
+//               }
+//             }
+//             else {
+//               if (user.userId.userType.name === "Driver") {
+//                 req.body.help.map((item) => {
+//                   if (item == 'DRIVER') {
+//                     gettedUsers.push(user)
+//                   }
+//                 })
+//               }
+//             }
+//           })
+//         })
+//         if (gettedUsers) {
+//           gettedUsers.map((users) => {
+//             sendPushNotification1(gettedUsers, "Someone need Help", res.firstName + ' ' + res.lastName + ' Need Help')
+//           })
+//         }
+//         // locations.map((item) => {
+//         //   let contactNo = `+91` + item.userId.mobileNo
+//         //   number.push(contactNo)
+//         // })
+//         // if (number) {
+//         //   number.map(async (item) => {
+//         //     await sendTextMessage(item)
+//         //   })
+//         // }
+//         return res.status(200).json(gettedUsers);
+//       }
+//     }
+//   )
+//     .populate("groupId")
+//     .populate("userId")
+//     .populate({
+//       path: "userId",
+//       populate: {
+//         path: "userType",
+//       },
+//     });
+// };
+
+exports.searchJobs = async (req, res, next) => {
+  const { userId, tripDate, tripdateinput, status, search_passenger, pick_upLat, pick_Long, drop_Lat, drop_Long } =
+    req.body;
+  let [result] = await Ride.find({ $and: [{ passengerCount: { $gte: search_passenger } }, { status: status }] });
+  const pickup_latitude = result.pickupLat;
+  console.log("pickup_latitude", pickup_latitude);
+  const pickup_longitude = result.pickLong;
+  const dropup_latitude = result.dropLat;
+  const dropup_longitude = result.dropLong;
+  const total_passenger = result.passengerCount;
+  const available_seet = result.availableSeet;
+  // find user
+  const user = await User.findOne({ userId: userId });
+
+  const km = distanceCount(pickup_latitude, pickup_longitude, pick_upLat, pick_Long);
+
+  const km1 = distanceCount(dropup_latitude, dropup_longitude, drop_Lat, drop_Long);
+
+  if (km <= 70) {
+    if (km1 <= 60) {
+      const trip_date = new Date(tripDate);
+      const tripdateinput1 = new Date(tripdateinput);
+      const date = tripdateinput1;
+      if (tripdateinput1 <= trip_date && trip_date <= date) {
+        const per_person_price = result.tripPrise;
+        let totalPrise = per_person_price * search_passenger;
+        totalPrise = totalPrise - (totalPrise % 5);
+        const total_Booked_huaa_seat = total_passenger - available_seet;
+        console.log((result.backSeatEmpty = available_seet));
+        console.log((result.passengerCount = total_Booked_huaa_seat));
+        result.tripPrise = totalPrise;
+        var data = await result.save();
+      }
+    }
+  }
+  res.status(201).json({
+    success: true,
+    data,
+  });
+};

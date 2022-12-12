@@ -85,6 +85,11 @@ const rideSchema = new Schema({
     required: [false, "Please Provide passengerCount"],
     trim: true,
   },
+  availableSeet: {
+    type: Number,
+    required: [false, "Please Provide passengerCount"],
+    trim: true,
+  },
   rideApproval: {
     type: Boolean,
     required: [false, "Please Provide rideApproval"],
@@ -103,6 +108,11 @@ const rideSchema = new Schema({
   extraMessage: {
     type: String,
     required: [false, "Please Provide extraMessage"],
+    trim: true,
+  },
+  status: {
+    type: Boolean,
+    required: [false, "Please Provide status"],
     trim: true,
   },
   vehicleSelect: {

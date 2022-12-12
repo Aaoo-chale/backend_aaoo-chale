@@ -438,7 +438,7 @@ exports.updateMobile = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.verifyUpdateMobile = catchAsync(async (req, res, next) => {
+exports.verifyUpdateMobile = async (req, res, next) => {
   const { id, otp, mobileNumber } = req.body;
   if (!mobileNumber || !id || !otp) {
     res.status(200).json({
@@ -450,15 +450,15 @@ exports.verifyUpdateMobile = catchAsync(async (req, res, next) => {
   }
   const user = await User.findByIdAndUpdate(
     { _id: id },
-    { ...req.body },
+    { mobile: { mobileNumber } },
     { runValidator: true, useFindAndModify: false, new: true }
   );
-  user.mobile = { mobileNumber };
+  // user.mobile = { mobileNumber };
 
   const currDate = new Date(Date.now());
   if (user?.verificationToken?.mobileTokenExpiry < currDate) return next(new AppErr("OTP Expired", 200));
   // verify otp
-  if (!(user?.verificationToken?.mobileToken === otp)) return next(new AppErr("OTP Entered Is Incorrect", 200));
+  if (!(user?.verificationToken?.mobileToken === otp)) return "OTP Entered Is Incorrect", 200;
   // update token fields in document
   user.verificationToken.mobileToken = undefined;
   user.verificationToken.mobileTokenExpiry = undefined;
@@ -471,4 +471,4 @@ exports.verifyUpdateMobile = catchAsync(async (req, res, next) => {
       doc,
     },
   });
-});
+};
