@@ -79,6 +79,21 @@ exports.getRide = catchAsync(async (req, res, next) => {
   });
 });
 
+// get ride by user Id
+exports.getRideByUserId = catchAsync(async (req, res, next) => {
+  const { id } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide Ride Id"), 200);
+
+  const ride = await Ride.find({ userId: id });
+  res.status(200).json({
+    status: true,
+    data: {
+      message: "Get Ride Successfully By user Id",
+      ride,
+    },
+  });
+});
+
 // TOTAL DISTANCE COUNT FUNCTION
 function distanceCount(latitude1, longitude1, latitude2, longitude2, units) {
   var p = 0.017453292519943295; //This is  Math.PI / 180
@@ -424,6 +439,13 @@ exports.searchJobs = async (req, res, next) => {
   const available_seet = result.availableSeet;
   // find user
   const user = await User.findOne({ userId: userId });
+  // console.log(user, "user");
+  // const userOb = {
+  //   chattiness: user.chattiness,
+  //   music: user.music,
+  //   smoking: user.smoking,
+  //   pets: user.pets,
+  // };
 
   const km = distanceCount(pickup_latitude, pickup_longitude, pick_upLat, pick_Long);
 
@@ -448,6 +470,9 @@ exports.searchJobs = async (req, res, next) => {
   }
   res.status(201).json({
     success: true,
-    data,
+    data: {
+      data,
+      user,
+    },
   });
 };
