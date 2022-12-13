@@ -85,21 +85,17 @@ const rideSchema = new Schema({
     required: [false, "Please Provide passengerCount"],
     trim: true,
   },
-  availableSeet: {
-    type: Number,
+  select_route: {
+    type: String,
     required: [false, "Please Provide passengerCount"],
     trim: true,
   },
   rideApproval: {
-    type: Boolean,
+    type: String,
     required: [false, "Please Provide rideApproval"],
     trim: true,
   },
-  profilePicture: {
-    type: String,
-    required: [false, "Please Provide profilePicture"],
-    trim: true,
-  },
+
   tripPrise: {
     type: String,
     required: [false, "Please Provide tripPrise"],
