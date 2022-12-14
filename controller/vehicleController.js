@@ -229,3 +229,31 @@ exports.deleteVehicle = catchAsync(async (req, res, next) => {
     vehicleDelete,
   });
 });
+
+// update vehicle
+
+exports.updateVehicleDetails = catchAsync(async (req, res, next) => {
+  // const user = req.user;
+  // const { id } = req.body;
+  const { id, vehicleRegiNumb, carBrand, carModel, carType, carColor, manufacturYear, seatCount, colorCode } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide User Id"), 200);
+
+  // // chake email present or mot
+  // const data = await User.findOne({ "email.emailId": emailId });
+  // if (data) return next(new AppErr("Account already exist please add new emailId"), 200);
+
+  const user = await User.findByIdAndUpdate(
+    { _id: id },
+    { ...req.body },
+    { runValidator: true, useFindAndModify: false, new: true }
+  );
+
+  await user.save();
+  res.status(200).json({
+    status: true,
+    data: {
+      message: "Add User Personal information",
+      user,
+    },
+  });
+});

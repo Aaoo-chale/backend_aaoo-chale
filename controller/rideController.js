@@ -4,6 +4,7 @@ const AppErr = require(path.join(__dirname, "..", "utils", "AppErr"));
 const User = require(path.join(__dirname, "..", "model", "userModel"));
 const Vehicle = require("../model/vehicleModel");
 const Ride = require("../model/rideModel");
+const moment = require("moment");
 
 exports.createRide = catchAsync(async (req, res, next) => {
   const {
@@ -22,7 +23,6 @@ exports.createRide = catchAsync(async (req, res, next) => {
     totalTime,
     backSeatEmpty,
     passengerCount,
-    availableSeet,
     rideApproval,
     tripPrise,
     extraMessage,
@@ -40,13 +40,12 @@ exports.createRide = catchAsync(async (req, res, next) => {
     stopCity: stopCity,
     stopCityLat: stopCityLat,
     stopCityLong: stopCityLong,
-    tripDate: tripDate,
-    tripTime: tripTime,
+    tripDate: moment(tripDate).format("YYYY/DD/MM"),
+    tripTime: moment(tripTime).format("h:mm:ss A"),
     totalDistance: totalDistance,
     totalTime: totalTime,
     backSeatEmpty: backSeatEmpty,
     passengerCount: passengerCount,
-    availableSeet: availableSeet,
     rideApproval: rideApproval,
     tripPrise: tripPrise,
     extraMessage: extraMessage,
@@ -80,9 +79,15 @@ exports.getRide = catchAsync(async (req, res, next) => {
 });
 
 // get ride by user Id
-exports.getRideByUserId = catchAsync(async (req, res, next) => {
+exports.getRideByUserId = async (req, res, next) => {
   const { id } = req.body;
-  if (!id) return next(new AppErr("Pelase Provide Ride Id"), 200);
+  if (!id)
+    ({
+      status: false,
+      data: {
+        message: "Please Provide userId",
+      },
+    });
 
   const ride = await Ride.find({ userId: id });
   res.status(200).json({
@@ -92,7 +97,7 @@ exports.getRideByUserId = catchAsync(async (req, res, next) => {
       ride,
     },
   });
-});
+};
 
 // TOTAL DISTANCE COUNT FUNCTION
 function distanceCount(latitude1, longitude1, latitude2, longitude2, units) {
@@ -427,18 +432,16 @@ exports.deleteRide = catchAsync(async (req, res, next) => {
 // };
 
 exports.searchJobs = async (req, res, next) => {
-  const { userId, tripDate, tripdateinput, status, search_passenger, pick_upLat, pick_Long, drop_Lat, drop_Long } =
-    req.body;
-  let [result] = await Ride.find({ $and: [{ passengerCount: { $gte: search_passenger } }, { status: status }] });
+  const { tripDate, searchCount, pick_upLat, pick_Long, drop_Lat, drop_Long } = req.body;
+  let [result] = await Ride.find({ $and: [{ passengerCount: { $gte: passengerCount } }, { tripDate: tripDate }] });
   const pickup_latitude = result.pickupLat;
   console.log("pickup_latitude", pickup_latitude);
   const pickup_longitude = result.pickLong;
   const dropup_latitude = result.dropLat;
   const dropup_longitude = result.dropLong;
   const total_passenger = result.passengerCount;
-  const available_seet = result.availableSeet;
   // find user
-  const user = await User.findOne({ userId: userId });
+  // const user = await User.findOne({ userId: userId });
   // console.log(user, "user");
   // const userOb = {
   //   chattiness: user.chattiness,
@@ -451,17 +454,17 @@ exports.searchJobs = async (req, res, next) => {
 
   const km1 = distanceCount(dropup_latitude, dropup_longitude, drop_Lat, drop_Long);
 
-  if (km <= 70) {
+  if (km <= 60) {
     if (km1 <= 60) {
       const trip_date = new Date(tripDate);
-      const tripdateinput1 = new Date(tripdateinput);
+      // const tripdateinput1 = new Date(tripdateinput);
       const date = tripdateinput1;
-      if (tripdateinput1 <= trip_date && trip_date <= date) {
+      if (trip_date <= date) {
         const per_person_price = result.tripPrise;
-        let totalPrise = per_person_price * search_passenger;
+        let totalPrise = per_person_price * passengerCount;
         totalPrise = totalPrise - (totalPrise % 5);
-        const total_Booked_huaa_seat = total_passenger - available_seet;
-        console.log((result.backSeatEmpty = available_seet));
+        const total_Booked_huaa_seat = total_passenger - searchCount;
+        console.log((result.backSeatEmpty = searchCount));
         console.log((result.passengerCount = total_Booked_huaa_seat));
         result.tripPrise = totalPrise;
         var data = await result.save();
@@ -475,4 +478,84 @@ exports.searchJobs = async (req, res, next) => {
       user,
     },
   });
+};
+
+exports.getNearByUsers = (req, res, next) => {
+  // res.send({ response: "I am alive" }).status(200);
+  UserLocation.ensureIndexes({ location: "2dsphere" });
+  var user = req.body.id;
+  // console.log(req.body)
+  let number = [];
+  const data = ({ location } = req.body);
+  var latitude = parseFloat(data.latitude); // latitude comes through as string from url params, so it's converted to a float
+  var longitude = parseFloat(data.longitude);
+  UserLocation.find(
+    {
+      $and: [
+        { userId: { $ne: user } },
+        {
+          location: {
+            $near: {
+              $geometry: {
+                type: "Point",
+                coordinates: [latitude, longitude],
+              },
+              $maxDistance: 250 * 100,
+            },
+          },
+        },
+      ],
+    },
+    function (err, locations) {
+      if (err) {
+        res.send(err);
+      } else {
+        const gettedUsers = [];
+        req.body.help.map((help) => {
+          locations.map((user) => {
+            if (user.userId.userType.name === "Service Provider") {
+              if (user.userId.typeOfServices) {
+                user.userId.typeOfServices.map((services) => {
+                  if (services === help) {
+                    gettedUsers.push(user);
+                  }
+                });
+              }
+            } else {
+              if (user.userId.userType.name === "Driver") {
+                req.body.help.map((item) => {
+                  if (item == "DRIVER") {
+                    gettedUsers.push(user);
+                  }
+                });
+              }
+            }
+          });
+        });
+        if (gettedUsers) {
+          gettedUsers.map((users) => {
+            sendPushNotification1(gettedUsers, "Someone need Help", res.firstName + " " + res.lastName + " Need Help");
+          });
+        }
+        // locations.map((item) => {
+        //   let contactNo = `+91` + item.userId.mobileNo
+        //   number.push(contactNo)
+        // })
+        // if (number) {
+        //   number.map(async (item) => {
+        //     await sendTextMessage(item)
+        //   })
+        // }
+        return res.status(200).json(gettedUsers);
+      }
+    }
+  )
+    .populate("groupId")
+    .populate("userId")
+    .populate({
+      path: "userId",
+      populate: {
+        path: "userType",
+      },
+    });
 };
