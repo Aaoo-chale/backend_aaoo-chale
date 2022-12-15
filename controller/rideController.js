@@ -26,6 +26,7 @@ exports.createRide = catchAsync(async (req, res, next) => {
     rideApproval,
     tripPrise,
     extraMessage,
+    select_route,
     status,
     vehicleSelect,
     userId,
@@ -49,6 +50,7 @@ exports.createRide = catchAsync(async (req, res, next) => {
     rideApproval: rideApproval,
     tripPrise: tripPrise,
     extraMessage: extraMessage,
+    select_route: select_route,
     status: status,
     vehicleSelect: vehicleSelect,
     userId: userId,
@@ -432,14 +434,16 @@ exports.deleteRide = catchAsync(async (req, res, next) => {
 // };
 
 exports.searchJobs = async (req, res, next) => {
-  const { tripDate, searchCount, pick_upLat, pick_Long, drop_Lat, drop_Long } = req.body;
-  let [result] = await Ride.find({ $and: [{ passengerCount: { $gte: passengerCount } }, { tripDate: tripDate }] });
-  const pickup_latitude = result.pickupLat;
-  console.log("pickup_latitude", pickup_latitude);
-  const pickup_longitude = result.pickLong;
-  const dropup_latitude = result.dropLat;
-  const dropup_longitude = result.dropLong;
-  const total_passenger = result.passengerCount;
+  const { tripDate, peopleCount, pick_upLat, pick_Long, drop_Lat, drop_Long } = req.body;
+  const result = await Ride.find({ $and: [{ passengerCount: { $gte: peopleCount } }, { tripDate: tripDate }] });
+
+  // [result].forEach (->result_array() as $row)
+  // const pickup_latitude = result.pickupLat;
+  // console.log("pickup_latitude", pickup_latitude);
+  // const pickup_longitude = result.pickLong;
+  // const dropup_latitude = result.dropLat;
+  // const dropup_longitude = result.dropLong;
+  // const total_passenger = result.passengerCount;
   // find user
   // const user = await User.findOne({ userId: userId });
   // console.log(user, "user");
@@ -450,33 +454,30 @@ exports.searchJobs = async (req, res, next) => {
   //   pets: user.pets,
   // };
 
-  const km = distanceCount(pickup_latitude, pickup_longitude, pick_upLat, pick_Long);
+  // const km = distanceCount(pickup_latitude, pickup_longitude, pick_upLat, pick_Long);
 
-  const km1 = distanceCount(dropup_latitude, dropup_longitude, drop_Lat, drop_Long);
+  // const km1 = distanceCount(dropup_latitude, dropup_longitude, drop_Lat, drop_Long);
 
-  if (km <= 60) {
-    if (km1 <= 60) {
-      const trip_date = new Date(tripDate);
-      // const tripdateinput1 = new Date(tripdateinput);
-      const date = tripdateinput1;
-      if (trip_date <= date) {
-        const per_person_price = result.tripPrise;
-        let totalPrise = per_person_price * passengerCount;
-        totalPrise = totalPrise - (totalPrise % 5);
-        const total_Booked_huaa_seat = total_passenger - searchCount;
-        console.log((result.backSeatEmpty = searchCount));
-        console.log((result.passengerCount = total_Booked_huaa_seat));
-        result.tripPrise = totalPrise;
-        var data = await result.save();
-      }
-    }
-  }
+  // if (km <= 60) {
+  //   if (km1 <= 60) {
+  //     const trip_date = new Date(tripDate);
+  //     // const tripdateinput1 = new Date(tripdateinput);
+  //     const date = tripdateinput1;
+  //     if (trip_date <= date) {
+  //       const per_person_price = result.tripPrise;
+  //       let totalPrise = per_person_price * passengerCount;
+  //       totalPrise = totalPrise - (totalPrise % 5);
+  //       const total_Booked_huaa_seat = total_passenger - searchCount;
+  //       console.log((result.backSeatEmpty = searchCount));
+  //       console.log((result.passengerCount = total_Booked_huaa_seat));
+  //       result.tripPrise = totalPrise;
+  //       var data = await result.save();
+  //     }
+  //   }
+  // }
   res.status(201).json({
     success: true,
-    data: {
-      data,
-      user,
-    },
+    result,
   });
 };
 
