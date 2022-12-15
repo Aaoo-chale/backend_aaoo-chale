@@ -242,7 +242,7 @@ exports.updateVehicleDetails = catchAsync(async (req, res, next) => {
   // const data = await User.findOne({ "email.emailId": emailId });
   // if (data) return next(new AppErr("Account already exist please add new emailId"), 200);
 
-  const user = await User.findByIdAndUpdate(
+  const user = await Vehicle.findByIdAndUpdate(
     { _id: id },
     { ...req.body },
     { runValidator: true, useFindAndModify: false, new: true }
@@ -252,7 +252,7 @@ exports.updateVehicleDetails = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: true,
     data: {
-      message: "Add User Personal information",
+      message: "Update Vehicle details Successfully",
       user,
     },
   });
