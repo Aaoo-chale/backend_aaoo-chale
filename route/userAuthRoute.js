@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const userAuthController = require("../controller/userAuthController");
+const upload = require("../controller/vehicleController");
 const router = express.Router();
 router.post("/login", userAuthController.login);
 router.post("/loginMobileOTP", userAuthController.loginMobileOTP);
@@ -12,7 +13,11 @@ router.post("/verifyReceivedMobileOTP", userAuthController.verifyReceivedMobileO
 // router.use(userAuthController.protect); //below this protected routes
 router.post("/updateMobile", userAuthController.updateMobile);
 router.post("/verifyUpdateMobile", userAuthController.verifyUpdateMobile);
-// router.get("/getProfilePicture", userAuthController.getProfilePicture);//
+router.post(
+  "/uploadUsertImage",
+  userAuthController.upload.array("profileimage", 4),
+  userAuthController.uploadUsertImage
+);
 
 // TESTING ROUTE
 router.get("/test-route", (req, res, next) => {

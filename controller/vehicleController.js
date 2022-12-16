@@ -119,23 +119,24 @@ module.exports.upload = multer({
 exports.uploadImage = async (req, res) => {
   const [files] = req.files;
   const { id } = req.body;
+  const vehicle = await Vehicle.findOne({ _id: id });
+  console.log(vehicle);
   if (!id) return next(new AppErr("Pelase Provide vehicle Id"), 200);
   // console.log(files.location, "files");
-  var data = await vehicleImage({
-    vehicleimage: files.location,
-    vehicleId: id,
-  });
+  // var data = await vehicleImage({
+  (vehicle.vehicleimage = files.location),
+    // });
 
-  console.log(data, "data");
-  await data.save((err, feed) => {
-    if (err) {
-      return res.status(400).json({
-        error: err,
-      });
-    }
-    // res.json(feed);
-    res.send(files);
-  });
+    // console.log(data, "data");
+    await vehicle.save((err, feed) => {
+      if (err) {
+        return res.status(400).json({
+          error: err,
+        });
+      }
+      // res.json(feed);
+      res.send(files);
+    });
 };
 // aaoochale-vehicle bucketName
 // const upload = () => {

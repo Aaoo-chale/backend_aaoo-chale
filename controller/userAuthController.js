@@ -1,13 +1,18 @@
 const path = require("path");
 const jwt = require("jsonwebtoken");
 require("dotenv").config({ path: path.join(__dirname, "..", "config.env") });
-const multer = require("multer");
+
 const { promisify } = require("util");
 const generateOtp = require(path.join(__dirname, "..", "helpers", "generateOtp"));
 const catchAsync = require(path.join(__dirname, "..", "utils", "catchAsync"));
 const AppErr = require(path.join(__dirname, "..", "utils", "AppErr"));
 const encryptPassword = require(path.join(__dirname, "..", "helpers", "encryptPassword"));
 const User = require(path.join(__dirname, "..", "model", "userModel"));
+
+const aws = require("aws-sdk");
+const multerS3 = require("multer-s3");
+const multer = require("multer");
+require("dotenv").config();
 
 // const NODE_ENV = development;
 const signToken = (id) => {
@@ -471,4 +476,49 @@ exports.verifyUpdateMobile = async (req, res, next) => {
       doc,
     },
   });
+};
+
+///// images
+const s3 = new aws.S3({
+  accessKeyId: process.env.S3_ACCESS_KEY,
+  secretAccessKey: process.env.S3_SECRETE_ACCESS_KEY,
+  region: process.env.S3_BUCKET_RESION,
+  // signatureVersion: "v4",
+});
+
+module.exports.upload = multer({
+  // fileFilter,
+  storage: multerS3({
+    //acl: "public-read",
+    s3,
+    bucket: process.env.AWS_S3_BUCKET,
+    metadata: function (req, file, cb) {
+      cb(null, { fieldName: file.originalname });
+    },
+    key: function (req, file, cb) {
+      cb(null, `${Date.now().toString()}${file.originalname}`);
+    },
+  }),
+});
+
+exports.uploadUsertImage = async (req, res) => {
+  const [files] = req.files;
+  const { id } = req.body;
+  const user = await User.findOne({ _id: id });
+  if (!id) return next(new AppErr("Pelase Provide user Id"), 200);
+  // console.log(files.location, "files");
+  // var data = await User({
+  (user.profilePicture = files.location),
+    // });
+
+    // console.log(data, "data");
+    await user.save((err, feed) => {
+      if (err) {
+        return res.status(400).json({
+          error: err,
+        });
+      }
+      // res.json(feed);
+      res.send(files);
+    });
 };

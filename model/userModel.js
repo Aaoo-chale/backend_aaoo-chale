@@ -29,7 +29,7 @@ const userModel = new Schema(
       required: [false, "Please Provide First Name"],
     },
 
-    profilePictureLink: String,
+    profilePicture: String,
     createdOn: {
       type: Date,
       default: getISTTime(new Date(Date.now())),
