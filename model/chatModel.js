@@ -17,6 +17,10 @@ const ChatSchema = new Schema(
       required: [false, "Please Provide message"],
       trim: true,
     },
+    createdOn: {
+      type: Date,
+      default: getISTTime(new Date(Date.now())),
+    },
     status: {
       type: Boolean,
       required: [false, "Please Provide status"],

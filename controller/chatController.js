@@ -11,12 +11,13 @@ exports.createChat = async (req, res, next) => {
   // const user = req.user;
 
   try {
-    let { senderId, receiverId, message, status } = req.body;
+    let { senderId, createdOn, receiverId, message, status } = req.body;
     const chat = await Chat.create({
       senderId: senderId,
       receiverId: receiverId,
       message: message,
       status: status,
+      createdOn: createdOn,
     });
     res.status(200).json({
       status: true,
@@ -86,6 +87,22 @@ exports.getAllChatBySenderIdAndReceiverId = async (req, res, next) => {
     res.status(200).json({
       status: true,
       message: "Get All Chat By Sender Id And Receiver Id Succussefully",
+      getAllChat,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+//
+exports.getUserChatHistory = async (req, res, next) => {
+  const user = req.user;
+  if (!user) return next(new AppErr("Pelase Login"), 200);
+  try {
+    const getAllChat = await Chat.find({ $or: [{ senderId: user._id }, { receiverId: user._id }] });
+    res.status(200).json({
+      status: true,
+      message: "Get All Chat History Succussefully",
       getAllChat,
     });
   } catch (error) {
