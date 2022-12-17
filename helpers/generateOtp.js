@@ -20,26 +20,19 @@ const generateOtp = async function (mode, user) {
   if (mode === "mobile") {
     const mobileNumber = user.mobile.mobileNumber;
     try {
-      console.log(otp);
-      console.log(mobileNumber);
-      // let masg = `1234 is your Aaoo Chale Login OTP.
-      // Please do not share it with anyone.
-
-      // Team
-      // Aaoo Chale`;
-      axios
-        .post(
-          `http://webpostservice.com/sendsms_v2.0/sendsms.php?apikey=ZHJlYW1wbGFUOkg5WmlCRFZJ&type=TEXT&sender=AOCHLE&mobile=7218275153&message=6543 is your Aaoo Chale Login OTP.
-          Please do not share it with anyone.
-          Team
-          Aaoo Chale`
-        )
-        .then(function (response) {
-          console.log(response);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      // console.log(otp);
+      // console.log(mobileNumber);
+      // massage body encoded by exact DLT register Body
+      let masg = `${otp}%20is%20your%20Aaoo%20Chale%20Login%20OTP.%0APlease%20do%20not%20share%20it%20with%20anyone.%0A%0ATeam%0AAaoo%20Chale`;
+      axios.post(
+        `http://webpostservice.com/sendsms_v2.0/sendsms.php?apikey=ZHJlYW1wbGFUOkg5WmlCRFZJ&type=TEXT&sender=AOCHLE&mobile=${mobileNumber}&message=${masg}`
+      );
+      // .then(function (response) {
+      //   console.log(response);
+      // })
+      // .catch(function (error) {
+      //   console.log(error);
+      // });
 
       // ZHJlYW1wbGFUOkg5WmlCRFZJ
     } catch (err) {

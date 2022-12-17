@@ -8,5 +8,6 @@ router.delete("/deleteRide", rideController.deleteRide);
 router.post("/countDistance", rideController.countDistance);
 router.post("/searchJobs", rideController.searchJobs);
 router.post("/getRideByUserId", rideController.getRideByUserId);
+router.put("/updateRideDetails", rideController.updateRideDetails);
 
 module.exports = router;

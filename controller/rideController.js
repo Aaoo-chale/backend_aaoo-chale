@@ -567,3 +567,51 @@ exports.searchJobs = async (req, res, next) => {
 //       },
 //     });
 // };
+
+exports.updateRideDetails = catchAsync(async (req, res, next) => {
+  // const user = req.user;
+  // const { id } = req.body;
+  const {
+    id,
+    pickUpLocation,
+    pickupLat,
+    pickLong,
+    dropLocation,
+    dropLat,
+    dropLong,
+    stopCity,
+    stopCityLat,
+    stopCityLong,
+    tripDate,
+    tripTime,
+    totalDistance,
+    totalTime,
+    backSeatEmpty,
+    passengerCount,
+    rideApproval,
+    tripPrise,
+    extraMessage,
+    select_route,
+    rideStatus,
+  } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide User Id"), 200);
+
+  // // chake email present or mot
+  // const data = await User.findOne({ "email.emailId": emailId });
+  // if (data) return next(new AppErr("Account already exist please add new emailId"), 200);
+
+  const user = await Ride.findByIdAndUpdate(
+    { _id: id },
+    { ...req.body },
+    { runValidator: true, useFindAndModify: false, new: true }
+  );
+
+  await user.save();
+  res.status(200).json({
+    status: true,
+    data: {
+      message: "Update Ride details Successfully",
+      user,
+    },
+  });
+});

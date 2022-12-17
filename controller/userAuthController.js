@@ -237,7 +237,7 @@ exports.forgotPwdGenerateOtp = catchAsync(async (req, res, next) => {
   }
   const user = await User.findOne({ "email.emailId": email });
   if (!user) return next(new AppErr("Account Not Found"), 200);
-  await generateOtp("password", user, "OTP send your email please verify email");
+  await generateOtp("email", user);
   res.status(200).json({
     status: true,
     data: {
@@ -309,7 +309,7 @@ exports.verifyMobileSendOtp = catchAsync(async (req, res, next) => {
   }
   const user = await User.findOne({ "mobile.mobileNumber": mobile });
   if (!user) return next(new AppErr("Account Not Found"), 200);
-  await generateOtp("mobile", user, "Please Verify OTP , OTP Expires in 10 Minutes");
+  await generateOtp("mobile", user);
 
   res.status(200).json({
     status: true,
@@ -424,7 +424,7 @@ exports.updateMobile = catchAsync(async (req, res, next) => {
   console.log(user);
 
   try {
-    var data = await generateOtp("mobile", user, "Please Verify OTP , OTP Expires in 10 Minutes");
+    var data = await generateOtp("mobile", user);
     console.log(data, "data");
   } catch (err) {
     return res.status(500).json({
