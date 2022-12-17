@@ -9,7 +9,7 @@ exports.addUserPersoInfo = async (req, res, next) => {
   // const user = req.user;
   // console.log(user);
   const { id, firstName, lastName, emailId } = req.body;
-  if (!id || firstName || lastName) {
+  if (!id || !firstName || !lastName) {
     return next(new AppErr("Please Provide id, firstName, lastName", 200));
   }
   const user = await User.findByIdAndUpdate(

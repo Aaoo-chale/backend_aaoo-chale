@@ -40,6 +40,7 @@ const userModel = new Schema(
     },
     DOB: {
       type: Date,
+      default: getISTTime(new Date(Date.now())),
     },
     bio: {
       type: String,

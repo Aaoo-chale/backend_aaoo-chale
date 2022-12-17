@@ -115,10 +115,11 @@ exports.login = catchAsync(async (req, res, next) => {
   let doc = await User.findOne({ "mobile.mobileNumber": mobileNumber });
   if (doc) {
     try {
-      await generateOtp("mobile", doc, "Please Verify OTP , OTP Expires in 10 Minutes");
+      console.log("ok", doc);
+      await generateOtp("mobile", doc);
     } catch (err) {
-      return res.status(200).json({
-        status: "fail",
+      return res.status(500).json({
+        status: false,
         message: "Unable To Send Otp, Please Try Later....",
       });
     }
@@ -134,9 +135,9 @@ exports.login = catchAsync(async (req, res, next) => {
     });
 
     try {
-      await generateOtp("mobile", user, "Please Verify OTP , OTP Expires in 10 Minutes");
+      await generateOtp("mobile", user);
     } catch (err) {
-      return res.status(500).json({
+      return res.status(200).json({
         status: "fail",
         message: "Unable To Send Otp, Please Try Later....",
       });
