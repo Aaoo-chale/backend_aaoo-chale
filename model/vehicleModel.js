@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const getISTTime = require("../helpers/getISTTime"); //"..", "helpers", "getISTTime"));
 const User = require("../model/userModel");
 const VehicleSchema = new Schema(
   {
@@ -42,6 +43,10 @@ const VehicleSchema = new Schema(
       type: String,
       required: [false, "Please Provide colorCode"],
       trim: true,
+    },
+    createdOn: {
+      type: Date,
+      default: getISTTime(new Date(Date.now())),
     },
     vehicleimage: String,
     userId: {

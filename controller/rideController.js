@@ -27,7 +27,7 @@ exports.createRide = catchAsync(async (req, res, next) => {
     tripPrise,
     extraMessage,
     select_route,
-    status,
+    rideStatus,
     vehicleSelect,
     userId,
   } = req.body;
@@ -41,8 +41,8 @@ exports.createRide = catchAsync(async (req, res, next) => {
     stopCity: stopCity,
     stopCityLat: stopCityLat,
     stopCityLong: stopCityLong,
-    tripDate: moment(tripDate).format("YYYY/DD/MM"),
-    tripTime: moment(tripTime).format("h:mm:ss A"),
+    tripDate: tripDate,
+    tripTime: tripTime,
     totalDistance: totalDistance,
     totalTime: totalTime,
     backSeatEmpty: backSeatEmpty,
@@ -51,7 +51,7 @@ exports.createRide = catchAsync(async (req, res, next) => {
     tripPrise: tripPrise,
     extraMessage: extraMessage,
     select_route: select_route,
-    status: status,
+    rideStatus: rideStatus,
     vehicleSelect: vehicleSelect,
     userId: userId,
   });
@@ -435,7 +435,13 @@ exports.deleteRide = catchAsync(async (req, res, next) => {
 
 exports.searchJobs = async (req, res, next) => {
   const { tripDate, peopleCount, pick_upLat, pick_Long, drop_Lat, drop_Long } = req.body;
-  const result = await Ride.find({ $and: [{ passengerCount: { $gte: peopleCount } }, { tripDate: tripDate }] });
+  const result = await Ride.find({
+    $and: [{ passengerCount: { $gte: peopleCount } }, { tripDate: tripDate }, { status: { $ne: false } }],
+  }).populate({
+    path: "userId",
+    select: "chattiness music smoking pets",
+    model: "User",
+  });
 
   // [result].forEach (->result_array() as $row)
   // const pickup_latitude = result.pickupLat;
@@ -477,86 +483,87 @@ exports.searchJobs = async (req, res, next) => {
   // }
   res.status(200).json({
     success: true,
+    length: result.length,
     result,
   });
 };
 
-exports.getNearByUsers = (req, res, next) => {
-  // res.send({ response: "I am alive" }).status(200);
-  UserLocation.ensureIndexes({ location: "2dsphere" });
-  var user = req.body.id;
-  // console.log(req.body)
-  let number = [];
-  const data = ({ location } = req.body);
-  var latitude = parseFloat(data.latitude); // latitude comes through as string from url params, so it's converted to a float
-  var longitude = parseFloat(data.longitude);
-  UserLocation.find(
-    {
-      $and: [
-        { userId: { $ne: user } },
-        {
-          location: {
-            $near: {
-              $geometry: {
-                type: "Point",
-                coordinates: [latitude, longitude],
-              },
-              $maxDistance: 250 * 100,
-            },
-          },
-        },
-      ],
-    },
-    function (err, locations) {
-      if (err) {
-        res.send(err);
-      } else {
-        const gettedUsers = [];
-        req.body.help.map((help) => {
-          locations.map((user) => {
-            if (user.userId.userType.name === "Service Provider") {
-              if (user.userId.typeOfServices) {
-                user.userId.typeOfServices.map((services) => {
-                  if (services === help) {
-                    gettedUsers.push(user);
-                  }
-                });
-              }
-            } else {
-              if (user.userId.userType.name === "Driver") {
-                req.body.help.map((item) => {
-                  if (item == "DRIVER") {
-                    gettedUsers.push(user);
-                  }
-                });
-              }
-            }
-          });
-        });
-        if (gettedUsers) {
-          gettedUsers.map((users) => {
-            sendPushNotification1(gettedUsers, "Someone need Help", res.firstName + " " + res.lastName + " Need Help");
-          });
-        }
-        // locations.map((item) => {
-        //   let contactNo = `+91` + item.userId.mobileNo
-        //   number.push(contactNo)
-        // })
-        // if (number) {
-        //   number.map(async (item) => {
-        //     await sendTextMessage(item)
-        //   })
-        // }
-        return res.status(200).json(gettedUsers);
-      }
-    }
-  )
-    .populate("groupId")
-    .populate("userId")
-    .populate({
-      path: "userId",
-      populate: {
-        path: "userType",
-      },
-    });
-};
+// exports.getNearByUsers = (req, res, next) => {
+//   // res.send({ response: "I am alive" }).status(200);
+//   UserLocation.ensureIndexes({ location: "2dsphere" });
+//   var user = req.body.id;
+//   // console.log(req.body)
+//   let number = [];
+//   const data = ({ location } = req.body);
+//   var latitude = parseFloat(data.latitude); // latitude comes through as string from url params, so it's converted to a float
+//   var longitude = parseFloat(data.longitude);
+//   UserLocation.find(
+//     {
+//       $and: [
+//         { userId: { $ne: user } },
+//         {
+//           location: {
+//             $near: {
+//               $geometry: {
+//                 type: "Point",
+//                 coordinates: [latitude, longitude],
+//               },
+//               $maxDistance: 250 * 100,
+//             },
+//           },
+//         },
+//       ],
+//     },
+//     function (err, locations) {
+//       if (err) {
+//         res.send(err);
+//       } else {
+//         const gettedUsers = [];
+//         req.body.help.map((help) => {
+//           locations.map((user) => {
+//             if (user.userId.userType.name === "Service Provider") {
+//               if (user.userId.typeOfServices) {
+//                 user.userId.typeOfServices.map((services) => {
+//                   if (services === help) {
+//                     gettedUsers.push(user);
+//                   }
+//                 });
+//               }
+//             } else {
+//               if (user.userId.userType.name === "Driver") {
+//                 req.body.help.map((item) => {
+//                   if (item == "DRIVER") {
+//                     gettedUsers.push(user);
+//                   }
+//                 });
+//               }
+//             }
+//           });
+//         });
+//         if (gettedUsers) {
+//           gettedUsers.map((users) => {
+//             sendPushNotification1(gettedUsers, "Someone need Help", res.firstName + " " + res.lastName + " Need Help");
+//           });
+//         }
+//         // locations.map((item) => {
+//         //   let contactNo = `+91` + item.userId.mobileNo
+//         //   number.push(contactNo)
+//         // })
+//         // if (number) {
+//         //   number.map(async (item) => {
+//         //     await sendTextMessage(item)
+//         //   })
+//         // }
+//         return res.status(200).json(gettedUsers);
+//       }
+//     }
+//   )
+//     .populate("groupId")
+//     .populate("userId")
+//     .populate({
+//       path: "userId",
+//       populate: {
+//         path: "userType",
+//       },
+//     });
+// };

@@ -57,6 +57,7 @@ const rideSchema = new Schema({
   },
   tripDate: {
     type: Date,
+    default: getISTTime(new Date(Date.now())),
     required: [false, "Please Provide tripDate"],
     trim: true,
   },
@@ -92,6 +93,7 @@ const rideSchema = new Schema({
   },
   rideApproval: {
     type: String,
+    enum: ["Yes", "No"],
     required: [false, "Please Provide rideApproval"],
     trim: true,
   },
@@ -106,9 +108,10 @@ const rideSchema = new Schema({
     required: [false, "Please Provide extraMessage"],
     trim: true,
   },
-  status: {
-    type: Boolean,
+  rideStatus: {
+    type: String,
     required: [false, "Please Provide status"],
+    enum: ["Created", "Booked", "Cancel"],
     trim: true,
   },
   vehicleSelect: {

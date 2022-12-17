@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 const path = require("path");
-// const candidateSchemaHelpers = require(path.join(__dirname, "..", "helpers", "candidate", "candidateSchemaHelpers"));
-// const getUrl = require(path.join(__dirname, "..", "helpers", "aws", "awsGetUrl"));
 const getISTTime = require("../helpers/getISTTime");
 const Schema = mongoose.Schema;
 // const validateEmail = function (email) {

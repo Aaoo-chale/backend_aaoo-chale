@@ -22,14 +22,17 @@ const generateOtp = async function (mode, user) {
     try {
       console.log(otp);
       console.log(mobileNumber);
-      let masg = `1234 is your Aaoo Chale Login OTP.
-      Please do not share it with anyone.
-      
-      Team
-      Aaoo Chale`;
+      // let masg = `1234 is your Aaoo Chale Login OTP.
+      // Please do not share it with anyone.
+
+      // Team
+      // Aaoo Chale`;
       axios
         .post(
-          `http://webpostservice.com/sendsms_v2.0/sendsms.php?apikey=ZHJlYW1wbGFUOkg5WmlCRFZJ&type=TEXT&sender=AOCHLE&mobile=${mobileNumber}&message=${masg}`
+          `http://webpostservice.com/sendsms_v2.0/sendsms.php?apikey=ZHJlYW1wbGFUOkg5WmlCRFZJ&type=TEXT&sender=AOCHLE&mobile=7218275153&message=6543 is your Aaoo Chale Login OTP.
+          Please do not share it with anyone.
+          Team
+          Aaoo Chale`
         )
         .then(function (response) {
           console.log(response);
