@@ -4,7 +4,7 @@ const router = express.Router();
 const rideBookedController = require("../controller/rideBookController");
 
 router.post("/bookedRide", rideBookedController.bookedRide);
-router.put("/updateBookedRide", rideBookedController.updateBookedRide);
+router.patch("/updateBookedRide", rideBookedController.updateBookedRide);
 router.get("/getBookedRide", rideBookedController.getBookedRide);
 router.delete("/deleteRide", rideBookedController.deleteRide);
 

@@ -4,7 +4,7 @@ const getISTTime = require(path.join(__dirname, "..", "helpers", "getISTTime"));
 const Schema = mongoose.Schema;
 const User = require("../model/userModel");
 const Ride = require("../model/rideModel");
-const ChatSchema = new Schema(
+const BookedRideSchema = new Schema(
   {
     user: {
       type: mongoose.Schema.ObjectId,
@@ -32,5 +32,5 @@ const ChatSchema = new Schema(
   { toJSON: { virtuals: true } }
 );
 
-const Chat = mongoose.model("Chat", ChatSchema);
-module.exports = Chat;
+const BookedRide = mongoose.model("BookedRide", BookedRideSchema);
+module.exports = BookedRide;

@@ -4,6 +4,7 @@ const AppErr = require(path.join(__dirname, "..", "utils", "AppErr"));
 const User = require(path.join(__dirname, "..", "model", "userModel"));
 const Vehicle = require("../model/vehicleModel");
 const Ride = require("../model/rideModel");
+const BookedRide = require("../model/rideBookingModel");
 // const moment = require("moment");
 
 exports.bookedRide = async (req, res, next) => {
@@ -13,12 +14,12 @@ exports.bookedRide = async (req, res, next) => {
     let { userId, rideId, status } = req.body;
     if (!userId || !rideId) return next(new AppErr("Please Provide all details"), 200);
 
-    const bookedRide = await Ride.create({
+    const bookedRide = await BookedRide.create({
       user: userId,
       ride: rideId,
       status: status,
     });
-
+    console.log(bookedRide);
     res.status(200).json({
       status: true,
       message: "Booked Ride Succussefully",
@@ -35,18 +36,18 @@ exports.bookedRide = async (req, res, next) => {
 exports.updateBookedRide = catchAsync(async (req, res, next) => {
   // const user = req.user;
   // const { id } = req.body;
-  const { rideId, status } = req.body;
-  if (!rideId) return next(new AppErr("Pelase Provide User Id"), 200);
+  const { id, status } = req.body;
+
+  if (!id) return next(new AppErr("Pelase Provide User Id"), 200);
 
   // // chake email present or mot
   // const data = await User.findOne({ "email.emailId": emailId });
   // if (data) return next(new AppErr("Account already exist please add new emailId"), 200);
 
-  const updateRide = await User.findByIdAndUpdate(
-    { ride: rideId },
-    { status: status }
-    // { ...req.body },
-    // { runValidator: true, useFindAndModify: false, new: true }
+  const updateRide = await BookedRide.findByIdAndUpdate(
+    { _id: id },
+    { status: status },
+    { runValidator: true, useFindAndModify: false, new: true }
   );
   // save data
   await updateRide.save();
@@ -62,22 +63,22 @@ exports.updateBookedRide = catchAsync(async (req, res, next) => {
 // get booked ride
 
 exports.getBookedRide = catchAsync(async (req, res, next) => {
-  const { rideId } = req.body;
-  if (!rideId) return next(new AppErr("Pelase Provide Ride Id"), 200);
+  const { id } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide Id"), 200);
 
-  const rideDelete = await Ride.findOne({ ride: rideId });
+  const rideBookedRide = await BookedRide.findOne({ _id: id });
   res.status(200).json({
     status: true,
     message: "Delete Ride Successfully By Ride Id",
-    rideDelete,
+    rideBookedRide,
   });
 });
 // delete booked ride
 exports.deleteRide = catchAsync(async (req, res, next) => {
-  const { rideId } = req.body;
-  if (!rideId) return next(new AppErr("Pelase Provide Ride Id"), 200);
+  const { id } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide Ride Id"), 200);
 
-  const rideDelete = await Ride.findByIdAndDelete({ ride: rideId });
+  const rideDelete = await BookedRide.findByIdAndDelete({ _id: id });
   res.status(200).json({
     status: true,
     message: "Delete Ride Successfully By Ride Id",
