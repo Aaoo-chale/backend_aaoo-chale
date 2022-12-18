@@ -439,7 +439,7 @@ exports.searchJobs = async (req, res, next) => {
     $and: [{ passengerCount: { $gte: peopleCount } }, { tripDate: tripDate }, { status: { $ne: false } }],
   }).populate({
     path: "userId",
-    select: "chattiness music smoking pets",
+    select: "firstName lastName profilePicture chattiness music smoking pets",
     model: "User",
   });
 

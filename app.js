@@ -14,6 +14,7 @@ const vehicleRoute = require("./route/vehicleRoute");
 const userPersonalInfoRoute = require("./route/userPersonalInfoRoute");
 const RideRoute = require("./route/rideRoute");
 const chatRoute = require("./route/chatRoute");
+const rideBookedRoute = require("./route/rideBookedRoute");
 const requestBodyLogger = require(path.join(__dirname, "helpers", "winstonLogger"));
 
 const globalErrorHandler = require(path.join(__dirname, "utils", "globalErrorHandler"));
@@ -57,6 +58,7 @@ app.use("/aaoochale/UserAuth/vehicle", vehicleRoute);
 app.use("/aaoochale/UserAuth/perinfo", userPersonalInfoRoute);
 app.use("/aaoochale/UserAuth/ride", RideRoute);
 app.use("/aaoochale/UserAuth/chat", chatRoute);
+app.use("/aaoochale/UserAuth/bookedRide", rideBookedRoute);
 
 // LANDING PAGE
 app.use(globalErrorHandler);

@@ -1,30 +1,31 @@
 const mongoose = require("mongoose");
 const path = require("path");
 const getISTTime = require(path.join(__dirname, "..", "helpers", "getISTTime"));
-const User = require("../model/userModel");
 const Schema = mongoose.Schema;
+const User = require("../model/userModel");
+const Ride = require("../model/rideModel");
 const ChatSchema = new Schema(
   {
-    senderId: {
+    user: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
     },
-    receiverId: {
+    ride: {
       type: mongoose.Schema.ObjectId,
-      ref: "User",
+      ref: "Ride",
     },
-    message: {
-      type: String,
-      required: [false, "Please Provide message"],
-      trim: true,
-    },
+    // message: {
+    //   type: String,
+    //   required: [false, "Please Provide message"],
+    //   trim: true,
+    // },
     createdOn: {
       type: Date,
       default: getISTTime(new Date(Date.now())),
     },
     status: {
-      type: Boolean,
-      required: [false, "Please Provide status"],
+      type: String,
+      required: ["Booked", "Unbooked"],
       trim: true,
     },
   },
