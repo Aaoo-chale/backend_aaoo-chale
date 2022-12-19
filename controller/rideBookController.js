@@ -59,12 +59,14 @@ exports.cancleBookedRide = catchAsync(async (req, res, next) => {
 
 exports.getBookedRide = catchAsync(async (req, res, next) => {
   const { userId } = req.body;
-  if (!userId) return next(new AppErr("Pelase Provide Id"), 200);
+  if (!userId) return next(new AppErr("Pelase Provide userId"), 200);
 
-  const rideBookedRide = await BookedRide.find({ user: userId });
+  const rideBookedRide = await Ride.find({ userId: userId }).select(
+    "-totalDistance -backSeatEmpty -passengerCount -tripPrise -extraMessage -vehicleSelect -rideApproval"
+  );
   res.status(200).json({
     status: true,
-    message: "Delete Ride Successfully By Ride Id",
+    message: "Get ride detail Successfully By User Id",
     rideBookedRide,
   });
 });
