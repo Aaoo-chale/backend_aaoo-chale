@@ -61,9 +61,13 @@ exports.getBookedRide = catchAsync(async (req, res, next) => {
   const { userId } = req.body;
   if (!userId) return next(new AppErr("Pelase Provide userId"), 200);
 
-  const rideBookedRide = await Ride.find({ userId: userId }).select(
-    "-totalDistance -backSeatEmpty -passengerCount -tripPrise -extraMessage -vehicleSelect -rideApproval"
-  );
+  const rideBookedRide = await BookedRide.find({ user: userId }).populate({
+    path: "ride",
+    model: "Ride",
+  });
+  // .select(
+  //   "-totalDistance -backSeatEmpty -passengerCount -tripPrise -extraMessage -vehicleSelect -rideApproval"
+  // );
   res.status(200).json({
     status: true,
     message: "Get ride detail Successfully By User Id",

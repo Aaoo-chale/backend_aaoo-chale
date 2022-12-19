@@ -5,7 +5,7 @@ const rideBookedController = require("../controller/rideBookController");
 
 router.post("/bookedRide", rideBookedController.bookedRide);
 router.put("/cancleBookedRide", rideBookedController.cancleBookedRide);
-router.get("/getBookedRide", rideBookedController.getBookedRide);
+router.post("/getBookedRide", rideBookedController.getBookedRide);
 router.delete("/deleteRide", rideBookedController.deleteRide);
 
 module.exports = router;
