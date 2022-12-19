@@ -1,0 +1,10 @@
+const path = require("path");
+const express = require("express");
+const router = express.Router();
+// const userAuthController = require(path.join(__dirname, "..", "..", "controller", "userAuthController"));
+const notificationController = require("../notification/notificationController");
+// router.use(userAuthController.protect);
+router.get("/getAllNotifications", notificationController.getAllNotifications);
+router.get("/getNotificationById", notificationController.getNotificationById);
+router.delete("/deleteNotification", notificationController.deleteNotifications);
+module.exports = router;

@@ -32,12 +32,12 @@ const sendErrorDev = (err, res) => {
       stack: err.stack,
     });
   }
-  res.status(err.statusCode).json({
-    status: err.status,
-    message: err.message,
-    error: err,
-    stack: err.stack,
-  });
+  // res.status(err.statusCode).json({
+  //   status: err.status,
+  //   message: err.message,
+  //   error: err,
+  //   stack: err.stack,
+  // });
 };
 
 const sendErrorProd = (err, res) => {

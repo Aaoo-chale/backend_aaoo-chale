@@ -33,17 +33,12 @@ exports.bookedRide = async (req, res, next) => {
 };
 
 // update booked ride
-exports.updateBookedRide = catchAsync(async (req, res, next) => {
+exports.cancleBookedRide = catchAsync(async (req, res, next) => {
   // const user = req.user;
   // const { id } = req.body;
   const { id, status } = req.body;
 
-  if (!id) return next(new AppErr("Pelase Provide User Id"), 200);
-
-  // // chake email present or mot
-  // const data = await User.findOne({ "email.emailId": emailId });
-  // if (data) return next(new AppErr("Account already exist please add new emailId"), 200);
-
+  if (!id || !status) return next(new AppErr("Pelase Provide User Id"), 200);
   const updateRide = await BookedRide.findByIdAndUpdate(
     { _id: id },
     { status: status },
@@ -63,10 +58,10 @@ exports.updateBookedRide = catchAsync(async (req, res, next) => {
 // get booked ride
 
 exports.getBookedRide = catchAsync(async (req, res, next) => {
-  const { id } = req.body;
-  if (!id) return next(new AppErr("Pelase Provide Id"), 200);
+  const { userId } = req.body;
+  if (!userId) return next(new AppErr("Pelase Provide Id"), 200);
 
-  const rideBookedRide = await BookedRide.findOne({ _id: id });
+  const rideBookedRide = await BookedRide.find({ user: userId });
   res.status(200).json({
     status: true,
     message: "Delete Ride Successfully By Ride Id",

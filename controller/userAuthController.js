@@ -261,16 +261,16 @@ exports.forgotPwdVerifyOtp = catchAsync(async (req, res, next) => {
   const doc = await User.findOne({ "email.emailId": email });
   if (!doc) return next(new AppErr("Account Not Found"), 200);
   // check if token is present
-  if (!doc?.verificationToken?.passwordToken && !doc?.verificationToken?.passwordTokenExpiry)
+  if (!doc?.verificationToken?.emailToken && !doc?.verificationToken?.emailTokenExpiry)
     return next(new AppErr("Token Not Issued, Route Is FORBIDDEN", 200));
   // check if time expired
   const currDate = new Date(Date.now());
-  if (doc?.verificationToken?.passwordTokenExpiry < currDate) return next(new AppErr("OTP Expired", 200));
+  if (doc?.verificationToken?.emailTokenExpiry < currDate) return next(new AppErr("OTP Expired", 200));
   // verify otp
-  if (!(doc?.verificationToken?.passwordToken === otp)) return next(new AppErr("OTP Entered Is Incorrect", 200));
+  if (!(doc?.verificationToken?.emailToken === otp)) return next(new AppErr("OTP Entered Is Incorrect", 200));
   // update token fields in document
-  doc.verificationToken.passwordToken = undefined;
-  doc.verificationToken.passwordTokenExpiry = undefined;
+  doc.verificationToken.emailToken = undefined;
+  doc.verificationToken.emailTokenExpiry = undefined;
   doc.email.isEmailVerified = true;
   await doc.save();
   res.status(200).json({

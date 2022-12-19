@@ -14,19 +14,19 @@ const BookedRideSchema = new Schema(
       type: mongoose.Schema.ObjectId,
       ref: "Ride",
     },
-    // message: {
-    //   type: String,
-    //   required: [false, "Please Provide message"],
-    //   trim: true,
-    // },
+    status: {
+      type: String,
+      required: ["Booked", "Cancel"],
+      trim: true,
+    },
+    message: {
+      type: String,
+      required: [false, "Please Provide message"],
+      trim: true,
+    },
     createdOn: {
       type: Date,
       default: getISTTime(new Date(Date.now())),
-    },
-    status: {
-      type: String,
-      required: ["Booked", "Unbooked"],
-      trim: true,
     },
   },
   { toJSON: { virtuals: true } }
