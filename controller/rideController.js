@@ -436,7 +436,7 @@ exports.deleteRide = catchAsync(async (req, res, next) => {
 exports.searchJobs = async (req, res, next) => {
   const { tripDate, peopleCount, pick_upLat, pick_Long, drop_Lat, drop_Long } = req.body;
   const result = await Ride.find({
-    $and: [{ passengerCount: { $gte: peopleCount } }, { tripDate: tripDate }, { status: { $ne: false } }],
+    $and: [{ passengerCount: { $gte: peopleCount } }, { tripDate: tripDate }],
   }).populate({
     path: "userId",
     select: "firstName lastName profilePicture chattiness music smoking pets",
