@@ -60,7 +60,7 @@ exports.getRating = catchAsync(async (req, res, next) => {
   const ratingAverage = parseFloat(total / sum.length);
   res.status(200).json({
     status: true,
-    message: "Get Rating Successfully By uerId",
+    message: "Get Rating Successfully By rideId",
     ratingAverage,
   });
 });
