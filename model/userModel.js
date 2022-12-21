@@ -26,6 +26,10 @@ const userModel = new Schema(
       type: String,
       required: [false, "Please Provide First Name"],
     },
+    verified: {
+      type: Boolean,
+      required: [false, "Please Provide verified"],
+    },
 
     profilePicture: String,
     createdOn: {

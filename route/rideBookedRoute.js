@@ -7,5 +7,6 @@ router.post("/bookedRide", rideBookedController.bookedRide);
 router.put("/cancleBookedRide", rideBookedController.cancleBookedRide);
 router.post("/getBookedRide", rideBookedController.getBookedRide);
 router.delete("/deleteRide", rideBookedController.deleteRide);
+router.post("/getAlreadyBookedPassenger", rideBookedController.getAlreadyBookedPassenger);
 
 module.exports = router;

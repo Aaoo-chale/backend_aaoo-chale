@@ -9,6 +9,11 @@ const rideSchema = new Schema({
     required: [false, "Please Provide pickUpLocation"],
     trim: true,
   },
+  pickCity: {
+    type: String,
+    required: [false, "Please Provide pickCity"],
+    trim: true,
+  },
   //doble
   pickupLat: {
     type: String,
@@ -25,6 +30,11 @@ const rideSchema = new Schema({
   dropLocation: {
     type: String,
     required: [false, "Please Provide dropLocation"],
+    trim: true,
+  },
+  dropoffCity: {
+    type: String,
+    required: [false, "Please Provide dropoffCity"],
     trim: true,
   },
   //doble

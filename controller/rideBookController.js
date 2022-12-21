@@ -86,3 +86,27 @@ exports.deleteRide = catchAsync(async (req, res, next) => {
     rideDelete,
   });
 });
+
+// already booked passenger
+exports.getAlreadyBookedPassenger = catchAsync(async (req, res, next) => {
+  const { rideId } = req.body;
+  if (!rideId) return next(new AppErr("Pelase Provide userId"), 200);
+
+  const bookedPassenger = await BookedRide.find({ $and: [{ ride: rideId }, { status: "Booked" }] }).populate({
+    path: "user",
+    select: "-email -mobile -createdOn -bio -DOB -ride -__v",
+    model: "User",
+  });
+  // .select(
+  //   "-totalDistance -backSeatEmpty -passengerCount -tripPrise -extraMessage -vehicleSelect -rideApproval"
+  // );
+  res.status(200).json({
+    status: true,
+    message: "Get Booked Passenger detail Successfully By rideId",
+    bookedPassenger,
+  });
+});
+
+// find({
+//   $and: [{ ride: rideId }, { status: status }],
+// });

@@ -11,6 +11,10 @@ const ratingSchema = new Schema(
       type: mongoose.Schema.ObjectId,
       ref: "User",
     },
+    driverId: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+    },
     rideId: {
       type: mongoose.Schema.ObjectId,
       ref: "Ride",
@@ -20,7 +24,12 @@ const ratingSchema = new Schema(
       required: [false, "Please Provide preDefindMessage"],
       trim: true,
     },
-    rating: {
+    reply: {
+      type: String,
+      required: [false, "Please Provide reply"],
+      trim: true,
+    },
+    startRating: {
       type: Number,
       required: [false, "Please Provide rating"],
       enum: [1, 2, 3, 4, 5],

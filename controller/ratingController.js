@@ -9,9 +9,10 @@ require("dotenv").config();
 
 exports.createRating = async (req, res, next) => {
   try {
-    const { userId, rideId, message, rating } = req.body;
+    const { userId, driverId, rideId, message, rating } = req.body;
     const createRating = await Rating.create({
       userId: userId,
+      driverId: driverId,
       rideId: rideId,
       message: message,
       rating: rating,
@@ -62,5 +63,57 @@ exports.getRating = catchAsync(async (req, res, next) => {
     status: true,
     message: "Get Rating Successfully By rideId",
     ratingAverage,
+  });
+});
+
+// 1.Api for create rarting 2.Api for received rating 3.APi for given rating 4.Reply for rating only single reply
+
+// api for given rating kisko mayne rating diya
+exports.giveOwnRatingOfUser = catchAsync(async (req, res, next) => {
+  const { userId } = req.body;
+  if (!userId) return next(new AppErr("Pelase Provide userId"), 200);
+  const givenRating = await Rating.find({ userId: userId });
+
+  res.status(200).json({
+    status: true,
+    message: "Get Rating Successfully By userId",
+    length: givenRating.length,
+    givenRating,
+  });
+});
+
+//kisne muze rating diya
+exports.getRatingOtherUserSend = catchAsync(async (req, res, next) => {
+  const { driverId } = req.body;
+  if (!driverId) return next(new AppErr("Pelase Provide driverId"), 200);
+  const riverGetRating = await Rating.find({ driverId: driverId });
+  console.log("riverGetRating", riverGetRating);
+
+  res.status(200).json({
+    status: true,
+    message: "Get send Rating Successfully",
+    length: riverGetRating.length,
+    riverGetRating,
+  });
+});
+
+// reply driver update
+exports.replyDriver = catchAsync(async (req, res, next) => {
+  const { id, reply } = req.body;
+  if (!id || !reply) return next(new AppErr("Pelase Provide id and reply"), 200);
+
+  const replyDriver = await Rating.findByIdAndUpdate(
+    { _id: id },
+    { reply: reply },
+    { runValidator: true, useFindAndModify: false, new: true }
+  );
+  // save data
+  await replyDriver.save();
+  res.status(200).json({
+    status: true,
+    data: {
+      message: "Driver reply Successfully",
+      replyDriver,
+    },
   });
 });
