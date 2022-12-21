@@ -615,3 +615,22 @@ exports.updateRideDetails = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+// change satus
+exports.changeRideStatus = catchAsync(async (req, res, next) => {
+  // const user = req.user;
+  // const { id } = req.body;
+  const { id, rideStatus } = req.body;
+
+  if (!id || !rideStatus) return next(new AppErr("Pelase Provide User Id"), 200);
+  const changeRideStatus = await Ride.findByIdAndUpdate({ _id: id }, { rideStatus: rideStatus });
+  // save data
+  await changeRideStatus.save();
+  res.status(200).json({
+    status: true,
+    data: {
+      message: "change rideStatus  Successfully",
+      changeRideStatus,
+    },
+  });
+});
