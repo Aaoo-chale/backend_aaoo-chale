@@ -72,7 +72,17 @@ exports.getRating = catchAsync(async (req, res, next) => {
 exports.giveOwnRatingOfUser = catchAsync(async (req, res, next) => {
   const { userId } = req.body;
   if (!userId) return next(new AppErr("Pelase Provide userId"), 200);
-  const givenRating = await Rating.find({ userId: userId });
+  const givenRating = await Rating.find({ userId: userId })
+    .populate({
+      path: "userId",
+      select: "-email -mobile -createdOn -bio -DOB -ride -__v",
+      model: "User",
+    })
+    .populate({
+      path: "rideId",
+      select: "-_id -__v",
+      model: "Ride",
+    });
 
   res.status(200).json({
     status: true,
@@ -86,7 +96,17 @@ exports.giveOwnRatingOfUser = catchAsync(async (req, res, next) => {
 exports.getRatingOtherUserSend = catchAsync(async (req, res, next) => {
   const { driverId } = req.body;
   if (!driverId) return next(new AppErr("Pelase Provide driverId"), 200);
-  const riverGetRating = await Rating.find({ driverId: driverId });
+  const riverGetRating = await Rating.find({ driverId: driverId })
+    .populate({
+      path: "driverId",
+      select: "-email -mobile -createdOn -bio -DOB -ride -__v",
+      model: "User",
+    })
+    .populate({
+      path: "rideId",
+      select: "-_id -__v",
+      model: "Ride",
+    });
   console.log("riverGetRating", riverGetRating);
 
   res.status(200).json({

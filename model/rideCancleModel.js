@@ -7,23 +7,23 @@ const rideCancleSchema = new Schema({
   // Isme rideid, userId, cancel massage, rideStatus
   userId: {
     type: String,
-    required: [false, "Please Provide pickUpLocation"],
+    required: [true, "Please Provide userId"],
     trim: true,
   },
   rideid: {
     type: String,
-    required: [false, "Please Provide pickCity"],
+    required: [true, "Please Provide rideid"],
     trim: true,
   },
   //doble
   massage: {
     type: String,
-    required: [false, "Please Provide pickupLat"],
+    required: [true, "Please Provide massage"],
     trim: true,
   },
   rideStatus: {
     type: String,
-    required: [false, "Please Provide status"],
+    required: [true, "Please Provide rideStatus"],
     enum: ["Created", "Booked", "Cancel"],
     trim: true,
   },

@@ -7,18 +7,11 @@ class Email {
     this.to = user.email.emailId;
     this.otp = otp;
     this.name = `${user.firstName} ${user.lastName}`;
-    this.from = "prudour.hr@gmail.com"; //process.env.EMAIL_FROM;
+    this.from = "aaoochale@gmail.com"; //process.env.EMAIL_FROM;
   }
   newTransporter() {
     return nodemailer.createTransport({
-      // host: process.env.EMAIL_HOST,
-      // port: process.env.EMAIL_PORT,
-      // auth: {
-      //   user: process.env.EMAIL_MAILTRAP_FROM,
-      //   pass: process.env.EMAIL_MAILTRAP_PASS,
-      // },
-      service: "gmail", //hotmail
-      // host: process.env.EMAIL_HOST,
+      service: "gmail",
       secureConnection: false,
       port: 3000, //  process.env.EMAIL_PORT |
       tls: {
@@ -26,10 +19,10 @@ class Email {
         rejectUnauthorized: false,
       }, // true
       auth: {
-        user: "prudour.hr@gmail.com", // process.env.EMAIL_FROM,
-        pass: "bpcecapacyvtazrj",
+        user: "aaoochale@gmail.com", // process.env.EMAIL_FROM,
+        pass: "wodqckbohyzkboae",
       },
-      from: "nniku544@gmail.com", // process.env.EMAIL_FROM, // aaochale.gmail.com,
+      from: "aaochale@gmail.com", // process.env.EMAIL_FROM, // aaochale.gmail.com,
     });
   }
   async send(subject, body) {
@@ -40,8 +33,7 @@ class Email {
     const mailOptions = {
       from: process.env.EMAIL_FROM,
       to: this.to,
-      subject: `[Confirmation Mail] You have Successfully applied for 
-      a Recruitment Drive!`,
+      subject: `AAOOCHALE`,
       html: html,
       text: "Hello. This email is for your email verification.",
     };
