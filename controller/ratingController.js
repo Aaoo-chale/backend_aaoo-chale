@@ -141,3 +141,15 @@ exports.replyDriver = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+// get retails of rating id
+exports.getRatingDetailsById = catchAsync(async (req, res, next) => {
+  const { id } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide id"), 200);
+  const getRatingDetails = await Rating.findOne({ _id: id });
+  res.status(200).json({
+    status: true,
+    message: "Get Rating getRatingDetails Successfully",
+    getRatingDetails,
+  });
+});
