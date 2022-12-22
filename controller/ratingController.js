@@ -9,14 +9,16 @@ require("dotenv").config();
 
 exports.createRating = async (req, res, next) => {
   try {
-    const { userId, driverId, rideId, message, rating } = req.body;
+    const { userId, driverId, rideId, message, startRating } = req.body;
+    // console.log(req.body);
     const createRating = await Rating.create({
       userId: userId,
       driverId: driverId,
       rideId: rideId,
       message: message,
-      rating: rating,
+      startRating: startRating,
     });
+    console.log("createRating", createRating);
     res.status(200).json({
       status: true,
       message: "Create Rating Succussefully",
