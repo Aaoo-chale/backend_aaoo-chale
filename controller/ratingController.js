@@ -49,8 +49,10 @@ exports.getRating = catchAsync(async (req, res, next) => {
   const { rideId } = req.body;
   if (!rideId) return next(new AppErr("Pelase Provide userId"), 200);
   const getRating = await Rating.find({ rideId: rideId });
+  console.log("getRating", getRating);
   const sum = [];
   const data = getRating.map((item) => {
+    console.log(item.startRating);
     sum.push(item.startRating);
   });
   let count = 0;
@@ -76,7 +78,7 @@ exports.giveOwnRatingOfUser = catchAsync(async (req, res, next) => {
   if (!userId) return next(new AppErr("Pelase Provide userId"), 200);
   const givenRating = await Rating.find({ userId: userId })
     .populate({
-      path: "userId",
+      path: "driverId",
       select: "-email -mobile -createdOn -bio -DOB -ride -__v",
       model: "User",
     })
@@ -100,7 +102,7 @@ exports.getRatingOtherUserSend = catchAsync(async (req, res, next) => {
   if (!driverId) return next(new AppErr("Pelase Provide driverId"), 200);
   const riverGetRating = await Rating.find({ driverId: driverId })
     .populate({
-      path: "driverId",
+      path: "userId",
       select: "-email -mobile -createdOn -bio -DOB -ride -__v",
       model: "User",
     })
