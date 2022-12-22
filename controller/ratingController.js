@@ -51,7 +51,7 @@ exports.getRating = catchAsync(async (req, res, next) => {
   const getRating = await Rating.find({ rideId: rideId });
   const sum = [];
   const data = getRating.map((item) => {
-    sum.push(item.rating);
+    sum.push(item.startRating);
   });
   let count = 0;
   let total = 0;
