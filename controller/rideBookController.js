@@ -92,11 +92,18 @@ exports.getAlreadyBookedPassenger = catchAsync(async (req, res, next) => {
   const { rideId } = req.body;
   if (!rideId) return next(new AppErr("Pelase Provide userId"), 200);
 
-  const bookedPassenger = await BookedRide.find({ $and: [{ ride: rideId }, { status: "Booked" }] }).populate({
-    path: "user",
-    select: "-email -mobile -createdOn -bio -DOB -ride -__v",
-    model: "User",
-  });
+  const bookedPassenger = await BookedRide.find({ $and: [{ ride: rideId }, { status: "Booked" }] })
+    .select("-__v")
+    .populate({
+      path: "user",
+      select: "-email -mobile -createdOn -bio -DOB -ride -__v",
+      model: "User",
+    })
+    .populate({
+      path: "ride",
+      select: "-_id -__v",
+      model: "Ride",
+    });
   // .select(
   //   "-totalDistance -backSeatEmpty -passengerCount -tripPrise -extraMessage -vehicleSelect -rideApproval"
   // );
