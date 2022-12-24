@@ -5,8 +5,8 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const util = require("util");
 const logger = require("morgan");
-// CORE MODULES
 const express = require("express");
+// CORE MODULES
 
 // SELF MODULES
 const UserAuthRouter = require("./route/userAuthRoute");
@@ -29,6 +29,16 @@ const app = express();
 //   "http://superadmin.slworldjobs.com",
 //   "http://localhost:3000",
 // ];
+
+// socket io connection
+app.use(express.static(__dirname + "/public"));
+
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+});
+
+// connection
+
 app.disable("etag");
 app.use(logger("dev"));
 // app.use(cors({ credentials: true, origin: whiteList }));

@@ -1,15 +1,26 @@
 // THIRD PARTY MODULES
 const path = require("path");
+let http = require("http");
 // CORE MODULES
 require("dotenv").config({ path: path.join(__dirname, "config.env") });
-
+const express = require("express");
 // SELF MODULES
 const dbConnect = require(path.join(__dirname, "config", "db.js"));
 const app = require(path.join(__dirname, "app.js"));
 dbConnect();
-const server = app.listen(process.env.PORT, () => {
+
+http = require("http").createServer(app);
+// // app.use(express.static(__dirname + "/public"));
+
+// // html file
+// app.get("/", (req, res) => {
+//   res.sendFile(__dirname + "/index.html");
+// });
+
+const server = http.listen(process.env.PORT, () => {
   console.log(`Server is running on port number ${process.env.PORT}`);
 });
+
 server.setTimeout(29000);
 process.on("uncaughtException", (err) => {
   console.log(`Error ${err.message} ${err}`);
@@ -22,6 +33,18 @@ process.on("unhandledRejection", (err) => {
   console.log(`Shutting down the server due to Unhandled Promise Rejection`);
   server.close(() => {
     process.exit(1);
+  });
+});
+
+// socket io
+
+const io = require("socket.io")(server);
+
+io.on("connection", (socket) => {
+  console.log("Connected...");
+  socket.on("message", (msg) => {
+    console.log(msg);
+    socket.broadcast.emit("message", msg);
   });
 });
 
