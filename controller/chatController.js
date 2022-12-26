@@ -6,42 +6,86 @@ const Vehicle = require("../model/vehicleModel");
 const Chat = require("../model/chatModel");
 require("dotenv").config();
 
-// create chat controller
-exports.createChat = async (req, res, next) => {
-  // const user = req.user;
+// // // create chat controller
+// // exports.createChat = async (req, res, next) => {
+// //   // const user = req.user;
 
+// //   try {
+// //     let { senderId, createdOn, receiverId, message, status } = req.body;
+// //     const chat = await Chat.create({
+// //       senderId: senderId,
+// //       receiverId: receiverId,
+// //       message: message,
+// //       status: status,
+// //       createdOn: createdOn,
+// //     });
+// //     res.status(200).json({
+// //       status: true,
+// //       message: "Chat Create Succussefully",
+// //       data: {
+// //         chat,
+// //       },
+// //     });
+// //   } catch (error) {
+// //     next(error);
+// //   }
+// // };
+
+// // get all chat
+// exports.getAllChat = async (req, res, next) => {
+//   try {
+//     const getAllChat = await Chat.find({});
+//     res.status(200).json({
+//       status: true,
+//       message: "Get All Chat Succussefully",
+//       getAllChat,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+// create chat
+exports.createChat = async (req, res, next) => {
   try {
-    let { senderId, createdOn, receiverId, message, status } = req.body;
-    const chat = await Chat.create({
-      senderId: senderId,
-      receiverId: receiverId,
+    const { senderId, users, message } = req.body;
+    const data = await Chat.create({
       message: message,
-      status: status,
-      createdOn: createdOn,
+      users: users,
+      sender: senderId,
     });
-    res.status(200).json({
-      status: true,
-      message: "Chat Create Succussefully",
-      data: {
-        chat,
-      },
-    });
-  } catch (error) {
-    next(error);
+
+    if (data) return res.json({ data, msg: "Message added successfully." });
+    else return res.json({ msg: "Failed to add message to the database" });
+  } catch (ex) {
+    next(ex);
   }
 };
 
-// get all chat
+// get chate
 exports.getAllChat = async (req, res, next) => {
   try {
-    const getAllChat = await Chat.find({});
-    res.status(200).json({
-      status: true,
-      message: "Get All Chat Succussefully",
-      getAllChat,
-    });
-  } catch (error) {
-    next(error);
+    const { senderId, receiverId } = req.body;
+
+    const messages = await Chat.find({
+      $and: [{ "users.senderId": senderId }, { "users.receiverId": receiverId }],
+    }).select("message");
+
+    // {
+    //   users: {
+    //     $all: [senderId, receiverId],
+    //   },
+    // }
+
+    // const projectedMessages = messages.map((msg) => {
+    //   return {
+    //     fromSelf: msg.sender.toString() === senderId,
+    //     message: msg.message,
+    //   };
+    // });
+    res.json(messages);
+  } catch (ex) {
+    next(ex);
   }
 };
 
@@ -50,7 +94,7 @@ exports.getAllChatBySenderId = async (req, res, next) => {
   const { id } = req.body;
   if (!id) return next(new AppErr("Pelase Provide Sender Id"), 200);
   try {
-    const getAllChat = await Chat.find({ senderId: id });
+    const getAllChat = await Chat.find({ "users.senderId": id });
     res.status(200).json({
       status: true,
       message: "Get All Chat By Sender Id Succussefully",
@@ -66,7 +110,7 @@ exports.getAllChatByReceiverId = async (req, res, next) => {
   const { id } = req.body;
   if (!id) return next(new AppErr("Pelase Provide Receiver Id"), 200);
   try {
-    const getAllChat = await Chat.find({ receiverId: id });
+    const getAllChat = await Chat.find({ "users.receiverId": id });
     res.status(200).json({
       status: true,
       message: "Get All Chat By Receiver Id Succussefully",
@@ -83,7 +127,7 @@ exports.getAllChatBySenderIdAndReceiverId = async (req, res, next) => {
   if (!senderId) return next(new AppErr("Pelase Provide Sender Id"), 200);
   if (!receiverId) return next(new AppErr("Pelase Provide Receiver Id"), 200);
   try {
-    const getAllChat = await Chat.find({ senderId: senderId, receiverId: receiverId });
+    const getAllChat = await Chat.find({ "users.senderId": senderId, "users.receiverId": receiverId });
     res.status(200).json({
       status: true,
       message: "Get All Chat By Sender Id And Receiver Id Succussefully",
@@ -96,10 +140,11 @@ exports.getAllChatBySenderIdAndReceiverId = async (req, res, next) => {
 
 //
 exports.getUserChatHistory = async (req, res, next) => {
-  const user = req.user;
-  if (!user) return next(new AppErr("Pelase Login"), 200);
+  // const user = req.user;
+  const { id } = req.body;
+  if (!id) return next(new AppErr("Pelase Login"), 200);
   try {
-    const getAllChat = await Chat.find({ $or: [{ senderId: user._id }, { receiverId: user._id }] });
+    const getAllChat = await Chat.find({ $or: [{ "users.senderId": id }, { "users.receiverId": id }] });
     res.status(200).json({
       status: true,
       message: "Get All Chat History Succussefully",

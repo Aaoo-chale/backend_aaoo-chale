@@ -36,17 +36,57 @@ process.on("unhandledRejection", (err) => {
   });
 });
 
-// socket io
+// //socket io
 
-const io = require("socket.io")(server);
+// const io = require("socket.io")(server);
 
+// io.on("connection", (socket) => {
+//   console.log("Connected...");
+//   socket.on("message", (msg) => {
+//     console.log(msg);
+//     socket.broadcast.emit("message", msg);
+
+//     socket.on("disconnect", () => {
+//       io.emit("message", "user has left the chat");
+//     });
+//   });
+// });
+const socket = require("socket.io");
+
+const io = socket(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    credentials: true,
+  },
+});
+
+global.onlineUsers = new Map();
 io.on("connection", (socket) => {
-  console.log("Connected...");
-  socket.on("message", (msg) => {
-    console.log(msg);
-    socket.broadcast.emit("message", msg);
+  console.log("connection..", socket.id);
+  global.chatSocket = socket;
+  socket.on("add-user", (userId) => {
+    onlineUsers.set(userId, socket.id);
+  });
+
+  socket.on("send-msg", (data) => {
+    const sendUserSocket = onlineUsers.get(data.to);
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit("msg-recieve", data.msg);
+    }
   });
 });
+
+// io.on("connection", (socket) => {
+//   console.log("Connected...");
+//   socket.on("message", (msg) => {
+//     console.log(msg);
+//     socket.broadcast.emit("message", msg);
+
+//     socket.on("disconnect", () => {
+//       io.emit("message", "user has left the chat");
+//     });
+//   });
+// });
 
 // global._onlineUsers = [];
 

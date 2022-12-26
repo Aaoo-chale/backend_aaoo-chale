@@ -49,22 +49,60 @@ const rideSchema = new Schema({
     required: [false, "Please Provide dropLong"],
     trim: true,
   },
-  stopCity: {
-    type: String,
-    required: [false, "Please Provide stopCity"],
-    trim: true,
-  },
-  stopCityLat: {
-    type: String,
-    required: [false, "Please Provide stopCityLat"],
-    trim: true,
-  },
-  //doble
-  stopCityLong: {
-    type: String,
-    required: [false, "Please Provide stopCityLong"],
-    trim: true,
-  },
+  stopCity: [
+    {
+      distance: {
+        type: Number,
+        required: [false, "Please Provide distance"],
+        trim: true,
+      },
+      duration: {
+        type: String,
+        required: [false, "Please Provide duration"],
+        trim: true,
+      },
+      price: {
+        type: Number,
+        required: [false, "Please Provide price"],
+        trim: true,
+      },
+      stop_address: {
+        type: String,
+        required: [false, "Please Provide stop_address"],
+        trim: true,
+      },
+      stop_lat: {
+        type: Number,
+        required: [false, "Please Provide stop_lat"],
+        trim: true,
+      },
+      stop_lng: {
+        type: Number,
+        required: [false, "Please Provide stop_lng"],
+        trim: true,
+      },
+    },
+  ],
+
+  //   // {
+  //     "distance": "341 ",
+  //   "duration": "4 hours 43 mins",
+  //   "price": 682,
+  //   "stop_address": "Agra, Uttar Pradesh, India",
+  //   "stop_lat": 27.1766701,
+  //   "stop_lng": 78.00807449999999
+  // }
+  // stopCityLat: {
+  //   type: String,
+  //   required: [false, "Please Provide stopCityLat"],
+  //   trim: true,
+  // },
+  // //doble
+  // stopCityLong: {
+  //   type: String,
+  //   required: [false, "Please Provide stopCityLong"],
+  //   trim: true,
+  // },
   tripDate: {
     type: Date,
     default: getISTTime(new Date(Date.now())),
