@@ -279,19 +279,9 @@ exports.searchJobs = async (req, res) => {
       tripDate: { $eq: new Date(customDate) },
       passengerCount: { $gte: passengerCount },
     })
-      .select({
-        tripDate: 1,
-        passengerCount: 1,
-        totalDistance: 1,
-        pickUpLocation: 1,
-        pickupLat: 1,
-        pickLong: 1,
-        dropLocation: 1,
-        dropLat: 1,
-        dropLong: 1,
-        tripTime: 1,
-        totalTime: 1,
-      })
+      .select(
+        "tripDate passengerCount totalDistance pickUpLocation pickupLat pickLong dropLocation dropLat dropLong tripTime totalTime tripPrise"
+      )
       .populate({
         path: "userId",
         select: "firstName lastName profilePicture chattiness music smoking pets startRating",
