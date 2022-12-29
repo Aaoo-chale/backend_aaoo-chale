@@ -9,6 +9,6 @@ router.get("/getAllChatBySenderId", chatController.getAllChatBySenderId);
 router.get("/getAllChatByReceiverId", chatController.getAllChatByReceiverId);
 router.get("/getAllChatBySenderIdAndReceiverId", chatController.getAllChatBySenderIdAndReceiverId);
 router.use(userAuthController.protect);
-router.get("/getUserChatHistory", chatController.getUserChatHistory);
+// router.get("/getUserChatHistory", chatController.getUserChatHistory);
 
 module.exports = router;
