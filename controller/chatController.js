@@ -48,15 +48,17 @@ require("dotenv").config();
 // create chat
 exports.createChat = async (req, res, next) => {
   try {
-    const { senderId, users, message } = req.body;
+    const { senderId, receiverId, message } = req.body;
     const data = await Chat.create({
       message: message,
-      users: users,
-      sender: senderId,
+      senderId: senderId,
+      receiverId: receiverId,
     });
 
-    if (data) return res.json({ data, msg: "Message added successfully." });
-    else return res.json({ msg: "Failed to add message to the database" });
+    res.status(200).json({
+      status: true,
+      data,
+    });
   } catch (ex) {
     next(ex);
   }
@@ -68,22 +70,19 @@ exports.getAllChat = async (req, res, next) => {
     const { senderId, receiverId } = req.body;
 
     const messages = await Chat.find({
-      $and: [{ "users.senderId": senderId }, { "users.receiverId": receiverId }],
-    }).select("message");
-
-    // {
-    //   users: {
-    //     $all: [senderId, receiverId],
-    //   },
-    // }
-
-    // const projectedMessages = messages.map((msg) => {
-    //   return {
-    //     fromSelf: msg.sender.toString() === senderId,
-    //     message: msg.message,
-    //   };
-    // });
-    res.json(messages);
+      $all: [{ senderId: senderId }, { receiverId: receiverId }],
+    });
+    const projectedMessages = messages.map((msg) => {
+      return {
+        fromSelf: msg.senderId.toString() === senderId,
+        message: msg.message,
+      };
+    });
+    // res.json(projectedMessages);
+    res.status(200).json({
+      status: true,
+      projectedMessages,
+    });
   } catch (ex) {
     next(ex);
   }

@@ -5,6 +5,8 @@ const User = require(path.join(__dirname, "..", "model", "userModel"));
 const Vehicle = require("../model/vehicleModel");
 const Ride = require("../model/rideModel");
 const moment = require("moment");
+const mongoose = require("mongoose");
+// const mongoDb = require("mongoDb");
 
 exports.createRide = catchAsync(async (req, res, next) => {
   const {
@@ -142,426 +144,60 @@ exports.deleteRide = catchAsync(async (req, res, next) => {
   });
 });
 
-// exports.searchJobs = catchAsync(async (req, res, next) => {
-//   const user = req?.user;
-//   // const {}
-//   let queryStr = req.query;
-//   let mongoObject = {};
-//   // if (queryStr.jobType) {
-//   //   mongoObject["jobType"] = {
-//   //     $regex: queryStr.jobType,
-//   //     $options: "ixsm",
-//   //   };
-//   // }
-//   if (queryStr.location) {
-//     // if (queryStr.jobDesignation) {
-//     //   if (mongoObject["$and"]) {
-//     //     mongoObject["$and"] = [
-//     //       ...mongoObject["$and"],
-//     //       {
-//     //         jobDesignation: {
-//     //           $regex: queryStr.jobDesignation,
-//     //           $options: "ixsm",
-//     //         },
-//     //       },
-//     //     ];
-//     //   } else {
-//     //     mongoObject["$and"] = [
-//     //       {
-//     //         jobDesignation: {
-//     //           $regex: queryStr.jobDesignation,
-//     //           $options: "ixsm",
-//     //         },
-//     //       },
-//     //     ];
-//     //   }
-//     // }
-//     if (queryStr.location) {
-//       if (mongoObject["$or"]) {
-//         mongoObject["$or"] = [
-//           ...mongoObject["$or"],
-//           {
-//             pickUpLocation: {
-//               $regex: queryStr.location,
-//               $options: "ixsm",
-//             },
-//           },
-//           {
-//             dropLocation: {
-//               $regex: queryStr.location,
-//               $options: "ixsm",
-//             },
-//           },
-//           {
-//             stopCity: {
-//               $regex: queryStr.location,
-//               $options: "ixsm",
-//             },
-//           },
-//         ];
-//       } else {
-//         mongoObject["$or"] = [
-//           {
-//             pickUpLocation: {
-//               $regex: queryStr.location,
-//               $options: "ixsm",
-//             },
-//           },
-//           {
-//             dropLocation: {
-//               $regex: queryStr.location,
-//               $options: "ixsm",
-//             },
-//           },
-//           {
-//             stopCity: {
-//               $regex: queryStr.location,
-//               $options: "ixsm",
-//             },
-//           },
-//         ];
-//       }
-//     }
-//   }
-//   if (queryStr.seatCount) {
-//     mongoObject["$and"] = [
-//       { passengerCount: { $gte: queryStr.seatCount } },
-//       // { "salaryRange.toSalary": { $lte: queryStr.toSalary } },
-//     ];
-//   }
-//   // if (queryStr.fromExperience && queryStr.toExperience) {
-//   //   let salaryRange = [];
-//   //   if (mongoObject["$and"]) {
-//   //     salaryRange = mongoObject["$and"];
-//   //   }
-//   //   mongoObject["$and"] = [
-//   //     ...salaryRange,
-//   //     { "requiredExperience.fromExperience": { $gte: queryStr.fromExperience } },
-//   //     { "requiredExperience.toExperience": { $lte: queryStr.toExperience } },
-//   //   ];
-//   // }
-
-//   const searchJobs = await Ride.find({ $and: [mongoObject] });
-//   res.status(201).json({
-//     success: true,
-//     result: searchJobs.length,
-//     searchJobs,
+// nikhil search api
+// exports.searchJobs = async (req, res, next) => {
+//   const { tripDate, peopleCount, pick_upLat, pick_Long, drop_Lat, drop_Long } = req.body;
+//   const result = await Ride.find({
+//     $and: [{ passengerCount: { $gte: peopleCount } }, { tripDate: tripDate }],
+//   }).populate({
+//     path: "userId",
+//     select: "firstName lastName profilePicture chattiness music smoking pets",
+//     model: "User",
 //   });
-// });
 
-// case 'Search_Data':
-// 					if(empty($this->input->post('user_id')))
-// 					{
-// 						$output['msg'] = 'User ID is required';
-// 					}
-// 					else
-// 					{
-// 						$user_id=$this->input->post('user_id');
-// 						$tripdateinput=$this->input->post('tripdate');
-// 						$search_passenger=$this->input->post('count_passenger');
-// 						$pick_up_latitude= $this->input->post('pick_up_latitude');
-// 						$pick_up_longitude = $this->input->post('pick_up_longitude');
-// 						$drop_up_latitude = $this->input->post('drop_up_latitude');
-// 						$drop_up_longitude = $this->input->post('drop_up_longitude');
+//   // [result].forEach (->result_array() as $row)
+//   // const pickup_latitude = result.pickupLat;
+//   // console.log("pickup_latitude", pickup_latitude);
+//   // const pickup_longitude = result.pickLong;
+//   // const dropup_latitude = result.dropLat;
+//   // const dropup_longitude = result.dropLong;
+//   // const total_passenger = result.passengerCount;
+//   // find user
+//   // const user = await User.findOne({ userId: userId });
+//   // console.log(user, "user");
+//   // const userOb = {
+//   //   chattiness: user.chattiness,
+//   //   music: user.music,
+//   //   smoking: user.smoking,
+//   //   pets: user.pets,
+//   // };
 
-// 						$result=$this->db->query("select * from `creat_trip` where `user_id`!='$user_id' AND available_seet>='$search_passenger' AND `status`='true'");
-// 						if($result->num_rows())
-// 						{
-// 							$i=0;
-// 							foreach ($result->result_array() as $row)
-// 							{
-//                                 $pickup_latitude=$row['pickup_latitude'];
-// 								$pickup_longitude=$row['pickup_longitude'];
-// 								$dropup_latitude=$row['dropup_latitude'];
-// 								$dropup_longitude=$row['dropup_longitude'];
-// 								$total_passenger=$row['count_passenger'];
-// 								$available_seet=$row['available_seet'];
-// 								$driver_id=$row['user_id'];
+//   // const km = distanceCount(pickup_latitude, pickup_longitude, pick_upLat, pick_Long);
 
-// 								$value=$this->db->query("select * from `users` where id='$driver_id'")->row();
-// 								$value1=$this->db->query("select * from `my_preference` where user_id='$driver_id'")->row();
-// 								$km = $this->getDistanceWithoutGMapKey($pickup_latitude,$pickup_longitude,$pick_up_latitude, $pick_up_longitude);
-// 								$km2 = $this->getDistanceWithoutGMapKey($dropup_latitude, $dropup_longitude, $drop_up_latitude, $drop_up_longitude);
-// 								$km1= intval($km);
-// 								$km3= intval($km2);
-// 								if($km1 <= 60)
-// 								{
-// 									if($km3 <=60)
-// 									{
-// 										$trip_date=$row['tripdate'];
-// 										$trip_date1=strtotime($trip_date);
-// 										$tripdateinput1=strtotime($tripdateinput);
-// 									    $date = strtotime("+7 day", $tripdateinput1);
-// 										if($tripdateinput1<=$trip_date1  && $trip_date1<$date)
-// 										{
-// 									        $per_person_price=$row['price'];
-//                                             $Total_prise=(int)$per_person_price*(int)$search_passenger;
-// 											$Total_prise=$Total_prise - ($Total_prise % 5);
-// 									        $total_Booked_huaa_seat=$total_passenger-$available_seet;
-// 									        $row['seat_booking_count']=$total_Booked_huaa_seat;
-// 								            $row['seat_empty_count']=$available_seet;
-// 											$row['Pic_Url']='https://easygo.digitalcredits.in/uploads/document/';
-// 											$row['driver_name']=$value->first_name;
-// 											$row['driver_pic']=$value->profilepic;
-// 											$row['verified']=$value->is_verified;
-// 											$row['singing']=$value1->singing;
-// 											$row['smoking']=$value1->smoking;
-// 											$row['pet']=$value1->pet;
-// 											$row['Total_Price_of_Trip']=$Total_prise;
-// 											$data[]=$row;
-// 											$output['res']='success';
-// 											$output['msg']='Trip Found';
-// 											$output['data']=$data;
-// 										}
-// 									}
-// 								}
-// 							}
-// 							if($output['res']!='success')
-// 							{
-// 								$output['res']='error';
-// 								$output['msg']='Trip Not Found';
-// 							}
-// 						}
-// 						else
-// 						{
-// 							$output['msg']="No Record Found";
-// 						}
-// 					}
-// 					break;
+//   // const km1 = distanceCount(dropup_latitude, dropup_longitude, drop_Lat, drop_Long);
 
-// public	function getDistanceWithoutGMapKey($lat1, $long1, $lat2, $long2)
-// 		{
-// 			if (($lat1 == $lat2) && ($long1 == $long2))
-// 			{
-// 				return 0;
-// 			}
-// 			else
-// 			{
-// 				$theta = ((float)$long1 -  (float)$long2);
-// 				// if($theta<0){
-// 				// $theta = abs($theta);
-// 				// }
-// 				$dist = (sin(deg2rad((float)$lat1)) * sin(deg2rad((float)$lat2))) +  ((cos(deg2rad((float)$lat1)) * cos(deg2rad((float)$lat2))) * cos(deg2rad((float)$theta)));
-// 				$dist = acos($dist);
-// 				$dist = rad2deg($dist);
-// 				$miles = $dist * 60 * 1.1515;
-// 				return $miles * 1.609;
-// 			}
-// 		}
-// exports.getNearByUsers = (req, res, next) => {
-//   // res.send({ response: "I am alive" }).status(200);
-//   UserLocation.ensureIndexes({ location: "2dsphere" });
-//   var user = req.body.id;
-//   // console.log(req.body)
-//   let number = []
-//   const data = ({ location } = req.body);
-//   var latitude = parseFloat(data.latitude); // latitude comes through as string from url params, so it's converted to a float
-//   var longitude = parseFloat(data.longitude);
-//   UserLocation.find(
-//     {
-//       $and: [
-//         { userId: { $ne: user } },
-//         {
-//           location: {
-//             $near: {
-//               $geometry: {
-//                 type: "Point",
-//                 coordinates: [latitude, longitude],
-//               },
-//               $maxDistance: 250 * 100,
-//             },
-//           },
-//         },
-//       ],
-//     },
-//     function (err, locations) {
-//       if (err) {
-//         res.send(err);
-//       } else {
-//         const gettedUsers = []
-//         req.body.help.map((help) => {
-//           locations.map((user) => {
-//             if (user.userId.userType.name === 'Service Provider') {
-//               if (user.userId.typeOfServices) {
-//                 user.userId.typeOfServices.map((services) => {
-//                   if (services === help) {
-//                     gettedUsers.push(user)
-//                   }
-//                 })
-//               }
-//             }
-//             else {
-//               if (user.userId.userType.name === "Driver") {
-//                 req.body.help.map((item) => {
-//                   if (item == 'DRIVER') {
-//                     gettedUsers.push(user)
-//                   }
-//                 })
-//               }
-//             }
-//           })
-//         })
-//         if (gettedUsers) {
-//           gettedUsers.map((users) => {
-//             sendPushNotification1(gettedUsers, "Someone need Help", res.firstName + ' ' + res.lastName + ' Need Help')
-//           })
-//         }
-//         // locations.map((item) => {
-//         //   let contactNo = `+91` + item.userId.mobileNo
-//         //   number.push(contactNo)
-//         // })
-//         // if (number) {
-//         //   number.map(async (item) => {
-//         //     await sendTextMessage(item)
-//         //   })
-//         // }
-//         return res.status(200).json(gettedUsers);
-//       }
-//     }
-//   )
-//     .populate("groupId")
-//     .populate("userId")
-//     .populate({
-//       path: "userId",
-//       populate: {
-//         path: "userType",
-//       },
-//     });
-// };
-
-exports.searchJobs = async (req, res, next) => {
-  const { tripDate, peopleCount, pick_upLat, pick_Long, drop_Lat, drop_Long } = req.body;
-  const result = await Ride.find({
-    $and: [{ passengerCount: { $gte: peopleCount } }, { tripDate: tripDate }],
-  }).populate({
-    path: "userId",
-    select: "firstName lastName profilePicture chattiness music smoking pets",
-    model: "User",
-  });
-
-  // [result].forEach (->result_array() as $row)
-  // const pickup_latitude = result.pickupLat;
-  // console.log("pickup_latitude", pickup_latitude);
-  // const pickup_longitude = result.pickLong;
-  // const dropup_latitude = result.dropLat;
-  // const dropup_longitude = result.dropLong;
-  // const total_passenger = result.passengerCount;
-  // find user
-  // const user = await User.findOne({ userId: userId });
-  // console.log(user, "user");
-  // const userOb = {
-  //   chattiness: user.chattiness,
-  //   music: user.music,
-  //   smoking: user.smoking,
-  //   pets: user.pets,
-  // };
-
-  // const km = distanceCount(pickup_latitude, pickup_longitude, pick_upLat, pick_Long);
-
-  // const km1 = distanceCount(dropup_latitude, dropup_longitude, drop_Lat, drop_Long);
-
-  // if (km <= 60) {
-  //   if (km1 <= 60) {
-  //     const trip_date = new Date(tripDate);
-  //     // const tripdateinput1 = new Date(tripdateinput);
-  //     const date = tripdateinput1;
-  //     if (trip_date <= date) {
-  //       const per_person_price = result.tripPrise;
-  //       let totalPrise = per_person_price * passengerCount;
-  //       totalPrise = totalPrise - (totalPrise % 5);
-  //       const total_Booked_huaa_seat = total_passenger - searchCount;
-  //       console.log((result.backSeatEmpty = searchCount));
-  //       console.log((result.passengerCount = total_Booked_huaa_seat));
-  //       result.tripPrise = totalPrise;
-  //       var data = await result.save();
-  //     }
-  //   }
-  // }
-  res.status(200).json({
-    success: true,
-    length: result.length,
-    result,
-  });
-};
-
-// exports.getNearByUsers = (req, res, next) => {
-//   // res.send({ response: "I am alive" }).status(200);
-//   UserLocation.ensureIndexes({ location: "2dsphere" });
-//   var user = req.body.id;
-//   // console.log(req.body)
-//   let number = [];
-//   const data = ({ location } = req.body);
-//   var latitude = parseFloat(data.latitude); // latitude comes through as string from url params, so it's converted to a float
-//   var longitude = parseFloat(data.longitude);
-//   UserLocation.find(
-//     {
-//       $and: [
-//         { userId: { $ne: user } },
-//         {
-//           location: {
-//             $near: {
-//               $geometry: {
-//                 type: "Point",
-//                 coordinates: [latitude, longitude],
-//               },
-//               $maxDistance: 250 * 100,
-//             },
-//           },
-//         },
-//       ],
-//     },
-//     function (err, locations) {
-//       if (err) {
-//         res.send(err);
-//       } else {
-//         const gettedUsers = [];
-//         req.body.help.map((help) => {
-//           locations.map((user) => {
-//             if (user.userId.userType.name === "Service Provider") {
-//               if (user.userId.typeOfServices) {
-//                 user.userId.typeOfServices.map((services) => {
-//                   if (services === help) {
-//                     gettedUsers.push(user);
-//                   }
-//                 });
-//               }
-//             } else {
-//               if (user.userId.userType.name === "Driver") {
-//                 req.body.help.map((item) => {
-//                   if (item == "DRIVER") {
-//                     gettedUsers.push(user);
-//                   }
-//                 });
-//               }
-//             }
-//           });
-//         });
-//         if (gettedUsers) {
-//           gettedUsers.map((users) => {
-//             sendPushNotification1(gettedUsers, "Someone need Help", res.firstName + " " + res.lastName + " Need Help");
-//           });
-//         }
-//         // locations.map((item) => {
-//         //   let contactNo = `+91` + item.userId.mobileNo
-//         //   number.push(contactNo)
-//         // })
-//         // if (number) {
-//         //   number.map(async (item) => {
-//         //     await sendTextMessage(item)
-//         //   })
-//         // }
-//         return res.status(200).json(gettedUsers);
-//       }
-//     }
-//   )
-//     .populate("groupId")
-//     .populate("userId")
-//     .populate({
-//       path: "userId",
-//       populate: {
-//         path: "userType",
-//       },
-//     });
+//   // if (km <= 60) {
+//   //   if (km1 <= 60) {
+//   //     const trip_date = new Date(tripDate);
+//   //     // const tripdateinput1 = new Date(tripdateinput);
+//   //     const date = tripdateinput1;
+//   //     if (trip_date <= date) {
+//   //       const per_person_price = result.tripPrise;
+//   //       let totalPrise = per_person_price * passengerCount;
+//   //       totalPrise = totalPrise - (totalPrise % 5);
+//   //       const total_Booked_huaa_seat = total_passenger - searchCount;
+//   //       console.log((result.backSeatEmpty = searchCount));
+//   //       console.log((result.passengerCount = total_Booked_huaa_seat));
+//   //       result.tripPrise = totalPrise;
+//   //       var data = await result.save();
+//   //     }
+//   //   }
+//   // }
+//   res.status(200).json({
+//     success: true,
+//     length: result.length,
+//     result,
+//   });
 // };
 
 exports.updateRideDetails = catchAsync(async (req, res, next) => {
@@ -630,3 +266,58 @@ exports.changeRideStatus = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+// const { ObjectId } = require("mongoDb");
+exports.searchJobs = async (req, res) => {
+  try {
+    let { pickupLat, pickLong, dropLat, dropLong, userId, tripDate, passengerCount } = req.body;
+    const distance = distanceCount(pickupLat, pickLong, dropLat, dropLong);
+    const queryId = userId;
+    const customDate = tripDate.toString().split("T")[0] + "T00:00:00.000+00:00";
+    const result = await Ride.find({
+      userId: { $ne: queryId },
+      tripDate: { $eq: new Date(customDate) },
+      passengerCount: { $gte: passengerCount },
+    })
+      .select({
+        tripDate: 1,
+        passengerCount: 1,
+        totalDistance: 1,
+        pickUpLocation: 1,
+        pickupLat: 1,
+        pickLong: 1,
+        dropLocation: 1,
+        dropLat: 1,
+        dropLong: 1,
+        tripTime: 1,
+        totalTime: 1,
+      })
+      .populate({
+        path: "userId",
+        select: "firstName lastName profilePicture chattiness music smoking pets startRating",
+        model: "User",
+      });
+    const R = 6371;
+    let array = [];
+    result.map((item, index) => {
+      const dLat = (item.pickupLat - pickupLat) * (Math.PI / 180); // deg2rad below
+      const dLon = (item.pickLong - pickLong) * (Math.PI / 180);
+      const a =
+        0.5 -
+        Math.cos(dLat) / 2 +
+        (Math.cos(pickupLat * (Math.PI / 180)) * Math.cos(item.pickupLat * (Math.PI / 180)) * (1 - Math.cos(dLon))) / 2;
+      const distanc = R * 2 * Math.asin(Math.sqrt(a));
+      if (distanc <= 70) {
+        array.push(item);
+      }
+    });
+    res.status(200).send({
+      success: true,
+      msg: "All details",
+      length: array.length,
+      result: array,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};

@@ -6,6 +6,7 @@ const cors = require("cors");
 const util = require("util");
 const logger = require("morgan");
 const express = require("express");
+const fileUpload = require("express-fileupload");
 // CORE MODULES
 
 // SELF MODULES
@@ -17,6 +18,7 @@ const chatRoute = require("./route/chatRoute");
 const rideBookedRoute = require("./route/rideBookedRoute");
 const reportRoute = require("./route/reportRoute");
 const ratingRoute = require("./route/ratingRoute");
+const documentRoute = require("./route/documentRoute");
 
 const requestBodyLogger = require(path.join(__dirname, "helpers", "winstonLogger"));
 
@@ -32,6 +34,7 @@ const app = express();
 
 // socket io connection
 app.use(express.static(__dirname + "/public"));
+app.use(fileUpload());
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
@@ -74,6 +77,7 @@ app.use("/aaoochale/UserAuth/chat", chatRoute);
 app.use("/aaoochale/UserAuth/bookedRide", rideBookedRoute);
 app.use("/aaoochale/UserAuth/report", reportRoute);
 app.use("/aaoochale/UserAuth/rating", ratingRoute);
+app.use("/aaoochale/UserAuth/document", documentRoute);
 
 // LANDING PAGE
 app.use(globalErrorHandler);

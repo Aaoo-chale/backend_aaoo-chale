@@ -5,12 +5,14 @@ const User = require("../model/userModel");
 const Vehicle = require("../model/vehicleModel");
 const Chat = require("../model/chatModel");
 const Rating = require("../model/ratingModel");
+const Notification = require("../model/notificationSchema");
+const notificationController = require("../notification/notificationController");
 require("dotenv").config();
 
 exports.createRating = async (req, res, next) => {
   try {
     const { userId, driverId, rideId, message, startRating } = req.body;
-    // console.log(req.body);
+    console.log(req.body);
     const createRating = await Rating.create({
       userId: userId,
       driverId: driverId,
@@ -18,7 +20,14 @@ exports.createRating = async (req, res, next) => {
       message: message,
       startRating: startRating,
     });
+    // await notificationController.postNotification(
+    //   { user: userId },
+    //   { user: driverId },
+    //   "Rating",
+    //   `Passender Give a rating`
+    // );
     console.log("createRating", createRating);
+    // await data.save();
     res.status(200).json({
       status: true,
       message: "Create Rating Succussefully",
