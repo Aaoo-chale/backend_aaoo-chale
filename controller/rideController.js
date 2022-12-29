@@ -4,6 +4,7 @@ const AppErr = require(path.join(__dirname, "..", "utils", "AppErr"));
 const User = require(path.join(__dirname, "..", "model", "userModel"));
 const Vehicle = require("../model/vehicleModel");
 const Ride = require("../model/rideModel");
+const Rating = require("../model/ratingModel");
 const moment = require("moment");
 const mongoose = require("mongoose");
 // const mongoDb = require("mongoDb");
@@ -270,10 +271,12 @@ exports.changeRideStatus = catchAsync(async (req, res, next) => {
 // const { ObjectId } = require("mongoDb");
 exports.searchJobs = async (req, res) => {
   try {
-    let { pickupLat, pickLong, dropLat, dropLong, userId, tripDate, passengerCount } = req.body;
+    let { pickupLat, pickLong, dropLat, dropLong, userId, tripDate, passengerCount, rideId } = req.body;
     const distance = distanceCount(pickupLat, pickLong, dropLat, dropLong);
     const queryId = userId;
     const customDate = tripDate.toString().split("T")[0] + "T00:00:00.000+00:00";
+    // const rating = await Rating.findOne({ userId: userId }).select("startRating");
+    // console.log("Rating", rating);
     const result = await Ride.find({
       userId: { $ne: queryId },
       tripDate: { $eq: new Date(customDate) },
@@ -301,11 +304,15 @@ exports.searchJobs = async (req, res) => {
         array.push(item);
       }
     });
+    const obj = {
+      result,
+      Rating,
+    };
     res.status(200).send({
       success: true,
       msg: "All details",
       length: array.length,
-      result: array,
+      obj,
     });
   } catch (error) {
     console.log(error);

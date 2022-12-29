@@ -74,11 +74,11 @@ exports.getAllChat = async (req, res, next) => {
     });
     const projectedMessages = messages.map((msg) => {
       return {
-        fromSelf: msg.senderId.toString() === senderId,
+        fromSelf: msg.senderId == senderId,
         message: msg.message,
       };
     });
-    // res.json(projectedMessages);
+    console.log(projectedMessages, "projectedMessages");
     res.status(200).json({
       status: true,
       projectedMessages,
