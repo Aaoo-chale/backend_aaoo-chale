@@ -113,7 +113,11 @@ exports.getAllChatByReceiverId = async (req, res, next) => {
   const { id } = req.body;
   if (!id) return next(new AppErr("Pelase Provide Receiver Id"), 200);
   try {
-    const getAllChat = await Chat.find({ receiverId: id });
+    const getAllChat = await Chat.find({ receiverId: id }).populate({
+      path: "senderId",
+      select: "firstName lastName profilePicture chattiness music smoking pets startRating",
+      model: "User",
+    });
     res.status(200).json({
       status: true,
       message: "Get All Chat By Receiver Id Succussefully",
