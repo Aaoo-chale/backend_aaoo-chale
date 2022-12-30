@@ -71,17 +71,28 @@ exports.getAllChat = async (req, res, next) => {
 
     const messages = await Chat.find({
       $all: [{ senderId: senderId }, { receiverId: receiverId }],
-    });
-    const projectedMessages = messages.map((msg) => {
-      return {
-        fromSelf: msg.senderId == senderId,
-        message: msg.message,
-      };
-    });
-    console.log(projectedMessages, "projectedMessages");
+    })
+      .populate({
+        path: "senderId",
+        select: "firstName lastName",
+        model: "User",
+      })
+      .populate({
+        path: "receiverId",
+        select: "firstName lastName",
+        model: "User",
+      });
+    // const projectedMessages = messages.map((msg) => {
+    //   return {
+    //     fromSelf: msg.senderId == senderId,
+    //     message: msg.message,
+    //     time: msg.createdOn,
+    //   };
+    // });
+    // console.log(projectedMessages, "projectedMessages");
     res.status(200).json({
       status: true,
-      projectedMessages,
+      messages,
     });
   } catch (ex) {
     next(ex);
@@ -94,8 +105,8 @@ exports.getAllChatBySenderId = async (req, res, next) => {
   if (!id) return next(new AppErr("Pelase Provide Sender Id"), 200);
   try {
     const getAllChat = await Chat.find({ senderId: id }).populate({
-      path: "senderId",
-      select: "firstName lastName profilePicture chattiness music smoking pets startRating",
+      path: "receiverId",
+      select: "firstName lastName profilePicture",
       model: "User",
     });
     res.status(200).json({
@@ -115,7 +126,7 @@ exports.getAllChatByReceiverId = async (req, res, next) => {
   try {
     const getAllChat = await Chat.find({ receiverId: id }).populate({
       path: "senderId",
-      select: "firstName lastName profilePicture chattiness music smoking pets startRating",
+      select: "firstName lastName profilePicture",
       model: "User",
     });
     res.status(200).json({
