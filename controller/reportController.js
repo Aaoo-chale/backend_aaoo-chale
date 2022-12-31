@@ -5,6 +5,8 @@ const User = require("../model/userModel");
 const Vehicle = require("../model/vehicleModel");
 const Chat = require("../model/chatModel");
 const Report = require("../model/reportModel");
+const notificationController = require("../notification/notificationController");
+
 require("dotenv").config();
 
 exports.createReport = async (req, res, next) => {
@@ -18,6 +20,7 @@ exports.createReport = async (req, res, next) => {
       preDefindMessage: preDefindMessage,
       userMessage: userMessage,
     });
+    await notificationController.postNotification(userId, reportUId, "Report", "one user report.... other user");
     res.status(200).json({
       status: true,
       message: " Create Report Succussefully",

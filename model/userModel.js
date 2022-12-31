@@ -26,8 +26,9 @@ const userModel = new Schema(
       type: String,
       required: [false, "Please Provide First Name"],
     },
-    verified: {
-      type: Boolean,
+    userStatus: {
+      type: String,
+      enum: ["Verified", "Unverified"],
       required: [false, "Please Provide verified"],
     },
 

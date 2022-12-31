@@ -20,14 +20,7 @@ exports.createRating = async (req, res, next) => {
       message: message,
       startRating: startRating,
     });
-    // await notificationController.postNotification(
-    //   { user: userId },
-    //   { user: driverId },
-    //   "Rating",
-    //   `Passender Give a rating`
-    // );
-    console.log("createRating", createRating);
-    // await data.save();
+    await notificationController.postNotification(userId, driverId, "Rating", "Passender Give a rating");
     res.status(200).json({
       status: true,
       message: "Create Rating Succussefully",
@@ -132,7 +125,7 @@ exports.getRatingOtherUserSend = catchAsync(async (req, res, next) => {
 
 // reply driver update
 exports.replyDriver = catchAsync(async (req, res, next) => {
-  const { id, reply } = req.body;
+  const { id, sender, receiver, reply } = req.body;
   if (!id || !reply) return next(new AppErr("Pelase Provide id and reply"), 200);
 
   const replyDriver = await Rating.findByIdAndUpdate(
@@ -141,7 +134,9 @@ exports.replyDriver = catchAsync(async (req, res, next) => {
     { runValidator: true, useFindAndModify: false, new: true }
   );
   // save data
+  console.log(replyDriver, "replyDriver");
   await replyDriver.save();
+  await notificationController.postNotification(sender, receiver, "Reply", "Driver Reply your rating");
   res.status(200).json({
     status: true,
     data: {

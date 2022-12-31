@@ -61,6 +61,15 @@ const io = socket(server, {
 });
 
 global.onlineUsers = new Map();
+
+// const addNewUser = (username, socketId) => {
+//   !global.onlineUsers.some((user) => user.username === username) && global.onlineUsers.push({ username, socketId });
+//   console.log("ONLINEUSERS", global.onlineUsers, username, socketId);
+// };
+
+// const removeUser = (socketId) => {
+//   global.onlineUsers = global.onlineUsers.filter((user) => user.socketId !== socketId);
+// };
 io.on("connection", (socket) => {
   console.log("connection..", socket.id);
   global.chatSocket = socket;
@@ -69,6 +78,15 @@ io.on("connection", (socket) => {
     if (sendUserSocket) {
       socket.to(sendUserSocket).emit("msg-recieve", data.msg);
     }
+  });
+
+  socket.on("getNotification", (data) => {
+    const sendUserSocket = onlineUsers.get(data.to);
+    socket.to(sendUserSocket).emit("getNotification", data.msg);
+  });
+
+  socket.on("disconnect", () => {
+    socket.delete(socket.id);
   });
 });
 

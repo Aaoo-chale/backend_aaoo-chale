@@ -48,11 +48,13 @@ require("dotenv").config();
 // create chat
 exports.createChat = async (req, res, next) => {
   try {
-    const { senderId, receiverId, message } = req.body;
+    const { senderId, receiverId, rideId, status, message } = req.body;
     const data = await Chat.create({
       message: message,
       senderId: senderId,
       receiverId: receiverId,
+      rideId: rideId,
+      status: status,
     });
 
     res.status(200).json({
@@ -67,10 +69,10 @@ exports.createChat = async (req, res, next) => {
 // get chate
 exports.getAllChat = async (req, res, next) => {
   try {
-    const { senderId, receiverId } = req.body;
+    const { senderId, receiverId, rideId } = req.body;
 
     const messages = await Chat.find({
-      $all: [{ senderId: senderId }, { receiverId: receiverId }],
+      $and: [{ senderId: senderId }, { receiverId: receiverId }, { rideId: rideId }],
     })
       .populate({
         path: "senderId",

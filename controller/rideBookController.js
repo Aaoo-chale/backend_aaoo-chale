@@ -5,13 +5,16 @@ const User = require(path.join(__dirname, "..", "model", "userModel"));
 const Vehicle = require("../model/vehicleModel");
 const Ride = require("../model/rideModel");
 const BookedRide = require("../model/rideBookingModel");
+const notificationController = require("../notification/notificationController");
+
 // const moment = require("moment");
 
 exports.bookedRide = async (req, res, next) => {
   //   const user = req.user;
   //   console.log(user);
   try {
-    let { userId, rideId, status } = req.body;
+    // add receiver
+    let { userId, receiver, rideId, status } = req.body;
     if (!userId || !rideId) return next(new AppErr("Please Provide all details"), 200);
 
     const bookedRide = await BookedRide.create({
@@ -19,7 +22,8 @@ exports.bookedRide = async (req, res, next) => {
       ride: rideId,
       status: status,
     });
-    console.log(bookedRide);
+    await notificationController.postNotification(userId, receiver, "BookedRide", "User Booker Ride....");
+
     res.status(200).json({
       status: true,
       message: "Booked Ride Succussefully",
@@ -34,9 +38,8 @@ exports.bookedRide = async (req, res, next) => {
 
 // update booked ride
 exports.cancleBookedRide = catchAsync(async (req, res, next) => {
-  // const user = req.user;
-  // const { id } = req.body;
-  const { id, status } = req.body;
+  // add sender id and receiver id
+  const { id, sender, receiver, status } = req.body;
 
   if (!id || !status) return next(new AppErr("Pelase Provide User Id"), 200);
   const updateRide = await BookedRide.findByIdAndUpdate(
@@ -46,6 +49,12 @@ exports.cancleBookedRide = catchAsync(async (req, res, next) => {
   );
   // save data
   await updateRide.save();
+  await notificationController.postNotification(
+    sender,
+    receiver,
+    "cancleBookedRide",
+    "User Cancle BookedRide Ride...."
+  );
   res.status(200).json({
     status: true,
     data: {
