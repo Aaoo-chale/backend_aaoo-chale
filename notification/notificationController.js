@@ -16,7 +16,7 @@ const getUser = (username) => {
 };
 
 // console.log("getUser", getUser);
-module.exports.postNotification = async (sender, receiver, type) => {
+module.exports.postNotification = async (sender, receiver, type, message) => {
   console.log("length", global?.onlineUsers?.length);
   if (global?.onlineUsers?.length) {
     // console.log(global?._onlineUsers);
@@ -30,6 +30,7 @@ module.exports.postNotification = async (sender, receiver, type) => {
         sender: sender,
         receiver: receiver,
         type: type,
+        message: message,
         createdOn: getISTTime(new Date(Date.now())),
       });
     }

@@ -92,7 +92,7 @@ io.on("connection", (socket) => {
 
   socket.on("newUser", (UserId) => {
     addNewUser(UserId, socket.id);
-    console.log("addNewUser(UserId, socket.id", addNewUser(UserId, socket.id));
+    // console.log("addNewUser(UserId, socket.id", addNewUser(UserId, socket.id));
     socket.emit("getNotification", "NOTIFICATION");
     // const sendUserSocket = onlineUsers.get(data.to);
     // socket.to(sendUserSocket).emit("getNotification", data.msg);
