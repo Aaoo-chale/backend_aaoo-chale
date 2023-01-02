@@ -44,7 +44,7 @@ module.exports.postNotification = async (sender, receiver, type, message) => {
   console.log(notification, "notification");
 };
 exports.getAllNotifications = async (req, res, next) => {
-  const user = req.user;
+  // const user = req.user;
   const { id } = req.body;
   let page = req.query.pageNo || 1;
   let limit = req.query.limit || 1000;
