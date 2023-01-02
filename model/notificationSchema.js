@@ -24,12 +24,12 @@ const NotificationSchema = new Schema(
     //   default: "UNREAD",
     //   enum: ["READ", "UNREAD"],
     // },
-    webUrl: {
-      type: String,
-    },
-    mobileUrl: {
-      type: String,
-    },
+    // webUrl: {
+    //   type: String,
+    // },
+    // mobileUrl: {
+    //   type: String,
+    // },
     createdOn: {
       type: Date,
       default: getISTTime(new Date(Date.now())),

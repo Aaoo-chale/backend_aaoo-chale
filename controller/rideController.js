@@ -269,10 +269,78 @@ exports.changeRideStatus = catchAsync(async (req, res, next) => {
 });
 
 // const { ObjectId } = require("mongoDb");
+// exports.searchJobs = async (req, res) => {
+//   try {
+//     let { pickupLat, pickLong, dropLat, dropLong, userId, tripDate, passengerCount, rideId } = req.body;
+//     const distance = distanceCount(pickupLat, pickLong, dropLat, dropLong);
+//     const queryId = userId;
+//     const customDate = tripDate.toString().split("T")[0] + "T00:00:00.000+00:00";
+//     // const rating = await Rating.findOne({ userId: userId }).select("startRating");
+//     // console.log("Rating", rating);
+//     const result = await Ride.find({
+//       userId: { $ne: queryId },
+//       tripDate: { $eq: new Date(customDate) },
+//       passengerCount: { $gte: passengerCount },
+//     })
+//       .select(
+//         "tripDate passengerCount totalDistance pickUpLocation pickupLat pickLong dropLocation dropLat dropLong tripTime totalTime tripPrise"
+//       )
+//       .populate({
+//         path: "userId",
+//         select: "firstName lastName profilePicture chattiness music smoking pets startRating",
+//         model: "User",
+//       });
+//     const R = 6371;
+//     let array = [];
+//     result.map((item, index) => {
+//       const dLat = (item.pickupLat - pickupLat) * (Math.PI / 180); // deg2rad below
+//       const dLon = (item.pickLong - pickLong) * (Math.PI / 180);
+//       /////
+//       const droLat = (item.dropLat - dropLat) * (Math.PI / 180); // deg2rad below
+//       const droLon = (item.dropLong - dropLong) * (Math.PI / 180);
+//       const a =
+//         0.5 -
+//         Math.cos(dLat) / 2 +
+//         (Math.cos(pickupLat * (Math.PI / 180)) * Math.cos(item.pickupLat * (Math.PI / 180)) * (1 - Math.cos(dLon))) / 2;
+
+//       const distanc = R * 2 * Math.asin(Math.sqrt(a));
+//       console.log("distanc", distanc);
+//       console.log("aaaaaaaaaaaaa", a);
+//       /////
+//       const b =
+//         0.5 -
+//         Math.cos(droLat) / 2 +
+//         (Math.cos(dropLat * (Math.PI / 180)) * Math.cos(item.dropLat * (Math.PI / 180)) * (1 - Math.cos(droLon))) / 2;
+//       const distanc1 = R * 2 * Math.asin(Math.sqrt(b));
+//       console.log("bbbbbbbbbbb", b);
+//       console.log("distanc1", distanc1);
+
+//       if (distanc <= 70) {
+//         // array.push(item);
+//         if (distanc1 <= 70) {
+//           array.push(item);
+//         }
+//       }
+//     });
+//     console.log("array", array);
+//     const obj = {
+//       result,
+//       Rating,
+//     };
+//     res.status(200).send({
+//       success: true,
+//       msg: "All details",
+//       length: array.length,
+//       obj,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
 exports.searchJobs = async (req, res) => {
   try {
     let { pickupLat, pickLong, dropLat, dropLong, userId, tripDate, passengerCount, rideId } = req.body;
-    const distance = distanceCount(pickupLat, pickLong, dropLat, dropLong);
     const queryId = userId;
     const customDate = tripDate.toString().split("T")[0] + "T00:00:00.000+00:00";
     // const rating = await Rating.findOne({ userId: userId }).select("startRating");
@@ -292,27 +360,48 @@ exports.searchJobs = async (req, res) => {
       });
     const R = 6371;
     let array = [];
+    let array1 = [];
+    let status = false;
+    let msg = " ";
     result.map((item, index) => {
       const dLat = (item.pickupLat - pickupLat) * (Math.PI / 180); // deg2rad below
       const dLon = (item.pickLong - pickLong) * (Math.PI / 180);
+      const droLat = (item.dropLat - dropLat) * (Math.PI / 180); // deg2rad below
+      const droLon = (item.dropLong - dropLong) * (Math.PI / 180);
       const a =
         0.5 -
         Math.cos(dLat) / 2 +
         (Math.cos(pickupLat * (Math.PI / 180)) * Math.cos(item.pickupLat * (Math.PI / 180)) * (1 - Math.cos(dLon))) / 2;
       const distanc = R * 2 * Math.asin(Math.sqrt(a));
-      if (distanc <= 70) {
+      const b =
+        0.5 -
+        Math.cos(droLat) / 2 +
+        (Math.cos(dropLat * (Math.PI / 180)) * Math.cos(item.dropLat * (Math.PI / 180)) * (1 - Math.cos(droLon))) / 2;
+      const distanc1 = R * 2 * Math.asin(Math.sqrt(b));
+      console.log(b, "bbbbbbbbbbbbbbbbbbbb");
+
+      console.log(distanc1, "distanc1");
+      if (distanc <= 90 && distanc1 <= 90) {
         array.push(item);
+        array1.push("pickup", distanc, "dropoff", distanc1);
+        status = true;
+        msg = "Search Result Found";
+      } else {
+        array.push();
+        array1.push("pickup", distanc, "dropoff", distanc1);
+        status = false;
+        msg = "Search Result Not Found";
       }
     });
     const obj = {
-      result,
+      array,
       Rating,
     };
     res.status(200).send({
-      success: true,
-      msg: "All details",
-      length: array.length,
-      obj,
+      success: status,
+      msg: msg,
+      both_distance: array1,
+      Search_Data: array,
     });
   } catch (error) {
     console.log(error);

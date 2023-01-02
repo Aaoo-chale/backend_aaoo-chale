@@ -60,16 +60,16 @@ const io = socket(server, {
   },
 });
 
-global.onlineUsers = new Map();
+global.onlineUsers = [];
 
-// const addNewUser = (username, socketId) => {
-//   !global.onlineUsers.some((user) => user.username === username) && global.onlineUsers.push({ username, socketId });
-//   console.log("ONLINEUSERS", global.onlineUsers, username, socketId);
-// };
+const addNewUser = (username, socketId) => {
+  !global.onlineUsers.some((user) => user.username === username) && global.onlineUsers.push({ username, socketId });
+  console.log("ONLINEUSERS", global.onlineUsers, username, socketId);
+};
 
-// const removeUser = (socketId) => {
-//   global.onlineUsers = global.onlineUsers.filter((user) => user.socketId !== socketId);
-// };
+const removeUser = (socketId) => {
+  global.onlineUsers = global.onlineUsers.filter((user) => user.socketId !== socketId);
+};
 io.on("connection", (socket) => {
   console.log("connection..", socket.id);
   global.chatSocket = socket;
@@ -80,15 +80,18 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("getNotification", (data) => {
-    const sendUserSocket = onlineUsers.get(data.to);
-    socket.to(sendUserSocket).emit("getNotification", data.msg);
+  socket.on("newUser", (UserId) => {
+    addNewUser(UserId, socket.id);
+    socket.emit("getNotification", "NOTIFICATION");
+    // const sendUserSocket = onlineUsers.get(data.to);
+    // socket.to(sendUserSocket).emit("getNotification", data.msg);
   });
-
   socket.on("disconnect", () => {
-    socket.delete(socket.id);
+    removeUser(socket.id);
   });
 });
+
+global.io = io;
 
 // createRating
 
@@ -133,9 +136,9 @@ io.on("connection", (socket) => {
 //     sock.emit("getNotification", "NOTIFICATION");
 //   });
 
-//   sock.on("disconnect", () => {
-//     removeUser(sock.id);
-//   });
+// sock.on("disconnect", () => {
+//   removeUser(sock.id);
+// });
 // });
 
 // global._io = io;

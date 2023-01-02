@@ -1,8 +1,8 @@
 const path = require("path");
-const catchAsync = require("../utils/catchAsync"); //path.join(__dirname, "..", "..", "utils", "catchAsync"));
-const AppErr = require("../utils/AppErr"); //path.join(__dirname, "..", "..", "utils", "AppErr"));
+const catchAsync = require("../utils/catchAsync");
+const AppErr = require("../utils/AppErr");
 const Notification = require("../model/notificationSchema");
-const getISTTime = require("../helpers/getISTTime"); //path.join(__dirname, "..", "..", "helpers", "getISTTime"));
+const getISTTime = require("../helpers/getISTTime");
 const Rating = require("../model/ratingModel");
 const { web, mobile } = require("../helpers/notificationRe");
 // // HELPER FUNCTION
@@ -14,20 +14,22 @@ const getUser = (username) => {
     return user.username == username.toString();
   });
 };
+
+// console.log("getUser", getUser);
 module.exports.postNotification = async (sender, receiver, type, message) => {
-  console.log("length", global?._onlineUsers?.length);
-  if (global?._onlineUsers?.length) {
+  console.log("length", global?.onlineUsers);
+  if (global?.onlineUsers) {
     // console.log(global?._onlineUsers);
-    const io = global._io;
-    const receive = getUser(receiver.user);
+    const io = global.io;
+    // const receive = receiver;
+    const receive = getUser(receiver);
     // console.log("receive", receive);
     if (receive) {
+      // console.log("okkkkkkkkkkkk");
       io.to(receive.socketId).emit("getNotification", {
         sender: sender,
         receiver: receiver,
         type: type,
-        webUrl: web,
-        mobileUrl: mobile,
         message: message,
         createdOn: getISTTime(new Date(Date.now())),
       });
@@ -64,6 +66,7 @@ exports.getNotificationById = catchAsync(async (req, res, next) => {
     data: notificationById,
   });
 });
+
 exports.deleteNotifications = catchAsync(async (req, res, next) => {
   const { id } = req.query;
   const deleteNotification = await Notification.findByIdAndDelete({ _id: id });

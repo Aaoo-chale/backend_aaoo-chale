@@ -104,7 +104,7 @@ const s3 = new aws.S3({
 module.exports.upload = multer({
   // fileFilter,
   storage: multerS3({
-    //acl: "public-read",
+    //acl: "public-read" process.env.AWS_S3_BUCKET,
     s3,
     bucket: process.env.AWS_S3_BUCKET,
     metadata: function (req, file, cb) {
@@ -258,3 +258,19 @@ exports.updateVehicleDetails = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+// {
+//   "Version": "2012-10-17",
+//   "Statement": [
+//       {
+//           "Sid": "1",
+//           "Effect": "Allow",
+//           "Principal": "*",
+//           "Action": "s3:*",
+//           "Resource": [
+//               "arn:aws:s3:::aaoochale-vehicle",
+//               "arn:aws:s3:::aaoochale-vehicle/*"
+//           ]
+//       }
+//   ]
+// }
