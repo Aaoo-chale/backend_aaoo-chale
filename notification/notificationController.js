@@ -43,6 +43,33 @@ module.exports.postNotification = async (sender, receiver, type, message) => {
   });
   console.log(notification, "notification");
 };
+
+/// self
+module.exports.postNotificationSelf = async (sender, type, message) => {
+  console.log("length", global?.onlineUsers?.length);
+  if (global?.onlineUsers?.length) {
+    // console.log(global?._onlineUsers);
+    const io = global.io;
+    // const receive = receiver;
+    const receive = getUser(sender);
+    // console.log("receive", receive);
+    if (receive) {
+      // console.log("okkkkkkkkkkkk");
+      io.to(receive.socketId).emit("getNotification", {
+        sender: sender,
+        type: type,
+        message: message,
+        createdOn: getISTTime(new Date(Date.now())),
+      });
+    }
+  }
+  const notification = await Notification.create({
+    sender: sender,
+    type: type,
+    message: message,
+  });
+  console.log(notification, "notification");
+};
 exports.getAllNotifications = async (req, res, next) => {
   // const user = req.user;
   const { id } = req.body;

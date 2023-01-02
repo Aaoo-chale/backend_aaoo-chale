@@ -10,11 +10,11 @@ const NotificationSchema = new Schema(
     },
     receiver: {
       type: mongoose.Schema.ObjectId,
-      required: [true, "Please Provide receiver Id"],
+      required: [false, "Please Provide receiver Id"],
     },
     type: {
       type: String,
-      enum: ["ChangeStatus", "Rating", "Reply", "Report", "BookedRide", "cancleBookedRide"],
+      enum: ["ChangeStatus", "Rating", "Reply", "Report", "BookedRide", "cancleBookedRide", "Self"],
     },
     message: {
       type: String,

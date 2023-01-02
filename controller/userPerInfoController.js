@@ -3,6 +3,7 @@ const catchAsync = require(path.join(__dirname, "..", "utils", "catchAsync"));
 const AppErr = require(path.join(__dirname, "..", "utils", "AppErr"));
 const encryptPassword = require(path.join(__dirname, "..", "helpers", "encryptPassword"));
 const User = require(path.join(__dirname, "..", "model", "userModel"));
+const notificationController = require("../notification/notificationController");
 
 // add user personal info
 exports.addUserPersoInfo = async (req, res, next) => {
@@ -21,6 +22,17 @@ exports.addUserPersoInfo = async (req, res, next) => {
   console.log(user);
   // save data
   await user.save();
+  await notificationController.postNotificationSelf(
+    id,
+    "Self",
+    "Please verify your Govt ID people get more trust in verified IDs."
+  );
+
+  ////
+
+  // pushnotification single
+
+  ////
   res.status(200).json({
     status: true,
     data: {
