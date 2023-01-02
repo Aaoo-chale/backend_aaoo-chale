@@ -53,11 +53,21 @@ process.on("unhandledRejection", (err) => {
 // });
 const socket = require("socket.io");
 
-const io = socket(server, {
+// const io = socket(server, {
+//   cors: {
+//     origin: "http://localhost:3000",
+//     credentials: true,
+//   },
+// });
+
+const io = require("socket.io")(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: `*`,
     credentials: true,
+    methods: ["GET", "POST"],
+    transports: ["websocket"],
   },
+  allowEIO3: true,
 });
 
 global.onlineUsers = [];
@@ -82,6 +92,7 @@ io.on("connection", (socket) => {
 
   socket.on("newUser", (UserId) => {
     addNewUser(UserId, socket.id);
+    console.log("addNewUser(UserId, socket.id", addNewUser(UserId, socket.id));
     socket.emit("getNotification", "NOTIFICATION");
     // const sendUserSocket = onlineUsers.get(data.to);
     // socket.to(sendUserSocket).emit("getNotification", data.msg);

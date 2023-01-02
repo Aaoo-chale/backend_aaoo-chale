@@ -17,8 +17,8 @@ const getUser = (username) => {
 
 // console.log("getUser", getUser);
 module.exports.postNotification = async (sender, receiver, type, message) => {
-  console.log("length", global?.onlineUsers);
-  if (global?.onlineUsers) {
+  console.log("length", global?.onlineUsers?.length);
+  if (global?.onlineUsers?.length) {
     // console.log(global?._onlineUsers);
     const io = global.io;
     // const receive = receiver;
@@ -45,13 +45,11 @@ module.exports.postNotification = async (sender, receiver, type, message) => {
 };
 exports.getAllNotifications = async (req, res, next) => {
   const user = req.user;
+  const { id } = req.body;
   let page = req.query.pageNo || 1;
   let limit = req.query.limit || 1000;
   let skip = (page - 1) * limit;
-  const getAllNotifications = await Notification.find({ "receiver.user": user._id })
-    .sort({ _id: -1 })
-    .skip(skip)
-    .limit(limit);
+  const getAllNotifications = await Notification.find({ receiver: id }).sort({ _id: -1 }).skip(skip).limit(limit);
   res.status(200).json({
     status: "success",
     lengt: getAllNotifications.length,
@@ -59,7 +57,7 @@ exports.getAllNotifications = async (req, res, next) => {
   });
 };
 exports.getNotificationById = catchAsync(async (req, res, next) => {
-  const { id } = req.query;
+  const { id } = req.body;
   const notificationById = await Notification.findById({ _id: id });
   res.status(200).json({
     status: "success",
@@ -68,7 +66,7 @@ exports.getNotificationById = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteNotifications = catchAsync(async (req, res, next) => {
-  const { id } = req.query;
+  const { id } = req.body;
   const deleteNotification = await Notification.findByIdAndDelete({ _id: id });
   res.status(200).json({
     status: "success",

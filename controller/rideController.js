@@ -378,9 +378,6 @@ exports.searchJobs = async (req, res) => {
         Math.cos(droLat) / 2 +
         (Math.cos(dropLat * (Math.PI / 180)) * Math.cos(item.dropLat * (Math.PI / 180)) * (1 - Math.cos(droLon))) / 2;
       const distanc1 = R * 2 * Math.asin(Math.sqrt(b));
-      console.log(b, "bbbbbbbbbbbbbbbbbbbb");
-
-      console.log(distanc1, "distanc1");
       if (distanc <= 90 && distanc1 <= 90) {
         array.push(item);
         array1.push("pickup", distanc, "dropoff", distanc1);
