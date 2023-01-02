@@ -20,7 +20,7 @@ exports.createRating = async (req, res, next) => {
       message: message,
       startRating: startRating,
     });
-    await notificationController.postNotification(userId, driverId, "Rating", "Passender Give a rating");
+    await notificationController.postNotification(userId, driverId, "Rating");
     res.status(200).json({
       status: true,
       message: "Create Rating Succussefully",
