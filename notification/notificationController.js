@@ -49,7 +49,7 @@ exports.getAllNotifications = async (req, res, next) => {
   let page = req.query.pageNo || 1;
   let limit = req.query.limit || 1000;
   let skip = (page - 1) * limit;
-  const getAllNotifications = await Notification.find({ receiver: id }).sort({ _id: -1 }).skip(skip).limit(limit);
+  const getAllNotifications = await Notification.find({ sender: id }).sort({ _id: -1 }).skip(skip).limit(limit);
   res.status(200).json({
     status: "success",
     lengt: getAllNotifications.length,
