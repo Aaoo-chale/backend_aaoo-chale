@@ -14,7 +14,16 @@ const NotificationSchema = new Schema(
     },
     type: {
       type: String,
-      enum: ["ChangeStatus", "Rating", "Reply", "Report", "BookedRide", "cancleBookedRide", "Self"],
+      enum: [
+        "ChangeStatus",
+        "Rating",
+        "Reply",
+        "Report",
+        "cancleBookedRide",
+        "Self",
+        "Booking Approval",
+        "Booking Instant Approval",
+      ],
     },
     message: {
       type: String,

@@ -76,7 +76,11 @@ exports.getAllNotifications = async (req, res, next) => {
   // let page = req.query.pageNo || 1;
   // let limit = req.query.limit || 1000;
   // let skip = (page - 1) * limit;
-  const getAllNotifications = await Notification.find({ receiver: id }).sort({ _id: -1 });
+  const getAllNotifications = await Notification.find({ receiver: id }).sort({ _id: -1 }).populate({
+    path: "sender",
+    select: "firstName lastName profilePicture",
+    model: "User",
+  });
   res.status(200).json({
     status: "success",
     lengt: getAllNotifications.length,

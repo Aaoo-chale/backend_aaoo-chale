@@ -6,6 +6,7 @@ const Vehicle = require("../model/vehicleModel");
 const Ride = require("../model/rideModel");
 const BookedRide = require("../model/rideBookingModel");
 const notificationController = require("../notification/notificationController");
+const { findOne } = require("../model/userModel");
 
 // const moment = require("moment");
 
@@ -16,21 +17,41 @@ exports.bookedRide = async (req, res, next) => {
     // add receiver
     let { userId, receiver, rideId, status } = req.body;
     if (!userId || !rideId) return next(new AppErr("Please Provide all details"), 200);
+    const approval = await Ride.findOne({ _id: rideId });
+    console.log(approval.rideApproval, "approval");
 
-    const bookedRide = await BookedRide.create({
-      user: userId,
-      ride: rideId,
-      status: status,
-    });
-    await notificationController.postNotification(userId, receiver, "BookedRide", "User Booker Ride....");
-
-    res.status(200).json({
-      status: true,
-      message: "Booked Ride Succussefully",
-      data: {
-        bookedRide,
-      },
-    });
+    if (approval.rideApproval == "No") {
+      console.log("okkkkkkkkkkkkk");
+      const data = await notificationController.postNotification(
+        userId,
+        receiver,
+        "Booking Instant Approval",
+        "You have received a new passenger from Aaoo Chale. Click here to know the more details."
+      );
+      res.status(200).json({
+        status: true,
+        message: "Not Booked Ride Because rideApproval is No",
+      });
+    } else {
+      const bookedRide = await BookedRide.create({
+        user: userId,
+        ride: rideId,
+        status: status,
+      });
+      await notificationController.postNotification(
+        userId,
+        receiver,
+        "Booking Approval",
+        "You have received a new passenger request from Aaoo Chale. Click here to approve the passenger"
+      );
+      res.status(200).json({
+        status: true,
+        message: "Booked Ride Succussefully",
+        data: {
+          bookedRide,
+        },
+      });
+    }
   } catch (error) {
     next(error);
   }
