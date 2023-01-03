@@ -108,7 +108,21 @@ const createSendToken = (user, statusCode, res) => {
 // login with otp
 exports.login = catchAsync(async (req, res, next) => {
   // TODO:NO LOGIN TILL EMAIL VERIFIED
-  const { mobileNumber } = req.body;
+  const {
+    mobileNumber,
+    firstName,
+    lastName,
+    userStatus,
+    profilePicture,
+    gender,
+    DOB,
+    bio,
+    emailId,
+    chattiness,
+    music,
+    smoking,
+    pets,
+  } = req.body;
   if (!mobileNumber) {
     return next(new AppErr("Please Provide all the details to create user", 200));
   }
@@ -132,6 +146,17 @@ exports.login = catchAsync(async (req, res, next) => {
   } else {
     const user = await User.create({
       mobile: { mobileNumber },
+      email: { emailId } || " ",
+      firstName: firstName || " ",
+      lastName: lastName || " ",
+
+      profilePicture: profilePicture || " ",
+
+      bio: bio || " ",
+      chattiness: chattiness || " ",
+      music: music || " ",
+      smoking: smoking || " ",
+      pets: pets || " ",
     });
 
     try {
