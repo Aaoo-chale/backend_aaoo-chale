@@ -19,10 +19,11 @@ cloudinary.config({
 });
 // register car
 exports.registerVehicle = async (req, res, next) => {
-  const user = req.user;
-  console.log(user);
+  // const user = req.user;
+  // console.log(user);
   try {
-    let { vehicleRegiNumb, carBrand, carModel, carType, carColor, manufacturYear, seatCount, colorCode } = req.body;
+    let { vehicleRegiNumb, carBrand, carModel, carType, carColor, manufacturYear, seatCount, colorCode, userId } =
+      req.body;
 
     const vehicle = await Vehicle.create({
       vehicleRegiNumb: vehicleRegiNumb,
@@ -33,8 +34,7 @@ exports.registerVehicle = async (req, res, next) => {
       carColor: carColor,
       colorCode: colorCode,
       manufacturYear: manufacturYear,
-      // vehiclePic,
-      userId: user._id,
+      userId: userId,
     });
 
     res.status(200).json({

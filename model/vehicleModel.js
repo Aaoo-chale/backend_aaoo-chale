@@ -51,6 +51,7 @@ const VehicleSchema = new Schema(
     vehicleimage: String,
     userId: {
       type: mongoose.Schema.ObjectId,
+      required: [false, "Please Provide userId"],
       ref: "User",
     },
   },
