@@ -9,10 +9,21 @@ const AppErr = require(path.join(__dirname, "..", "utils", "AppErr"));
 const encryptPassword = require(path.join(__dirname, "..", "helpers", "encryptPassword"));
 const User = require(path.join(__dirname, "..", "model", "userModel"));
 
-const aws = require("aws-sdk");
-const multerS3 = require("multer-s3");
-const multer = require("multer");
+// const aws = require("aws-sdk");
+// const multerS3 = require("multer-s3");
+// const multer = require("multer");
 require("dotenv").config();
+
+/// image upload
+const cloudinary = require("cloudinary").v2;
+cloudinary.config({
+  cloud_name: "dyetuvbqa",
+  api_key: "931785857465896",
+  api_secret: "hEnL1zZDYVp65zn-S3ZEy66B0bs",
+  secure: true,
+});
+
+///
 
 // const NODE_ENV = development;
 const signToken = (id) => {
@@ -504,47 +515,64 @@ exports.verifyUpdateMobile = async (req, res, next) => {
   });
 };
 
-///// images
-const s3 = new aws.S3({
-  accessKeyId: process.env.S3_ACCESS_KEY,
-  secretAccessKey: process.env.S3_SECRETE_ACCESS_KEY,
-  region: process.env.S3_BUCKET_RESION,
-  // signatureVersion: "v4",
-});
+// ///// images
+// const s3 = new aws.S3({
+//   accessKeyId: process.env.S3_ACCESS_KEY,
+//   secretAccessKey: process.env.S3_SECRETE_ACCESS_KEY,
+//   region: process.env.S3_BUCKET_RESION,
+//   // signatureVersion: "v4",
+// });
 
-module.exports.upload = multer({
-  // fileFilter,
-  storage: multerS3({
-    //acl: "public-read",
-    s3,
-    bucket: process.env.AWS_S3_BUCKET,
-    metadata: function (req, file, cb) {
-      cb(null, { fieldName: file.originalname });
-    },
-    key: function (req, file, cb) {
-      cb(null, `${Date.now().toString()}${file.originalname}`);
-    },
-  }),
-});
+// module.exports.upload = multer({
+//   // fileFilter,
+//   storage: multerS3({
+//     //acl: "public-read",
+//     s3,
+//     bucket: process.env.AWS_S3_BUCKET,
+//     metadata: function (req, file, cb) {
+//       cb(null, { fieldName: file.originalname });
+//     },
+//     key: function (req, file, cb) {
+//       cb(null, `${Date.now().toString()}${file.originalname}`);
+//     },
+//   }),
+// });
+
+// exports.uploadUsertImage = async (req, res) => {
+//   const [files] = req.files;
+//   const { id } = req.body;
+// const user = await User.findOne({ _id: id });
+//   if (!id) return next(new AppErr("Pelase Provide user Id"), 200);
+//   // console.log(files.location, "files");
+//   // var data = await User({
+//   (user.profilePicture = files.location),
+//     // });
+
+//     // console.log(data, "data");
+//     await user.save((err, feed) => {
+//       if (err) {
+//         return res.status(400).json({
+//           error: err,
+//         });
+//       }
+//       // res.json(feed);
+//       res.send(files);
+//     });
+// };
 
 exports.uploadUsertImage = async (req, res) => {
-  const [files] = req.files;
   const { id } = req.body;
-  const user = await User.findOne({ _id: id });
-  if (!id) return next(new AppErr("Pelase Provide user Id"), 200);
-  // console.log(files.location, "files");
-  // var data = await User({
-  (user.profilePicture = files.location),
-    // });
-
-    // console.log(data, "data");
-    await user.save((err, feed) => {
-      if (err) {
-        return res.status(400).json({
-          error: err,
-        });
-      }
-      // res.json(feed);
-      res.send(files);
+  const file = req.files.profileimage;
+  if (!id) return next(new AppErr("Pelase Provide vehicle Id"), 200);
+  cloudinary.uploader.upload(file.tempFilePath, async (err, result) => {
+    const user = await User.findOne({ _id: id });
+    user.profilePicture = result.url;
+    await user.save();
+    res.status(200).json({
+      status: true,
+      data: {
+        message: "Upload User Image Successfully",
+      },
     });
+  });
 };

@@ -13,11 +13,12 @@ router.post("/verifyReceivedMobileOTP", userAuthController.verifyReceivedMobileO
 // router.use(userAuthController.protect); //below this protected routes
 router.post("/updateMobile", userAuthController.updateMobile);
 router.post("/verifyUpdateMobile", userAuthController.verifyUpdateMobile);
-router.post(
-  "/uploadUsertImage",
-  userAuthController.upload.array("profileimage", 4),
-  userAuthController.uploadUsertImage
-);
+router.post("/uploadUsertImage", userAuthController.uploadUsertImage);
+// router.post(
+//   "/uploadUsertImage",
+//   userAuthController.upload.array("profileimage", 4),
+//   userAuthController.uploadUsertImage
+// );
 
 // TESTING ROUTE
 router.get("/test-route", (req, res, next) => {

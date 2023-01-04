@@ -9,7 +9,14 @@ const multer = require("multer");
 require("dotenv").config();
 const Vehicle = require("../model/vehicleModel");
 const vehicleImage = require("../model/vehicleImageModel");
+const cloudinary = require("cloudinary").v2;
 
+cloudinary.config({
+  cloud_name: "dyetuvbqa",
+  api_key: "931785857465896",
+  api_secret: "hEnL1zZDYVp65zn-S3ZEy66B0bs",
+  secure: true,
+});
 // register car
 exports.registerVehicle = async (req, res, next) => {
   const user = req.user;
@@ -94,50 +101,148 @@ exports.getVehicleById = async (req, res, next) => {
   }
 };
 
-const s3 = new aws.S3({
-  accessKeyId: process.env.S3_ACCESS_KEY,
-  secretAccessKey: process.env.S3_SECRETE_ACCESS_KEY,
-  region: process.env.S3_BUCKET_RESION,
-  // signatureVersion: "v4",
-});
+////////////////////////////////////////////////////
+// const s3 = new aws.S3({
+//   accessKeyId: process.env.S3_ACCESS_KEY,
+//   secretAccessKey: process.env.S3_SECRETE_ACCESS_KEY,
+//   region: process.env.S3_BUCKET_RESION,
+//   // signatureVersion: "v4",
+// });
 
-module.exports.upload = multer({
-  // fileFilter,
-  storage: multerS3({
-    //acl: "public-read" process.env.AWS_S3_BUCKET,
-    s3,
-    bucket: process.env.AWS_S3_BUCKET,
-    metadata: function (req, file, cb) {
-      cb(null, { fieldName: file.originalname });
-    },
-    key: function (req, file, cb) {
-      cb(null, `${Date.now().toString()}${file.originalname}`);
-    },
-  }),
-});
+// module.exports.upload = multer({
+//   // fileFilter,
+//   storage: multerS3({
+//     //acl: "public-read" process.env.AWS_S3_BUCKET,
+//     s3,
+//     bucket: process.env.AWS_S3_BUCKET,
+//     metadata: function (req, file, cb) {
+//       cb(null, { fieldName: file.originalname });
+//     },
+//     key: function (req, file, cb) {
+//       cb(null, `${Date.now().toString()}${file.originalname}`);
+//     },
+//   }),
+// });
 
-exports.uploadImage = async (req, res) => {
-  const [files] = req.files;
+// exports.uploadImage = async (req, res) => {
+//   const [files] = req.files;
+//   const { id } = req.body;
+//   if (!id) return next(new AppErr("Pelase Provide vehicle Id"), 200);
+//   const vehicle = await Vehicle.findOne({ _id: id });
+//   console.log(vehicle);
+//   console.log(files.location, "files");
+//   // var data = await vehicleImage({
+//   (vehicle.vehicleimage = files.location),
+//     // });
+
+//     // console.log(data, "data");
+//     await vehicle.save((err, feed) => {
+//       if (err) {
+//         return res.status(400).json({
+//           error: err,
+//         });
+//       }
+//       // res.json(feed);
+//       res.send(files);
+//     });
+// };
+
+/// get Vehicle Image
+
+////////////////////////////////////////////////////////
+exports.getVehicleimage = async (req, res, next) => {
   const { id } = req.body;
-  const vehicle = await Vehicle.findOne({ _id: id });
-  console.log(vehicle);
-  if (!id) return next(new AppErr("Pelase Provide vehicle Id"), 200);
-  // console.log(files.location, "files");
-  // var data = await vehicleImage({
-  (vehicle.vehicleimage = files.location),
-    // });
+  if (!id) return next(new AppErr("Pelase Provide Vehicle Id"), 200);
 
-    // console.log(data, "data");
-    await vehicle.save((err, feed) => {
-      if (err) {
-        return res.status(400).json({
-          error: err,
-        });
-      }
-      // res.json(feed);
-      res.send(files);
+  try {
+    const vehiclePic = await vehicleImage.findOne({ vehicleId: id });
+    res.status(200).json({
+      status: true,
+      message: "Get Vehicle Image successfully By Vehicle Id",
+      vehiclePic,
     });
+  } catch (error) {
+    next(error);
+  }
 };
+
+// delete vehicle
+exports.deleteVehicle = catchAsync(async (req, res, next) => {
+  const { id } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide Vehicle Id"), 200);
+
+  const vehicleDelete = await Vehicle.findByIdAndDelete({ _id: id });
+  res.status(200).json({
+    status: true,
+    message: "Delete Vehicle Successfully By Vehicle Id",
+    vehicleDelete,
+  });
+});
+
+// update vehicle
+
+exports.updateVehicleDetails = catchAsync(async (req, res, next) => {
+  // const user = req.user;
+  // const { id } = req.body;
+  const { id, vehicleRegiNumb, carBrand, carModel, carType, carColor, manufacturYear, seatCount, colorCode } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide User Id"), 200);
+
+  // // chake email present or mot
+  // const data = await User.findOne({ "email.emailId": emailId });
+  // if (data) return next(new AppErr("Account already exist please add new emailId"), 200);
+
+  const user = await Vehicle.findByIdAndUpdate(
+    { _id: id },
+    { ...req.body },
+    { runValidator: true, useFindAndModify: false, new: true }
+  );
+
+  await user.save();
+  res.status(200).json({
+    status: true,
+    data: {
+      message: "Update Vehicle details Successfully",
+      user,
+    },
+  });
+});
+
+////////////////
+exports.uploadImage = async (req, res) => {
+  const { id } = req.body;
+  const file = req.files.vehicleimage;
+  if (!id) return next(new AppErr("Pelase Provide vehicle Id"), 200);
+  cloudinary.uploader.upload(file.tempFilePath, async (err, result) => {
+    const vehicle = await Vehicle.findOne({ _id: id });
+    vehicle.vehicleimage = result.url;
+    await vehicle.save();
+    res.status(200).json({
+      status: true,
+      data: {
+        message: "Upload Vehicle Image Successfully",
+      },
+    });
+  });
+};
+
+// {
+//   "Version": "2012-10-17",
+//   "Statement": [
+//       {
+//           "Sid": "1",
+//           "Effect": "Allow",
+//           "Principal": "*",
+//           "Action": "s3:*",
+//           "Resource": [
+//               "arn:aws:s3:::aaoochale-vehicle",
+//               "arn:aws:s3:::aaoochale-vehicle/*"
+//           ]
+//       }
+//   ]
+// }
+
+// arn:aws:iam::465194170809:user/s3-user
+
 // aaoochale-vehicle bucketName
 // const upload = () => {
 //   multer({
@@ -200,77 +305,3 @@ exports.uploadImage = async (req, res) => {
 //   //   res.status(200).json({ data: req.file });
 //   // });
 // };
-
-/// get Vehicle Image
-exports.getVehicleimage = async (req, res, next) => {
-  const { id } = req.body;
-  if (!id) return next(new AppErr("Pelase Provide Vehicle Id"), 200);
-
-  try {
-    const vehiclePic = await vehicleImage.findOne({ vehicleId: id });
-    res.status(200).json({
-      status: true,
-      message: "Get Vehicle Image successfully By Vehicle Id",
-      vehiclePic,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// delete vehicle
-exports.deleteVehicle = catchAsync(async (req, res, next) => {
-  const { id } = req.body;
-  if (!id) return next(new AppErr("Pelase Provide Vehicle Id"), 200);
-
-  const vehicleDelete = await Vehicle.findByIdAndDelete({ _id: id });
-  res.status(200).json({
-    status: true,
-    message: "Delete Vehicle Successfully By Vehicle Id",
-    vehicleDelete,
-  });
-});
-
-// update vehicle
-
-exports.updateVehicleDetails = catchAsync(async (req, res, next) => {
-  // const user = req.user;
-  // const { id } = req.body;
-  const { id, vehicleRegiNumb, carBrand, carModel, carType, carColor, manufacturYear, seatCount, colorCode } = req.body;
-  if (!id) return next(new AppErr("Pelase Provide User Id"), 200);
-
-  // // chake email present or mot
-  // const data = await User.findOne({ "email.emailId": emailId });
-  // if (data) return next(new AppErr("Account already exist please add new emailId"), 200);
-
-  const user = await Vehicle.findByIdAndUpdate(
-    { _id: id },
-    { ...req.body },
-    { runValidator: true, useFindAndModify: false, new: true }
-  );
-
-  await user.save();
-  res.status(200).json({
-    status: true,
-    data: {
-      message: "Update Vehicle details Successfully",
-      user,
-    },
-  });
-});
-
-// {
-//   "Version": "2012-10-17",
-//   "Statement": [
-//       {
-//           "Sid": "1",
-//           "Effect": "Allow",
-//           "Principal": "*",
-//           "Action": "s3:*",
-//           "Resource": [
-//               "arn:aws:s3:::aaoochale-vehicle",
-//               "arn:aws:s3:::aaoochale-vehicle/*"
-//           ]
-//       }
-//   ]
-// }

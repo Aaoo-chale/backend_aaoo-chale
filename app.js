@@ -36,13 +36,21 @@ const app = express();
 
 // socket io connection
 app.use(express.static(__dirname + "/public"));
-app.use(fileUpload());
+// app.use(fileUpload());
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
 
 // connection
+
+///
+// image upload cloudinary
+app.use(
+  fileUpload({
+    useTempFiles: true,
+  })
+);
 
 app.disable("etag");
 app.use(logger("dev"));

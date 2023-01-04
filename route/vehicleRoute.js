@@ -8,9 +8,10 @@ router.post("/getAllCarsByUserId", vehicleController.getAllCarsByUserId);
 router.post("/getVehicleById", vehicleController.getVehicleById);
 router.delete("/deleteVehicle", vehicleController.deleteVehicle);
 router.put("/updateVehicleDetails", vehicleController.updateVehicleDetails);
-router.use(userAuthController.protect); //below this protected routes//
+// router.use(userAuthController.protect); //below this protected routes//
 router.post("/registerVehicle", vehicleController.registerVehicle);
 router.post("/getVehicleimage", vehicleController.getVehicleimage);
-router.post("/uploadImage", vehicleController.upload.array("vehicleimage", 4), vehicleController.uploadImage);
+router.post("/uploadImage", vehicleController.uploadImage);
+// router.post("/uploadImage", vehicleController.upload.array("vehicleimage", 4), vehicleController.uploadImage);
 
 module.exports = router;
