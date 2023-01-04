@@ -121,23 +121,46 @@ exports.updateUserPreferences = catchAsync(async (req, res, next) => {
 
 // email agar verify nai to verify , aur agar email add nai kiyta to add karega uyska notuification
 // notification
-exports.notification = catchAsync(async (req, res, next) => {
+exports.notificationByEmail = catchAsync(async (req, res, next) => {
   // const user = req.user;
   const { id } = req.body;
   if (!id) return next(new AppErr("Pelase Provide User Id"), 200);
-  const user = await User.findOne({ _id: id }, "-__v");
-  if (user?.email?.isEmailVerified == false) {
-    await notificationController.postNotificationSelf(id, "Self", "Please verify your EmailId.");
-  } else if (user?.email?.emailId == " ") {
+  const user = await User.findOne({ _id: id });
+
+  if (!user.email) {
     await notificationController.postNotificationSelf(id, "Self", "Please Add your EmailId.");
+    res.status(200).json({
+      status: true,
+      data: {
+        message: "Notification send successfully",
+      },
+    });
+  } else if (user?.email?.isEmailVerified == false) {
+    await notificationController.postNotificationSelf(id, "Self", "Please Add verify your EmailId.");
+    res.status(200).json({
+      status: true,
+      data: {
+        message: "Notification send successfully",
+      },
+    });
   }
-  // if (!user) return next(new AppErr("Please Login User"), 200);
-  console.log(user);
-  res.status(200).json({
-    status: true,
-    data: {
-      message: "Get User Personal information",
-      user,
-    },
-  });
+});
+
+/// verify user pic
+
+exports.notificationByprofilePicture = catchAsync(async (req, res, next) => {
+  // const user = req.user;
+  const { id } = req.body;
+  if (!id) return next(new AppErr("Pelase Provide User Id"), 200);
+  const user = await User.findOne({ _id: id });
+
+  if (user.profilePicture == " ") {
+    await notificationController.postNotificationSelf(id, "Self", "Please Add your profilePicture.");
+    res.status(200).json({
+      status: true,
+      data: {
+        message: "Notification send successfully",
+      },
+    });
+  }
 });

@@ -155,7 +155,7 @@ exports.getVehicleimage = async (req, res, next) => {
   if (!id) return next(new AppErr("Pelase Provide Vehicle Id"), 200);
 
   try {
-    const vehiclePic = await vehicleImage.findOne({ vehicleId: id });
+    const vehiclePic = await Vehicle.findOne({ vehicleId: id });
     res.status(200).json({
       status: true,
       message: "Get Vehicle Image successfully By Vehicle Id",

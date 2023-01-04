@@ -96,6 +96,34 @@ exports.getNotificationById = catchAsync(async (req, res, next) => {
   });
 });
 
+/// get notification by self
+
+exports.getAllNotificationsBySelf = async (req, res, next) => {
+  const { id } = req.body;
+
+  const getAllNotifications = await Notification.find({ $and: [{ sender: id }, { type: "Self" }] })
+    .sort({ _id: -1 })
+    .populate({
+      path: "sender",
+      select: "firstName lastName profilePicture",
+      model: "User",
+    });
+  res.status(200).json({
+    status: "success",
+    lengt: getAllNotifications.length,
+    data: getAllNotifications,
+  });
+};
+
+exports.getNotificationById = catchAsync(async (req, res, next) => {
+  const { id } = req.body;
+  const notificationById = await Notification.findById({ _id: id });
+  res.status(200).json({
+    status: "success",
+    data: notificationById,
+  });
+});
+
 exports.deleteNotifications = catchAsync(async (req, res, next) => {
   const { id } = req.body;
   const deleteNotification = await Notification.findByIdAndDelete({ _id: id });
