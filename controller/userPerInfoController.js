@@ -132,7 +132,7 @@ exports.notificationByEmail = catchAsync(async (req, res, next) => {
     res.status(200).json({
       status: true,
       data: {
-        message: "Notification send successfully",
+        message: "Please Add your EmailId",
       },
     });
   } else if (user?.email?.isEmailVerified == false) {
@@ -140,7 +140,7 @@ exports.notificationByEmail = catchAsync(async (req, res, next) => {
     res.status(200).json({
       status: true,
       data: {
-        message: "Notification send successfully",
+        message: "Please Add verify your EmailId",
       },
     });
   } else {
@@ -161,12 +161,12 @@ exports.notificationByprofilePicture = async (req, res, next) => {
   if (!id) return next(new AppErr("Pelase Provide User Id"), 200);
   const user = await User.findOne({ _id: id });
 
-  if (user.profilePicture == " ") {
+  if (user.profilePicture == "") {
     await notificationController.postNotificationSelf(id, "Self", "Please Add your profilePicture.");
     res.status(200).json({
       status: true,
       data: {
-        message: "Notification send successfully",
+        message: "Please Add your profilePicture",
       },
     });
   } else {

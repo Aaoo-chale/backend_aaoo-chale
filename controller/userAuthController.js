@@ -157,17 +157,17 @@ exports.login = catchAsync(async (req, res, next) => {
   } else {
     const user = await User.create({
       mobile: { mobileNumber },
-      email: { emailId } || " ",
-      firstName: firstName || " ",
-      lastName: lastName || " ",
+      email: { emailId } || "",
+      firstName: firstName || "",
+      lastName: lastName || "",
 
-      profilePicture: profilePicture || " ",
+      profilePicture: profilePicture || "",
 
-      bio: bio || " ",
-      chattiness: chattiness || " ",
-      music: music || " ",
-      smoking: smoking || " ",
-      pets: pets || " ",
+      bio: bio || "",
+      chattiness: chattiness || "",
+      music: music || "",
+      smoking: smoking || "",
+      pets: pets || "",
     });
 
     try {
