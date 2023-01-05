@@ -415,6 +415,36 @@ exports.changeRideStatus = catchAsync(async (req, res, next) => {
 //   }
 // };
 
+const rating = async function (userId) {
+  if (userId) {
+    const getRating = await Rating.find({ userId: userId });
+    // console.log("getRating", getRating);
+    const sum = [];
+    const data = getRating.map((item) => {
+      // console.log(item.startRating);
+      sum.push(item.startRating);
+    });
+    let count = 0;
+    let total = 0;
+
+    while (count < sum.length) {
+      total = total + sum[count];
+      count += 1;
+    }
+    const ratingAverage = parseFloat(total / sum.length);
+    // console.log(ratingAverage, "ratingAverage");
+    return ratingAverage;
+  }
+};
+
+// let ratings = rating("63b41b61e4629fdd814c6f00");
+// const datas = ratings.then(function (result) {
+//   const data = result;
+//   // console.log(data, "data");
+//   return data; // "Some User token"
+// });
+// console.log(datas, "ratings ratingsratings");
+///
 exports.searchJobs = async (req, res) => {
   try {
     let { pickupLat, pickLong, dropLat, dropLong, userId, tripDate, passengerCount, rideId } = req.body;
@@ -436,9 +466,11 @@ exports.searchJobs = async (req, res) => {
         select: "firstName lastName profilePicture chattiness music smoking pets startRating",
         model: "User",
       });
+    // console.log(result, "result");
     const R = 6371;
     let array = [];
     let array1 = [];
+    var array2 = [];
     let status = false;
     let msg = " ";
     result.map((item, index) => {
@@ -456,7 +488,24 @@ exports.searchJobs = async (req, res) => {
         Math.cos(droLat) / 2 +
         (Math.cos(dropLat * (Math.PI / 180)) * Math.cos(item.dropLat * (Math.PI / 180)) * (1 - Math.cos(droLon))) / 2;
       const distanc1 = R * 2 * Math.asin(Math.sqrt(b));
+
+      // ///////////////////
+      // let ratings = rating(item.userId);
+      // const datas = ratings.then(function (result) {
+      //   const data = result;
+      //   console.log(data, "data");
+      //   return data; // "Some User token"
+      // });
+      // console.log(datas, "ratings");
+      // // //////////
       if (distanc <= 90 && distanc1 <= 90) {
+        let ratings = rating("63b41b54e4629fdd814c6ef9"); //  (item.userId);
+        ratings.then(function (result) {
+          const data = result;
+          // if (data) {
+          console.log(data);
+          array2.push(data);
+        });
         array.push(item);
         array1.push("pickup", distanc, "dropoff", distanc1);
         status = true;
@@ -468,15 +517,17 @@ exports.searchJobs = async (req, res) => {
         msg = "Search Result Not Found";
       }
     });
-    const obj = {
-      array,
-      Rating,
-    };
+    console.log(array2, "ratingrating");
+    // const obj = {
+    //   array,
+    //   Rating,
+    // };
     res.status(200).send({
       success: status,
       msg: msg,
       both_distance: array1,
       Search_Data: array,
+      rating: array2,
     });
   } catch (error) {
     console.log(error);

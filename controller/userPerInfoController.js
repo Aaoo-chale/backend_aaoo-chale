@@ -143,12 +143,19 @@ exports.notificationByEmail = catchAsync(async (req, res, next) => {
         message: "Notification send successfully",
       },
     });
+  } else {
+    res.status(200).json({
+      status: true,
+      data: {
+        message: "User EmailId already Updated",
+      },
+    });
   }
 });
 
 /// verify user pic
 
-exports.notificationByprofilePicture = catchAsync(async (req, res, next) => {
+exports.notificationByprofilePicture = async (req, res, next) => {
   // const user = req.user;
   const { id } = req.body;
   if (!id) return next(new AppErr("Pelase Provide User Id"), 200);
@@ -162,5 +169,12 @@ exports.notificationByprofilePicture = catchAsync(async (req, res, next) => {
         message: "Notification send successfully",
       },
     });
+  } else {
+    res.status(200).json({
+      status: true,
+      data: {
+        message: "User profilePicture already uploaded",
+      },
+    });
   }
-});
+};

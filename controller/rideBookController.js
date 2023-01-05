@@ -15,13 +15,12 @@ exports.bookedRide = async (req, res, next) => {
   //   console.log(user);
   try {
     // add receiver
-    let { userId, receiver, rideId, status } = req.body;
+    const { userId, receiver, rideId, status } = req.body;
     if (!userId || !rideId) return next(new AppErr("Please Provide all details"), 200);
     const approval = await Ride.findOne({ _id: rideId });
     console.log(approval.rideApproval, "approval");
 
     if (approval.rideApproval == "No") {
-      console.log("okkkkkkkkkkkkk");
       const data = await notificationController.postNotification(
         userId,
         receiver,

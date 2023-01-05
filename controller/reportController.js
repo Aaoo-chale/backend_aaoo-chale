@@ -13,7 +13,7 @@ exports.createReport = async (req, res, next) => {
   // const user = req.user;
 
   try {
-    let { userId, reportUId, preDefindMessage, userMessage } = req.body;
+    const { userId, reportUId, preDefindMessage, userMessage } = req.body;
     const report = await Report.create({
       userId: userId,
       reportUId: reportUId,

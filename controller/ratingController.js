@@ -136,7 +136,12 @@ exports.replyDriver = catchAsync(async (req, res, next) => {
   // save data
   console.log(replyDriver, "replyDriver");
   await replyDriver.save();
-  await notificationController.postNotification(sender, receiver, "Reply");
+  await notificationController.postNotification(
+    sender,
+    receiver,
+    "Message",
+    "You have received a new message. Click here to reply"
+  );
   res.status(200).json({
     status: true,
     data: {
