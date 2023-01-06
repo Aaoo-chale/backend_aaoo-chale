@@ -7,7 +7,22 @@ const Chat = require("../model/chatModel");
 const Rating = require("../model/ratingModel");
 const Notification = require("../model/notificationSchema");
 const notificationController = require("../notification/notificationController");
+const Token = require("../model/fireBaseSchema");
+const firebase = require("../notification/firebase");
 require("dotenv").config();
+
+const GetToken = async (userId) => {
+  const list = await Token.find({ user_id: userId });
+
+  if (list.length > 0) {
+    return list[0].token;
+  } else {
+    var token = "";
+    return token;
+  }
+};
+
+console.log(GetToken, "GetToken");
 
 exports.createRating = async (req, res, next) => {
   try {
@@ -21,11 +36,29 @@ exports.createRating = async (req, res, next) => {
       startRating: startRating,
     });
     await notificationController.postNotification(userId, driverId, "Rating");
-    res.status(200).json({
-      status: true,
-      message: "Create Rating Succussefully",
-      createRating,
-    });
+
+    /////////////
+    // async function (err, data) {
+    if (driverId) {
+      // console.log("okkkkkkkk");
+      var content = {
+        title: "Hi You Get Successfully Rating.",
+        body: message,
+      };
+      const key = await GetToken("63b41b54e4629fdd814c6ef9");
+      console.log(key, "key");
+
+      // if (key != "") {
+      var firebaseres = await firebase.sendNotification(key, content);
+      console.log(firebaseres, "firebaseres");
+      // }
+      //////////////
+      res.status(200).json({
+        status: true,
+        message: "Create Rating Succussefully",
+        createRating,
+      });
+    }
   } catch (error) {
     next(error);
   }
@@ -72,6 +105,30 @@ exports.getRating = catchAsync(async (req, res, next) => {
   });
 });
 
+///
+exports.getAverageRatingByUserId = catchAsync(async (req, res, next) => {
+  const { userId } = req.body;
+  if (!userId) return next(new AppErr("Pelase Provide userId"), 200);
+  const getRating = await Rating.find({ driverId: userId });
+
+  const sum = [];
+  const data = getRating.map((item) => {
+    sum.push(item.startRating);
+  });
+  let count = 0;
+  let total = 0;
+
+  while (count < sum.length) {
+    total = total + sum[count];
+    count += 1;
+  }
+  const ratingAverage = parseFloat(total / sum.length);
+  res.status(200).json({
+    status: true,
+    message: "Get Rating Successfully By userId",
+    ratingAverage,
+  });
+});
 // 1.Api for create rarting 2.Api for received rating 3.APi for given rating 4.Reply for rating only single reply
 
 // api for given rating kisko mayne rating diya

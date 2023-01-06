@@ -9,5 +9,6 @@ router.post("/giveOwnRatingOfUser", ratingController.giveOwnRatingOfUser);
 router.post("/getRatingOtherUserSend", ratingController.getRatingOtherUserSend);
 router.put("/replyDriver", ratingController.replyDriver);
 router.post("/getRatingDetailsById", ratingController.getRatingDetailsById);
+router.post("/getAverageRatingByUserId", ratingController.getAverageRatingByUserId);
 
 module.exports = router;
