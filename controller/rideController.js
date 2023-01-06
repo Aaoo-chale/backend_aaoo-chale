@@ -499,7 +499,7 @@ exports.searchJobs = async (req, res) => {
       // console.log(datas, "ratings");
       // // //////////
       if (distanc <= 90 && distanc1 <= 90) {
-        let ratings = rating("63b41b54e4629fdd814c6ef9"); //  (item.userId);
+        let ratings = rating(item.userId); //  (item.userId);
         ratings.then(function (result) {
           const data = result;
           // if (data) {
