@@ -131,8 +131,8 @@ exports.getNotificationById = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteNotifications = catchAsync(async (req, res, next) => {
-  const { id } = req.body;
-  const deleteNotification = await Notification.findByIdAndDelete({ _id: id });
+  const { notificationId } = req.body;
+  const deleteNotification = await Notification.findByIdAndDelete({ _id: notificationId });
   res.status(200).json({
     status: "success",
     data: deleteNotification,
