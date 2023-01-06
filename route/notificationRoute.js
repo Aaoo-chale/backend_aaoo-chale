@@ -9,5 +9,6 @@ router.post("/getAllNotifications", notificationController.getAllNotifications);
 router.post("/getNotificationById", notificationController.getNotificationById);
 router.delete("/deleteNotification", notificationController.deleteNotifications);
 router.post("/getAllNotificationsBySelf", notificationController.getAllNotificationsBySelf);
+router.post("/sendnotification", notificationController.sendnotification);
 
 module.exports = router;

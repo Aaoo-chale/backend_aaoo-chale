@@ -22,11 +22,11 @@ exports.addUserPersoInfo = async (req, res, next) => {
   console.log(user);
   // save data
   await user.save();
-  await notificationController.postNotificationSelf(
-    id,
-    "Self",
-    "Please verify your Govt ID people get more trust in verified IDs."
-  );
+  // await notificationController.postNotificationSelf(
+  //   id,
+  //   "Self",
+  //   "Please verify your Govt ID people get more trust in verified IDs."
+  // );
 
   ////
 

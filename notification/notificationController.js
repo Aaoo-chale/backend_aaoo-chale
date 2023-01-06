@@ -5,6 +5,12 @@ const Notification = require("../model/notificationSchema");
 const getISTTime = require("../helpers/getISTTime");
 const Rating = require("../model/ratingModel");
 const { web, mobile } = require("../helpers/notificationRe");
+
+// firebase
+const Token = require("../model/fireBaseSchema");
+const firebase = require("../notification/firebase");
+// firebase
+
 // // HELPER FUNCTION
 const getUser = (username) => {
   const onlineUsers = global.onlineUsers;
@@ -41,7 +47,7 @@ module.exports.postNotification = async (sender, receiver, type, message) => {
     type: type,
     message: message,
   });
-  console.log(notification, "notification");
+  // console.log(notification, "notification");
 };
 
 /// self
@@ -132,3 +138,61 @@ exports.deleteNotifications = catchAsync(async (req, res, next) => {
     data: deleteNotification,
   });
 });
+
+////////////////
+
+module.exports.sendnotification = async (req, res, next) => {
+  const data_object = {
+    sender: req.body.sender,
+    receiver: req.body.receiver,
+    type: "Rating",
+    message: req.body.message,
+  };
+  const notification = new Notification(data_object);
+  console.log(notification, "notification");
+  const err = notification.joiValidate(req.body);
+
+  if (err.error) {
+    var final = {
+      res: "error",
+      msg: err.error.details[0].message,
+    };
+
+    res.status(400).send(final);
+  } else {
+    notification.save(function (err, result) {
+      if (result) {
+        // get all tokens
+        var response = "";
+        Token.find({}, async function (err, tokens) {
+          var count = 0;
+          if (tokens) {
+            for (each of tokens) {
+              var data = {
+                body: req.body.message,
+                title: req.body.sender,
+              };
+              response = await firebase.sendNotification(each.token, data);
+              console.log(response, "response");
+              count++;
+            }
+          }
+          var final = {
+            res: "success",
+            msg: count + " Notification sent successfully.",
+            data: result,
+          };
+          res.status(200).send(final);
+        });
+      } else {
+        var final = {
+          res: "error",
+          msg: "Something went wrong!",
+        };
+        res.status(400).send(final);
+      }
+    });
+  }
+};
+
+// module.exports = router;
