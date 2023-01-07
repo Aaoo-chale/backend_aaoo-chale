@@ -10,6 +10,23 @@ const { findOne } = require("../model/userModel");
 
 // const moment = require("moment");
 
+////////////
+const Token = require("../model/fireBaseSchema");
+const firebase = require("../notification/firebase");
+
+////
+
+const GetToken = async (userId) => {
+  const list = await Token.find({ user_id: userId });
+
+  if (list.length > 0) {
+    return list[0].token;
+  } else {
+    var token = "";
+    return token;
+  }
+};
+
 exports.bookedRide = async (req, res, next) => {
   //   const user = req.user;
   //   console.log(user);
@@ -27,6 +44,22 @@ exports.bookedRide = async (req, res, next) => {
         "Booking Instant Approval",
         "You have received a new passenger from Aaoo Chale. Click here to know the more details."
       );
+
+      if (receiver) {
+        // console.log("okkkkkkkk");
+        var content = {
+          title: "You have new Notification please chake...",
+          body: "You have received a new passenger from Aaoo Chale. Click here to know the more details.",
+          imageUrl: "http://res.cloudinary.com/dyetuvbqa/image/upload/v1672929153/r3pwo0x7wmrhjrfyuruz.jpg",
+        };
+        const key = await GetToken(receiver);
+        console.log(key, "key");
+
+        if (key != "") {
+          console.log("okkkkkkkkkkkkkkkk");
+          var firebaseres = await firebase.sendNotification(key, content);
+        }
+      }
       res.status(200).json({
         status: true,
         message: "Not Booked Ride Because rideApproval is No",
@@ -43,6 +76,23 @@ exports.bookedRide = async (req, res, next) => {
         "Booking Approval",
         "You have received a new passenger request from Aaoo Chale. Click here to approve the passenger"
       );
+
+      if (receiver) {
+        // console.log("okkkkkkkk");
+        var content = {
+          title: "You have new Notification please chake...",
+          body: "You have received a new passenger request from Aaoo Chale. Click here to approve the passenger.",
+          imageUrl: "http://res.cloudinary.com/dyetuvbqa/image/upload/v1672929153/r3pwo0x7wmrhjrfyuruz.jpg",
+        };
+        const key = await GetToken(receiver);
+        console.log(key, "key");
+
+        if (key != "") {
+          console.log("okkkkkkkkkkkkkkkk");
+          var firebaseres = await firebase.sendNotification(key, content);
+        }
+      }
+
       res.status(200).json({
         status: true,
         message: "Booked Ride Succussefully",
@@ -75,6 +125,24 @@ exports.cancleBookedRide = catchAsync(async (req, res, next) => {
     "cancleBookedRide",
     "User Cancle BookedRide Ride...."
   );
+
+  /// firebase
+  if (receiver) {
+    // console.log("okkkkkkkk");
+    var content = {
+      title: "You have new Notification please chake...",
+      body: "User Cancle BookedRide Ride.....",
+      imageUrl: "http://res.cloudinary.com/dyetuvbqa/image/upload/v1672929153/r3pwo0x7wmrhjrfyuruz.jpg",
+    };
+    const key = await GetToken(receiver);
+    console.log(key, "key");
+
+    if (key != "") {
+      // console.log("okkkkkkkkkkkkkkkk");
+      var firebaseres = await firebase.sendNotification(key, content);
+    }
+  }
+
   res.status(200).json({
     status: true,
     data: {

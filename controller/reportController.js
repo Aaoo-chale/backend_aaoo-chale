@@ -9,6 +9,23 @@ const notificationController = require("../notification/notificationController")
 
 require("dotenv").config();
 
+////////////
+const Token = require("../model/fireBaseSchema");
+const firebase = require("../notification/firebase");
+
+////
+
+const GetToken = async (userId) => {
+  const list = await Token.find({ user_id: userId });
+
+  if (list.length > 0) {
+    return list[0].token;
+  } else {
+    var token = "";
+    return token;
+  }
+};
+
 exports.createReport = async (req, res, next) => {
   // const user = req.user;
 
@@ -21,6 +38,23 @@ exports.createReport = async (req, res, next) => {
       userMessage: userMessage,
     });
     await notificationController.postNotification(userId, reportUId, "Report", "one user report.... other user");
+    ///////// firebase
+
+    if (reportUId) {
+      // console.log("okkkkkkkk");
+      var content = {
+        title: "You have new Notification please chake.",
+        body: userMessage,
+        imageUrl: "http://res.cloudinary.com/dyetuvbqa/image/upload/v1672929153/r3pwo0x7wmrhjrfyuruz.jpg",
+      };
+      const key = await GetToken(reportUId);
+      console.log(key, "key");
+
+      if (key != "") {
+        console.log("okkkkkkkkkkkkkkkk");
+        var firebaseres = await firebase.sendNotification(key, content);
+      }
+    }
     res.status(200).json({
       status: true,
       message: " Create Report Succussefully",

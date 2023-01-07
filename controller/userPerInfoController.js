@@ -5,6 +5,23 @@ const encryptPassword = require(path.join(__dirname, "..", "helpers", "encryptPa
 const User = require(path.join(__dirname, "..", "model", "userModel"));
 const notificationController = require("../notification/notificationController");
 
+////////////
+const Token = require("../model/fireBaseSchema");
+const firebase = require("../notification/firebase");
+
+////
+
+const GetToken = async (userId) => {
+  const list = await Token.find({ user_id: userId });
+
+  if (list.length > 0) {
+    return list[0].token;
+  } else {
+    var token = "";
+    return token;
+  }
+};
+
 // add user personal info
 exports.addUserPersoInfo = async (req, res, next) => {
   // const user = req.user;
@@ -129,6 +146,22 @@ exports.notificationByEmail = catchAsync(async (req, res, next) => {
 
   if (!user.email) {
     await notificationController.postNotificationSelf(id, "Self", "Please Add your EmailId.");
+
+    if (id) {
+      // console.log("okkkkkkkk");
+      var content = {
+        title: "You have new Notification please chake...",
+        body: "Please Add your EmailId.",
+        imageUrl: "http://res.cloudinary.com/dyetuvbqa/image/upload/v1672929153/r3pwo0x7wmrhjrfyuruz.jpg",
+      };
+      const key = await GetToken(id);
+      // console.log(key, "key");
+
+      if (key != "") {
+        // console.log("okkkkkkkkkkkkkkkk");
+        var firebaseres = await firebase.sendNotification(key, content);
+      }
+    }
     res.status(200).json({
       status: true,
       data: {
@@ -137,6 +170,22 @@ exports.notificationByEmail = catchAsync(async (req, res, next) => {
     });
   } else if (user?.email?.isEmailVerified == false) {
     await notificationController.postNotificationSelf(id, "Self", "Please Add verify your EmailId.");
+
+    if (id) {
+      // console.log("okkkkkkkk");
+      var content = {
+        title: "You have new Notification please chake...",
+        body: "Please Add verify your EmailId.",
+        imageUrl: "http://res.cloudinary.com/dyetuvbqa/image/upload/v1672929153/r3pwo0x7wmrhjrfyuruz.jpg",
+      };
+      const key = await GetToken(id);
+      // console.log(key, "key");
+
+      if (key != "") {
+        // console.log("okkkkkkkkkkkkkkkk");
+        var firebaseres = await firebase.sendNotification(key, content);
+      }
+    }
     res.status(200).json({
       status: true,
       data: {
@@ -163,6 +212,23 @@ exports.notificationByprofilePicture = async (req, res, next) => {
 
   if (user.profilePicture == "") {
     await notificationController.postNotificationSelf(id, "Self", "Please Add your profilePicture.");
+
+    //
+    if (id) {
+      // console.log("okkkkkkkk");
+      var content = {
+        title: "You have new Notification please chake...",
+        body: "Please Add your profilePicture.",
+        imageUrl: "http://res.cloudinary.com/dyetuvbqa/image/upload/v1672929153/r3pwo0x7wmrhjrfyuruz.jpg",
+      };
+      const key = await GetToken(id);
+      // console.log(key, "key");
+
+      if (key != "") {
+        // console.log("okkkkkkkkkkkkkkkk");
+        var firebaseres = await firebase.sendNotification(key, content);
+      }
+    }
     res.status(200).json({
       status: true,
       data: {

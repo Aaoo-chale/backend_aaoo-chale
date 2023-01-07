@@ -22,7 +22,7 @@ const GetToken = async (userId) => {
   }
 };
 
-console.log(GetToken, "GetToken");
+// console.log(GetToken, "GetToken");
 
 exports.createRating = async (req, res, next) => {
   try {
@@ -44,14 +44,15 @@ exports.createRating = async (req, res, next) => {
       var content = {
         title: "Hi You Get Successfully Rating.",
         body: message,
+        imageUrl: "http://res.cloudinary.com/dyetuvbqa/image/upload/v1672929153/r3pwo0x7wmrhjrfyuruz.jpg",
       };
-      const key = await GetToken("63b41b54e4629fdd814c6ef9");
+      const key = await GetToken(driverId);
       console.log(key, "key");
 
-      // if (key != "") {
-      var firebaseres = await firebase.sendNotification(key, content);
-      console.log(firebaseres, "firebaseres");
-      // }
+      if (key != "") {
+        console.log("okkkkkkkkkkkkkkkk");
+        var firebaseres = await firebase.sendNotification(key, content);
+      }
       //////////////
       res.status(200).json({
         status: true,
