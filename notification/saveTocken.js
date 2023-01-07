@@ -68,7 +68,7 @@ exports.saveToken = async function (req, res, next) {
                       res: "error",
                       msg: "Something went wrong 2!",
                     };
-                    res.status(400).send(final);
+                    res.status(200).send(final);
                   }
                 });
               }
@@ -78,7 +78,7 @@ exports.saveToken = async function (req, res, next) {
               res: "error",
               msg: "Something went wrong 3!",
             };
-            res.status(400).send(final);
+            res.status(200).send(final);
           }
         });
       } else {
@@ -86,7 +86,7 @@ exports.saveToken = async function (req, res, next) {
           res: "error",
           msg: "User ID is not valid!",
         };
-        res.status(400).send(final);
+        res.status(200).send(final);
       }
     });
   }
