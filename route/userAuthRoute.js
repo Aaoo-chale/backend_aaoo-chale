@@ -14,6 +14,8 @@ router.post("/verifyReceivedMobileOTP", userAuthController.verifyReceivedMobileO
 router.post("/updateMobile", userAuthController.updateMobile);
 router.post("/verifyUpdateMobile", userAuthController.verifyUpdateMobile);
 router.post("/uploadUsertImage", userAuthController.uploadUsertImage);
+router.post("/uploadUserDocuments", userAuthController.uploadUserDocuments);
+
 // router.post(
 //   "/uploadUsertImage",
 //   userAuthController.upload.array("profileimage", 4),

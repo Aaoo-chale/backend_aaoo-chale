@@ -576,3 +576,58 @@ exports.uploadUsertImage = async (req, res) => {
     });
   });
 };
+
+// const checkArr = ["aadharCard", "panCard", "drivingLicence"];
+/// upload documents
+exports.uploadUserDocuments = async (req, res) => {
+  const { id, aadharCard, panCard, drivingLicence } = req.body;
+  const file = req.files.document;
+  if (!id) return next(new AppErr("Pelase Provide vehicle Id"), 200);
+  cloudinary.uploader.upload(file.tempFilePath, async (err, result) => {
+    const user = await User.findOne({ _id: id });
+    if (req.body == "aadharCard") {
+      user.documents.aadharCard = result.url;
+      await user.save();
+      res.status(200).json({
+        status: true,
+        data: {
+          message: "User aadharCard Upload Successfully",
+        },
+      });
+    } else if (req.body == "panCard") {
+      user.documents.panCard = result.url;
+      await user.save();
+      res.status(200).json({
+        status: true,
+        data: {
+          message: "User panCard Upload Successfully",
+        },
+      });
+    } else if (req.body == "drivingLicence") {
+      user.documents.drivingLicence = result.url;
+      await user.save();
+      res.status(200).json({
+        status: true,
+        data: {
+          message: "User drivingLicence Upload Successfully",
+        },
+      });
+    } else {
+      res.status(200).json({
+        status: true,
+        data: {
+          message: "Please Upload valid Documents",
+        },
+      });
+    }
+
+    user["documents"][checkArr]["aadharCard" || "panCard" || "drivingLicence"] = result.url;
+    await user.save();
+    res.status(200).json({
+      status: true,
+      data: {
+        message: "Upload User Image Successfully",
+      },
+    });
+  });
+};

@@ -97,24 +97,12 @@ const userModel = new Schema(
     documents: {
       aadharCard: {
         documentName: String,
-        documentNumber: String,
-        documentLink: String,
-        isDocumentVerified: Boolean,
-        documentExpiryDate: Date,
       },
       panCard: {
         documentName: String,
-        documentNumber: String,
-        documentLink: String,
-        isDocumentVerified: Boolean,
-        documentExpiryDate: Date,
       },
       drivingLicence: {
         documentName: String,
-        documentNumber: String,
-        documentLink: String,
-        isDocumentVerified: Boolean,
-        documentExpiryDate: Date,
       },
     },
   },

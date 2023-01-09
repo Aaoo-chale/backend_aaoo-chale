@@ -27,7 +27,7 @@ const GetToken = async (userId) => {
 exports.createRating = async (req, res, next) => {
   try {
     const { userId, driverId, rideId, message, startRating } = req.body;
-    console.log(req.body);
+    // console.log(req.body);
     const createRating = await Rating.create({
       userId: userId,
       driverId: driverId,
@@ -46,11 +46,11 @@ exports.createRating = async (req, res, next) => {
         body: message,
       };
       const key = await GetToken(driverId);
-      console.log(key, "key");
+      // console.log(key, "key");
       const imageUrl = "http://res.cloudinary.com/dyetuvbqa/image/upload/v1672929153/r3pwo0x7wmrhjrfyuruz.jpg";
 
       if (key != "") {
-        console.log("okkkkkkkkkkkkkkkk");
+        // console.log("okkkkkkkkkkkkkkkk");
         var firebaseres = await firebase.sendNotification(key, imageUrl, content);
       }
       //////////////
@@ -85,10 +85,10 @@ exports.getRating = catchAsync(async (req, res, next) => {
   const { rideId } = req.body;
   if (!rideId) return next(new AppErr("Pelase Provide userId"), 200);
   const getRating = await Rating.find({ rideId: rideId });
-  console.log("getRating", getRating);
+  // console.log("getRating", getRating);
   const sum = [];
   const data = getRating.map((item) => {
-    console.log(item.startRating);
+    // console.log(item.startRating);
     sum.push(item.startRating);
   });
   let count = 0;
@@ -99,10 +99,11 @@ exports.getRating = catchAsync(async (req, res, next) => {
     count += 1;
   }
   const ratingAverage = parseFloat(total / sum.length);
+  const rating = ratingAverage.toFixed(1);
   res.status(200).json({
     status: true,
     message: "Get Rating Successfully By rideId",
-    ratingAverage,
+    ratingAverage: rating,
   });
 });
 
@@ -124,10 +125,11 @@ exports.getAverageRatingByUserId = catchAsync(async (req, res, next) => {
     count += 1;
   }
   const ratingAverage = parseFloat(total / sum.length);
+  const rating = ratingAverage.toFixed(1);
   res.status(200).json({
     status: true,
     message: "Get Rating Successfully By userId",
-    ratingAverage,
+    ratingAverage: rating,
   });
 });
 // 1.Api for create rarting 2.Api for received rating 3.APi for given rating 4.Reply for rating only single reply
@@ -171,7 +173,7 @@ exports.getRatingOtherUserSend = catchAsync(async (req, res, next) => {
       select: "-_id -__v",
       model: "Ride",
     });
-  console.log("riverGetRating", riverGetRating);
+  // console.log("riverGetRating", riverGetRating);
 
   res.status(200).json({
     status: true,
@@ -192,7 +194,7 @@ exports.replyDriver = catchAsync(async (req, res, next) => {
     { runValidator: true, useFindAndModify: false, new: true }
   );
   // save data
-  console.log(replyDriver, "replyDriver");
+  // console.log(replyDriver, "replyDriver");
   await replyDriver.save();
   await notificationController.postNotification(
     sender,
