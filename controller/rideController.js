@@ -256,7 +256,11 @@ exports.changeRideStatus = catchAsync(async (req, res, next) => {
   const { id, rideStatus } = req.body;
 
   if (!id || !rideStatus) return next(new AppErr("Pelase Provide User Id"), 200);
-  const changeRideStatus = await Ride.findByIdAndUpdate({ _id: id }, { rideStatus: rideStatus });
+  const changeRideStatus = await Ride.findByIdAndUpdate(
+    { _id: id },
+    { rideStatus: rideStatus },
+    { runValidator: true, useFindAndModify: false, new: true }
+  );
   // save data
   await changeRideStatus.save();
   res.status(200).json({
@@ -268,6 +272,28 @@ exports.changeRideStatus = catchAsync(async (req, res, next) => {
   });
 });
 
+//// cancle ride
+exports.cancleRide = catchAsync(async (req, res, next) => {
+  // const user = req.user;
+  // const { id } = req.body;
+  const { id, rideStatus } = req.body;
+
+  if (!id || !rideStatus) return next(new AppErr("Pelase Provide User Id"), 200);
+  const CancleRide = await Ride.findByIdAndUpdate(
+    { _id: id },
+    { rideStatus: rideStatus },
+    { runValidator: true, useFindAndModify: false, new: true }
+  ); //{$set: {email: req.body.email}
+  // save data
+  await CancleRide.save();
+  res.status(200).json({
+    status: true,
+    data: {
+      message: "Cancle Ride Successfully",
+      CancleRide,
+    },
+  });
+});
 // const { ObjectId } = require("mongoDb");
 // exports.searchJobs = async (req, res) => {
 //   try {

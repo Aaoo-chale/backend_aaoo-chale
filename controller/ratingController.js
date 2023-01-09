@@ -44,14 +44,14 @@ exports.createRating = async (req, res, next) => {
       var content = {
         title: "Hi You Get Successfully Rating.",
         body: message,
-        imageUrl: "http://res.cloudinary.com/dyetuvbqa/image/upload/v1672929153/r3pwo0x7wmrhjrfyuruz.jpg",
       };
       const key = await GetToken(driverId);
       console.log(key, "key");
+      const imageUrl = "http://res.cloudinary.com/dyetuvbqa/image/upload/v1672929153/r3pwo0x7wmrhjrfyuruz.jpg";
 
       if (key != "") {
         console.log("okkkkkkkkkkkkkkkk");
-        var firebaseres = await firebase.sendNotification(key, content);
+        var firebaseres = await firebase.sendNotification(key, imageUrl, content);
       }
       //////////////
       res.status(200).json({

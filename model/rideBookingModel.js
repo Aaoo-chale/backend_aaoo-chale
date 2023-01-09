@@ -10,6 +10,10 @@ const BookedRideSchema = new Schema(
       type: mongoose.Schema.ObjectId,
       ref: "User",
     },
+    receiver: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+    },
     ride: {
       type: mongoose.Schema.ObjectId,
       ref: "Ride",

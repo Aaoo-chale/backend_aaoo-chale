@@ -10,5 +10,6 @@ router.post("/searchJobs", rideController.searchJobs);
 router.post("/getRideByUserId", rideController.getRideByUserId);
 router.put("/updateRideDetails", rideController.updateRideDetails);
 router.patch("/changeRideStatus", rideController.changeRideStatus);
+router.patch("/cancleRide", rideController.cancleRide);
 
 module.exports = router;

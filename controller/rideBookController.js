@@ -32,8 +32,9 @@ exports.bookedRide = async (req, res, next) => {
   //   console.log(user);
   try {
     // add receiver
-    const { userId, receiver, rideId, status } = req.body;
-    if (!userId || !rideId) return next(new AppErr("Please Provide all details"), 200);
+    const { userId, receiver, rideId, status, message } = req.body;
+    if (!userId || !receiver || !rideId || !status || !message)
+      return next(new AppErr("Please Provide all details"), 200);
     const approval = await Ride.findOne({ _id: rideId });
     console.log(approval.rideApproval, "approval");
 
@@ -45,29 +46,31 @@ exports.bookedRide = async (req, res, next) => {
         "You have received a new passenger from Aaoo Chale. Click here to know the more details."
       );
 
-      if (receiver) {
-        // console.log("okkkkkkkk");
-        var content = {
-          title: "You have new Notification please chake...",
-          body: "You have received a new passenger from Aaoo Chale. Click here to know the more details.",
-          imageUrl: "http://res.cloudinary.com/dyetuvbqa/image/upload/v1672929153/r3pwo0x7wmrhjrfyuruz.jpg",
-        };
-        const key = await GetToken(receiver);
-        console.log(key, "key");
+      //   if (receiver) {
+      //     // console.log("okkkkkkkk");
+      //     var content = {
+      //       title: "You have new Notification please chake...",
+      //       body: "You have received a new passenger from Aaoo Chale. Click here to know the more details.",
+      //       imageUrl: "http://res.cloudinary.com/dyetuvbqa/image/upload/v1672929153/r3pwo0x7wmrhjrfyuruz.jpg",
+      //     };
+      //     const key = await GetToken(receiver);
+      //     console.log(key, "key");
 
-        if (key != "") {
-          console.log("okkkkkkkkkkkkkkkk");
-          var firebaseres = await firebase.sendNotification(key, content);
-        }
-      }
-      res.status(200).json({
-        status: true,
-        message: "Not Booked Ride Because rideApproval is No",
-      });
-    } else {
+      //     if (key != "") {
+      //       console.log("okkkkkkkkkkkkkkkk");
+      //       var firebaseres = await firebase.sendNotification(key, content);
+      //     }
+      //   }
+      //   res.status(200).json({
+      //     status: true,
+      //     message: "Not Booked Ride Because rideApproval is No",
+      //   });
+      // } else {
       const bookedRide = await BookedRide.create({
         user: userId,
+        receiver: receiver,
         ride: rideId,
+        message: message,
         status: status,
       });
       await notificationController.postNotification(
@@ -114,7 +117,7 @@ exports.cancleBookedRide = catchAsync(async (req, res, next) => {
   if (!id || !status) return next(new AppErr("Pelase Provide User Id"), 200);
   const updateRide = await BookedRide.findByIdAndUpdate(
     { _id: id },
-    { status: status },
+    { ...req.body },
     { runValidator: true, useFindAndModify: false, new: true }
   );
   // save data
@@ -146,7 +149,7 @@ exports.cancleBookedRide = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: true,
     data: {
-      message: "Update Ride Successfully",
+      message: "User Cancle Booked Ride Successfully",
       updateRide,
     },
   });
