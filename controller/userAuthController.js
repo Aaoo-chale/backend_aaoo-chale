@@ -487,38 +487,56 @@ exports.updateMobile = catchAsync(async (req, res, next) => {
 });
 
 exports.verifyUpdateMobile = async (req, res, next) => {
-  const { id, otp, mobileNumber } = req.body;
-  if (!mobileNumber || !id || !otp) {
-    res.status(200).json({
-      status: false,
-      data: {
-        message: "Please Provide All The Details",
-      },
+  try {
+    const { id, otp, mobileNumber } = req.body;
+    if (!mobileNumber || !id || !otp) {
+      res.status(200).json({
+        status: false,
+        data: {
+          message: "Please Provide All The Details",
+        },
+      });
+    }
+
+    const user = await User.findOne({ $and: [{ _id: id }, { "mobile.mobileNumber": mobileNumber }] });
+    // console.log(user, "user");
+    const mobile = user.mobile.mobileNumber;
+    if (mobile == mobileNumber) {
+      // const user = await User.findByIdAndUpdate(
+      //   { _id: id },
+      //   { mobile: { mobileNumber } },
+      //   { runValidator: true, useFindAndModify: false, new: true }
+      // );
+      // // user.mobile = { mobileNumber };
+
+      const currDate = new Date(Date.now());
+      if (user?.verificationToken?.mobileTokenExpiry < currDate) return next(new AppErr("OTP Expired", 200));
+      // verify otp
+      if (!(user?.verificationToken?.mobileToken === otp)) return "OTP Entered Is Incorrect", 200;
+      // update token fields in document
+      user.verificationToken.mobileToken = undefined;
+      user.verificationToken.mobileTokenExpiry = undefined;
+      user.mobile.isMobileVerified = true;
+      const doc = await user.save();
+      res.status(200).json({
+        status: true,
+        data: {
+          message: "User Mobile Verified",
+          doc,
+        },
+      });
+    } else {
+      res.status(200).json({
+        status: true,
+        message: "Please Enter Valid Mobile Number..................",
+      });
+    }
+  } catch (err) {
+    return res.status(200).json({
+      status: true,
+      message: "Please Enter Valid Mobile Number",
     });
   }
-  const user = await User.findByIdAndUpdate(
-    { _id: id },
-    { mobile: { mobileNumber } },
-    { runValidator: true, useFindAndModify: false, new: true }
-  );
-  // user.mobile = { mobileNumber };
-
-  const currDate = new Date(Date.now());
-  if (user?.verificationToken?.mobileTokenExpiry < currDate) return next(new AppErr("OTP Expired", 200));
-  // verify otp
-  if (!(user?.verificationToken?.mobileToken === otp)) return "OTP Entered Is Incorrect", 200;
-  // update token fields in document
-  user.verificationToken.mobileToken = undefined;
-  user.verificationToken.mobileTokenExpiry = undefined;
-  user.mobile.isMobileVerified = true;
-  const doc = await user.save();
-  res.status(200).json({
-    status: true,
-    data: {
-      message: "User Mobile Verified",
-      doc,
-    },
-  });
 };
 
 // ///// images
