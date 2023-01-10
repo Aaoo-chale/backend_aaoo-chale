@@ -456,10 +456,16 @@ exports.updateMobile = catchAsync(async (req, res, next) => {
   const { id, mobileNumber } = req.body;
   console.log(mobileNumber);
 
-  const user = await User.findById({ _id: id });
-  console.log(user);
+  // const user = await User.findById({ _id: id });
+  // console.log(user);
 
   try {
+    const user = await User.findByIdAndUpdate(
+      { _id: id },
+      { mobile: { mobileNumber } },
+      { runValidator: true, useFindAndModify: false, new: true }
+    );
+
     var data = await generateOtp("mobile", user);
     console.log(data, "data");
   } catch (err) {
@@ -474,7 +480,7 @@ exports.updateMobile = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: true,
     data: {
-      message: "Otp send your No",
+      message: "Otp send your Number",
       data,
     },
   });
