@@ -32,13 +32,14 @@ exports.bookedRide = async (req, res, next) => {
   //   console.log(user);
   try {
     // add receiver
-    const { userId, receiver, rideId, status, message } = req.body;
+    const { userId, receiver, rideId, status, message, passengercount } = req.body;
     if (!userId || !receiver || !rideId || !status || !message)
       return next(new AppErr("Please Provide all details"), 200);
     const approval = await Ride.findOne({ _id: rideId });
-    console.log(approval.rideApproval, "approval");
+    // console.log(approval, "approval");
 
     if (approval.rideApproval == "No") {
+      console.log("hhhhhhhhhhhhhhhhhhhhhh");
       const data = await notificationController.postNotification(
         userId,
         receiver,
@@ -46,45 +47,11 @@ exports.bookedRide = async (req, res, next) => {
         "You have received a new passenger from Aaoo Chale. Click here to know the more details."
       );
 
-      //   if (receiver) {
-      //     // console.log("okkkkkkkk");
-      //     var content = {
-      //       title: "You have new Notification please chake...",
-      //       body: "You have received a new passenger from Aaoo Chale. Click here to know the more details.",
-      //       imageUrl: "http://res.cloudinary.com/dyetuvbqa/image/upload/v1672929153/r3pwo0x7wmrhjrfyuruz.jpg",
-      //     };
-      //     const key = await GetToken(receiver);
-      //     console.log(key, "key");
-
-      //     if (key != "") {
-      //       console.log("okkkkkkkkkkkkkkkk");
-      //       var firebaseres = await firebase.sendNotification(key, content);
-      //     }
-      //   }
-      //   res.status(200).json({
-      //     status: true,
-      //     message: "Not Booked Ride Because rideApproval is No",
-      //   });
-      // } else {
-      const bookedRide = await BookedRide.create({
-        user: userId,
-        receiver: receiver,
-        ride: rideId,
-        message: message,
-        status: status,
-      });
-      await notificationController.postNotification(
-        userId,
-        receiver,
-        "Booking Approval",
-        "You have received a new passenger request from Aaoo Chale. Click here to approve the passenger"
-      );
-
       if (receiver) {
         // console.log("okkkkkkkk");
         var content = {
           title: "You have new Notification please chake...",
-          body: "You have received a new passenger request from Aaoo Chale. Click here to approve the passenger.",
+          body: "You have received a new passenger from Aaoo Chale. Click here to know the more details.",
           imageUrl: "http://res.cloudinary.com/dyetuvbqa/image/upload/v1672929153/r3pwo0x7wmrhjrfyuruz.jpg",
         };
         const key = await GetToken(receiver);
@@ -95,14 +62,68 @@ exports.bookedRide = async (req, res, next) => {
           var firebaseres = await firebase.sendNotification(key, content);
         }
       }
-
       res.status(200).json({
         status: true,
-        message: "Booked Ride Succussefully",
-        data: {
-          bookedRide,
-        },
+        message: "Not Booked Ride Because rideApproval is No",
       });
+    } else {
+      // console.log(approval.passengerCount, "approval.passengerCount");
+      // // const count = approval.passengerCount;
+      if (approval.passengerCount >= passengercount) {
+        const bookedRide = await BookedRide.create({
+          user: userId,
+          receiver: receiver,
+          ride: rideId,
+          message: message,
+          status: status,
+        });
+
+        // calculate trip prise
+        // const tripPrises = approval.tripPrise * passengercount;
+        // // await bookedRide.save();
+        // console.log(prise, "prise");
+        // const result = {
+        //   bookedRide,
+        //   tripPrises,
+        // };
+        // console.log(result, "result");
+        await notificationController.postNotification(
+          userId,
+          receiver,
+          "Booking Approval",
+          "You have received a new passenger request from Aaoo Chale. Click here to approve the passenger"
+        );
+
+        if (receiver) {
+          // console.log("okkkkkkkk");
+          var content = {
+            title: "You have new Notification please chake...",
+            body: "You have received a new passenger request from Aaoo Chale. Click here to approve the passenger.",
+            imageUrl: "http://res.cloudinary.com/dyetuvbqa/image/upload/v1672929153/r3pwo0x7wmrhjrfyuruz.jpg",
+          };
+          const key = await GetToken(receiver);
+          console.log(key, "key");
+
+          if (key != "") {
+            // console.log("okkkkkkkkkkkkkkkk");
+            var firebaseres = await firebase.sendNotification(key, content);
+          }
+        }
+
+        // const tripPrises = approval.tripPrise * passengercount;
+        // console.log(approval.tripPrise, "approval.tripPrise");
+        // await bookedRide.save();
+        res.status(200).json({
+          status: true,
+          message: "Booked Ride Succussefully",
+          bookedRide,
+        });
+      } else {
+        res.status(200).json({
+          status: true,
+          message: `${approval.passengerCount} seats only available`,
+        });
+      }
     }
   } catch (error) {
     next(error);
