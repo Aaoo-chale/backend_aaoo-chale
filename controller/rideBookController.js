@@ -36,7 +36,7 @@ exports.bookedRide = async (req, res, next) => {
     if (!userId || !receiver || !rideId || !status || !message)
       return next(new AppErr("Please Provide all details"), 200);
     const approval = await Ride.findOne({ _id: rideId });
-    // console.log(approval, "approval");
+    console.log(approval, "approval");
 
     if (approval.rideApproval == "No") {
       console.log("hhhhhhhhhhhhhhhhhhhhhh");
@@ -70,6 +70,10 @@ exports.bookedRide = async (req, res, next) => {
       // console.log(approval.passengerCount, "approval.passengerCount");
       // // const count = approval.passengerCount;
       if (approval.passengerCount >= passengercount) {
+        const tripPrises = approval.tripPrise * passengercount;
+        // console.log(tripPrises, "tripPrises");
+
+        // calculate trip prise
         const bookedRide = await BookedRide.create({
           user: userId,
           receiver: receiver,
@@ -78,15 +82,17 @@ exports.bookedRide = async (req, res, next) => {
           status: status,
         });
 
-        // calculate trip prise
-        // const tripPrises = approval.tripPrise * passengercount;
-        // // await bookedRide.save();
-        // console.log(prise, "prise");
-        // const result = {
-        //   bookedRide,
-        //   tripPrises,
-        // };
-        // console.log(result, "result");
+        // manage seat
+
+        const seatCount = approval.passengerCount - passengercount;
+        const updateCount = await Ride.findByIdAndUpdate(
+          { _id: rideId },
+          { passengerCount: seatCount },
+          { runValidator: true, useFindAndModify: false, new: true }
+        );
+        await updateCount.save();
+        // manage seat
+
         await notificationController.postNotification(
           userId,
           receiver,
@@ -95,7 +101,6 @@ exports.bookedRide = async (req, res, next) => {
         );
 
         if (receiver) {
-          // console.log("okkkkkkkk");
           var content = {
             title: "You have new Notification please chake...",
             body: "You have received a new passenger request from Aaoo Chale. Click here to approve the passenger.",
@@ -116,7 +121,10 @@ exports.bookedRide = async (req, res, next) => {
         res.status(200).json({
           status: true,
           message: "Booked Ride Succussefully",
-          bookedRide,
+          data: {
+            tripPrises,
+            bookedRide,
+          },
         });
       } else {
         res.status(200).json({
